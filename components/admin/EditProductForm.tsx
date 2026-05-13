@@ -1,0 +1,271 @@
+'use client'
+
+import { useState } from 'react'
+import { type DbProduct } from '@/lib/queries/products'
+import { formatSlug } from '@/lib/utils'
+
+interface EditProductFormProps {
+  product: DbProduct
+  categories: { id: string; name: string; slug: string }[]
+  onSuccess: () => void
+  onClose: () => void
+}
+
+export default function EditProductForm({
+  product,
+  categories,
+  onSuccess,
+  onClose,
+}: EditProductFormProps) {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false)
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null)
+
+  const [form, setForm] = useState({
+    name: product.name,
+    slug: product.slug,
+    price: product.price.toString(),
+    categorySlug: product.categorySlug,
+    description: product.description,
+    images: product.images.length > 0 ? [...product.images] : [''],
+    stock: product.stock.toString(),
+    featured: product.featured,
+  })
+
+  function handleNameChange(value: string) {
+    setForm((prev) => ({
+      ...prev,
+      name: value,
+      slug: slugManuallyEdited ? prev.slug : formatSlug(value),
+    }))
+  }
+
+  function handleSlugChange(value: string) {
+    setSlugManuallyEdited(true)
+    setForm((prev) => ({ ...prev, slug: value }))
+  }
+
+  function addImage() {
+    setForm((prev) => ({ ...prev, images: [...prev.images, ''] }))
+  }
+
+  function updateImage(index: number, value: string) {
+    setForm((prev) => {
+      const imgs = [...prev.images]
+      imgs[index] = value
+      return { ...prev, images: imgs }
+    })
+  }
+
+  function removeImage(index: number) {
+    setForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }))
+  }
+
+  async function handleFileUpload(index: number, file: File) {
+    setUploadingIndex(index)
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const ext = file.name.split('.').pop() ?? 'jpg'
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+      const { data, error: uploadError } = await supabase.storage
+        .from('products')
+        .upload(path, file, { cacheControl: '3600', upsert: false })
+      if (uploadError) {
+        setError(`Error al subir imagen: ${uploadError.message}`)
+        return
+      }
+      const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(data.path)
+      updateImage(index, publicUrl)
+    } catch {
+      setError('Error al subir la imagen. Verificá que el bucket "products" exista en Supabase.')
+    } finally {
+      setUploadingIndex(null)
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    const images = form.images.filter((img) => img.trim().length > 0)
+    if (images.length === 0) {
+      setError('Agregá al menos una imagen')
+      setLoading(false)
+      return
+    }
+
+    try {
+      const res = await fetch(`/api/admin/products/${product.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          slug: form.slug.trim(),
+          price: Number(form.price),
+          categorySlug: form.categorySlug,
+          images,
+          description: form.description.trim(),
+          stock: Number(form.stock),
+          featured: form.featured,
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error ?? 'Error al guardar')
+        return
+      }
+
+      onSuccess()
+    } catch {
+      setError('Error de red. Intentá de nuevo.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-foreground/40">
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="w-full max-w-lg bg-background border border-border">
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-border px-6 py-4">
+            <h2 className="text-[12px] font-black uppercase tracking-[0.22em]">
+              Editar producto
+            </h2>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Cerrar"
+              className="text-muted hover:text-foreground transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                <path d="M1 1l12 12M13 1L1 13" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-6 py-6">
+            {/* Nombre */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Nombre</label>
+              <input type="text" required value={form.name} onChange={(e) => handleNameChange(e.target.value)}
+                className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full" />
+            </div>
+
+            {/* Slug */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Slug</label>
+              <input type="text" required value={form.slug} onChange={(e) => handleSlugChange(e.target.value)}
+                className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full" />
+            </div>
+
+            {/* Categoría */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Categoría</label>
+              <select required value={form.categorySlug} onChange={(e) => setForm((prev) => ({ ...prev, categorySlug: e.target.value }))}
+                className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full cursor-pointer">
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.slug}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Precio */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Precio (ARS)</label>
+              <input type="number" required min={1} step={1} value={form.price}
+                onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))}
+                className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full" />
+            </div>
+
+            {/* Descripción */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Descripción</label>
+              <textarea required rows={3} value={form.description}
+                onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
+                className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full resize-none" />
+            </div>
+
+            {/* Imágenes */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Imágenes</label>
+              <div className="flex flex-col gap-2">
+                {form.images.map((img, i) => (
+                  <div key={i} className="flex flex-col gap-1.5">
+                    <div className="flex gap-2">
+                      <input type="url" value={img} placeholder="https://..." onChange={(e) => updateImage(i, e.target.value)}
+                        disabled={uploadingIndex === i}
+                        className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors flex-1 disabled:opacity-40" />
+                      <label className={['flex h-[38px] cursor-pointer items-center border border-border px-3 text-[9px] font-semibold uppercase tracking-[0.15em] text-muted transition-colors hover:border-foreground hover:text-foreground shrink-0', uploadingIndex === i ? 'opacity-40 pointer-events-none' : ''].join(' ')}>
+                        {uploadingIndex === i ? '...' : 'Subir'}
+                        <input type="file" accept="image/*" className="sr-only"
+                          onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFileUpload(i, file); e.target.value = '' }} />
+                      </label>
+                      {form.images.length > 1 && (
+                        <button type="button" onClick={() => removeImage(i)} disabled={uploadingIndex === i}
+                          className="flex h-[38px] w-[38px] items-center justify-center border border-border text-muted transition-colors hover:border-destructive hover:text-destructive disabled:opacity-40 shrink-0"
+                          aria-label="Eliminar imagen">
+                          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden><path d="M1 1l8 8M9 1L1 9" /></svg>
+                        </button>
+                      )}
+                    </div>
+                    {img && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={img} alt="" className="h-16 w-16 object-cover border border-border"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                    )}
+                  </div>
+                ))}
+                <button type="button" onClick={addImage}
+                  className="self-start text-[10px] font-semibold uppercase tracking-[0.15em] text-muted hover:text-foreground transition-colors underline underline-offset-2">
+                  + Agregar imagen
+                </button>
+              </div>
+            </div>
+
+            {/* Stock */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Stock</label>
+              <input type="number" required min={0} step={1} value={form.stock}
+                onChange={(e) => setForm((prev) => ({ ...prev, stock: e.target.value }))}
+                className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full" />
+            </div>
+
+            {/* Destacado */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" id="edit-featured" checked={form.featured}
+                onChange={(e) => setForm((prev) => ({ ...prev, featured: e.target.checked }))}
+                className="h-4 w-4 cursor-pointer accent-foreground" />
+              <label htmlFor="edit-featured" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted cursor-pointer">
+                Producto destacado
+              </label>
+            </div>
+
+            {/* Error */}
+            {error && <p className="text-[11px] font-medium text-destructive">{error}</p>}
+
+            {/* Actions */}
+            <div className="flex gap-3 border-t border-border pt-5">
+              <button type="submit" disabled={loading}
+                className="flex h-10 flex-1 items-center justify-center bg-foreground text-[10px] font-semibold uppercase tracking-[0.18em] text-background hover:opacity-80 transition-opacity disabled:opacity-40">
+                {loading ? 'Guardando...' : 'Guardar cambios'}
+              </button>
+              <button type="button" onClick={onClose} disabled={loading}
+                className="flex h-10 items-center justify-center border border-border px-6 text-[10px] font-semibold uppercase tracking-[0.18em] hover:border-foreground transition-colors disabled:opacity-40">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  )
+}

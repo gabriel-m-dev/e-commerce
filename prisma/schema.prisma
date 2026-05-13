@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Users ────────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id // UUID from Supabase auth.users
+  email     String   @unique
+  name      String?
+  role      String   @default("customer")
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+}
+
+// ─── Catalog ──────────────────────────────────────────────────────────────────
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  image       String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+}
+
+model Product {
+  id           String      @id @default(cuid())
+  name         String
+  slug         String      @unique
+  description  String
+  // Price stored in ARS cents (e.g. 24900 = $249.00 ARS)
+  price        Int
+  comparePrice Int?
+  images       String[]
+  categoryId   String
+  category     Category    @relation(fields: [categoryId], references: [id])
+  stock        Int         @default(0)
+  featured     Boolean     @default(false)
+  active       Boolean     @default(true)
+  cartItems    CartItem[]
+  orderItems   OrderItem[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([categoryId])
+  @@index([featured, active])
+}
+
+// ─── Cart ─────────────────────────────────────────────────────────────────────
+
+// Session-based cart — no user account required
+model CartItem {
+  id        String   @id @default(cuid())
+  sessionId String
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  size      String?
+  createdAt DateTime @default(now())
+
+  @@index([sessionId])
+  @@unique([sessionId, productId, size])
+}
+
+// ─── Orders ───────────────────────────────────────────────────────────────────
+
+model Order {
+  id        String      @id @default(cuid())
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
+  email     String
+  status    OrderStatus @default(PENDING)
+  subtotal  Int
+  shipping  Int
+  total     Int
+  items     OrderItem[]
+  address   Address?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  name      String
+  price     Int
+  quantity  Int
+  size      String?
+
+  @@index([orderId])
+}
+
+// ─── Address ──────────────────────────────────────────────────────────────────
+
+model Address {
+  id      String @id @default(cuid())
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  name    String
+  street  String
+  city    String
+  state   String
+  zipCode String
+  country String
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}

@@ -1,0 +1,542 @@
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import ArrowIcon from '@/components/ui/ArrowIcon'
+import useCartStore from '@/store/cart'
+import { formatPrice } from '@/lib/utils'
+import type { CartItem } from '@/store/cart'
+
+{/* ─── Types ─── */}
+
+type FormFields = {
+  email: string
+  phone: string
+  fullName: string
+  address: string
+  city: string
+  province: string
+  postalCode: string
+}
+
+type FormErrors = Partial<Record<keyof FormFields, string>>
+
+const PROVINCES = [
+  'Buenos Aires',
+  'Buenos Aires (CABA)',
+  'Catamarca',
+  'Chaco',
+  'Chubut',
+  'Córdoba',
+  'Corrientes',
+  'Entre Ríos',
+  'Formosa',
+  'Jujuy',
+  'La Pampa',
+  'La Rioja',
+  'Mendoza',
+  'Misiones',
+  'Neuquén',
+  'Río Negro',
+  'Salta',
+  'San Juan',
+  'San Luis',
+  'Santa Cruz',
+  'Santa Fe',
+  'Santiago del Estero',
+  'Tierra del Fuego',
+  'Tucumán',
+]
+
+const FREE_SHIPPING_THRESHOLD = 50000
+
+const INPUT_CLASS =
+  'border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-foreground focus:outline-none transition-colors w-full'
+
+const INPUT_ERROR_CLASS =
+  'border border-destructive bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-destructive focus:outline-none transition-colors w-full'
+
+const LABEL_CLASS =
+  'text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground mb-2 block'
+
+{/* ─── Helpers ─── */}
+
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
+
+function validate(fields: FormFields): FormErrors {
+  const errors: FormErrors = {}
+
+  if (!fields.email.trim()) errors.email = 'El email es requerido'
+  else if (!isValidEmail(fields.email)) errors.email = 'Email inválido'
+
+  if (!fields.phone.trim()) errors.phone = 'El teléfono es requerido'
+  if (!fields.fullName.trim()) errors.fullName = 'El nombre es requerido'
+  if (!fields.address.trim()) errors.address = 'La dirección es requerida'
+  if (!fields.city.trim()) errors.city = 'La ciudad es requerida'
+  if (!fields.province) errors.province = 'Seleccioná una provincia'
+  if (!fields.postalCode.trim()) errors.postalCode = 'El código postal es requerido'
+
+  return errors
+}
+
+{/* ─── Sub-components ─── */}
+
+function SectionHeader({ number, title }: { number: string; title: string }) {
+  return (
+    <div className="flex items-baseline gap-4 mb-6">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">
+        {number}
+      </span>
+      <h2 className="text-base font-black uppercase tracking-tight text-foreground">
+        {title}
+      </h2>
+    </div>
+  )
+}
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null
+  return (
+    <p className="mt-1.5 text-[10px] text-destructive uppercase tracking-[0.1em]">
+      {message}
+    </p>
+  )
+}
+
+{/* ─── Page ─── */}
+
+export default function CheckoutPage() {
+  const items = useCartStore((s) => s.items)
+  const getTotal = useCartStore((s) => s.getTotal)
+
+  const subtotal = getTotal()
+  const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : null
+
+  const [fields, setFields] = useState<FormFields>({
+    email: '',
+    phone: '',
+    fullName: '',
+    address: '',
+    city: '',
+    province: '',
+    postalCode: '',
+  })
+
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [loading, setLoading] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
+    const { name, value } = e.target
+    setFields((prev) => ({ ...prev, [name]: value }))
+    if (errors[name as keyof FormFields]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }))
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const validationErrors = validate(fields)
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
+
+    setLoading(true)
+    setSubmitError(null)
+
+    try {
+      const res = await fetch('/api/checkout/create-preference', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items,
+          buyer: {
+            email: fields.email,
+            fullName: fields.fullName,
+            phone: fields.phone,
+          },
+          shipping: {
+            address: fields.address,
+            city: fields.city,
+            province: fields.province,
+            postalCode: fields.postalCode,
+          },
+        }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        setSubmitError(data.error ?? 'Error al procesar el pago')
+        setLoading(false)
+        return
+      }
+
+      const { initPoint } = await res.json()
+      window.location.href = initPoint
+    } catch {
+      setSubmitError('Error de conexión. Verificá tu internet e intentá de nuevo.')
+      setLoading(false)
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-background">
+      <div className="max-w-screen-xl mx-auto px-6 lg:px-10">
+
+        {/* ─── Page header ─── */}
+        <div className="border-b border-border py-8">
+          <Link
+            href="/"
+            className="text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground"
+          >
+            LUXE.
+          </Link>
+        </div>
+
+        <div className="py-12 lg:py-16 flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+
+          {/* ─── Order summary — mobile first ─── */}
+          <aside className="w-full lg:hidden border border-border p-6">
+            <OrderSummary items={items} subtotal={subtotal} shipping={shipping} />
+          </aside>
+
+          {/* ─── Form ─── */}
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            className="flex-1 min-w-0"
+          >
+
+            {/* ─── 01 Contacto ─── */}
+            <section className="mb-12">
+              <SectionHeader number="01" title="Contacto" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="email" className={LABEL_CLASS}>
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="tu@email.com"
+                    value={fields.email}
+                    onChange={handleChange}
+                    className={errors.email ? INPUT_ERROR_CLASS : INPUT_CLASS}
+                  />
+                  <FieldError message={errors.email} />
+                </div>
+                <div>
+                  <label htmlFor="phone" className={LABEL_CLASS}>
+                    Teléfono
+                  </label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    placeholder="+54 11 0000-0000"
+                    value={fields.phone}
+                    onChange={handleChange}
+                    className={errors.phone ? INPUT_ERROR_CLASS : INPUT_CLASS}
+                  />
+                  <FieldError message={errors.phone} />
+                </div>
+              </div>
+            </section>
+
+            {/* ─── 02 Envío ─── */}
+            <section className="mb-12">
+              <SectionHeader number="02" title="Envío" />
+              <div className="flex flex-col gap-4">
+                <div>
+                  <label htmlFor="fullName" className={LABEL_CLASS}>
+                    Nombre completo
+                  </label>
+                  <input
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    autoComplete="name"
+                    placeholder="Nombre y apellido"
+                    value={fields.fullName}
+                    onChange={handleChange}
+                    className={errors.fullName ? INPUT_ERROR_CLASS : INPUT_CLASS}
+                  />
+                  <FieldError message={errors.fullName} />
+                </div>
+                <div>
+                  <label htmlFor="address" className={LABEL_CLASS}>
+                    Dirección
+                  </label>
+                  <input
+                    id="address"
+                    name="address"
+                    type="text"
+                    autoComplete="street-address"
+                    placeholder="Calle y número"
+                    value={fields.address}
+                    onChange={handleChange}
+                    className={errors.address ? INPUT_ERROR_CLASS : INPUT_CLASS}
+                  />
+                  <FieldError message={errors.address} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="city" className={LABEL_CLASS}>
+                      Ciudad
+                    </label>
+                    <input
+                      id="city"
+                      name="city"
+                      type="text"
+                      autoComplete="address-level2"
+                      placeholder="Ciudad"
+                      value={fields.city}
+                      onChange={handleChange}
+                      className={errors.city ? INPUT_ERROR_CLASS : INPUT_CLASS}
+                    />
+                    <FieldError message={errors.city} />
+                  </div>
+                  <div>
+                    <label htmlFor="postalCode" className={LABEL_CLASS}>
+                      Código postal
+                    </label>
+                    <input
+                      id="postalCode"
+                      name="postalCode"
+                      type="text"
+                      autoComplete="postal-code"
+                      placeholder="1234"
+                      value={fields.postalCode}
+                      onChange={handleChange}
+                      className={errors.postalCode ? INPUT_ERROR_CLASS : INPUT_CLASS}
+                    />
+                    <FieldError message={errors.postalCode} />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="province" className={LABEL_CLASS}>
+                    Provincia
+                  </label>
+                  <select
+                    id="province"
+                    name="province"
+                    autoComplete="address-level1"
+                    value={fields.province}
+                    onChange={handleChange}
+                    className={errors.province ? INPUT_ERROR_CLASS : INPUT_CLASS}
+                  >
+                    <option value="">Seleccioná una provincia</option>
+                    {PROVINCES.map((p) => (
+                      <option key={p} value={p}>
+                        {p}
+                      </option>
+                    ))}
+                  </select>
+                  <FieldError message={errors.province} />
+                </div>
+              </div>
+            </section>
+
+            {/* ─── 03 Pago ─── */}
+            <section className="mb-12">
+              <SectionHeader number="03" title="Pago" />
+              <div className="border border-border p-6 bg-surface">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gold mb-3">
+                  Próximamente
+                </p>
+                <p className="text-sm leading-relaxed text-muted mb-6">
+                  La integración con Mercado Pago estará disponible en breve.
+                  Por ahora coordinamos el pago luego de confirmar tu pedido.
+                </p>
+                <div className="flex items-center gap-6 pt-4 border-t border-border">
+                  {/* Tarjeta */}
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-10 h-7 border border-border bg-background flex items-center justify-center">
+                      <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden>
+                        <rect x="0.5" y="0.5" width="17" height="11" rx="1" stroke="currentColor" strokeOpacity="0.3" />
+                        <rect y="2" width="18" height="3" fill="currentColor" fillOpacity="0.12" />
+                        <rect x="2" y="7" width="5" height="1.5" rx="0.25" fill="currentColor" fillOpacity="0.3" />
+                      </svg>
+                    </div>
+                    <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted">Tarjeta</span>
+                  </div>
+                  {/* Transferencia */}
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-10 h-7 border border-border bg-background flex items-center justify-center">
+                      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden>
+                        <path d="M1 6h14M11 2l4 4-4 4" stroke="currentColor" strokeOpacity="0.4" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted">Transferencia</span>
+                  </div>
+                  {/* Efectivo */}
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-10 h-7 border border-border bg-background flex items-center justify-center">
+                      <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden>
+                        <rect x="0.5" y="0.5" width="15" height="9" rx="0.5" stroke="currentColor" strokeOpacity="0.3" />
+                        <circle cx="8" cy="5" r="2" stroke="currentColor" strokeOpacity="0.35" strokeWidth="1" />
+                      </svg>
+                    </div>
+                    <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted">Efectivo</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* ─── CTA ─── */}
+            <div>
+              {submitError && (
+                <p className="mb-4 text-[11px] text-destructive uppercase tracking-[0.1em] text-center">
+                  {submitError}
+                </p>
+              )}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-3 bg-foreground text-background px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.22em] transition-opacity hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Procesando...' : 'Confirmar pedido'}
+                {!loading && <ArrowIcon className="shrink-0 text-gold" />}
+              </button>
+              <div className="mt-4 flex items-center justify-center gap-2">
+                <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden>
+                  <rect x="1" y="5.5" width="10" height="8" rx="0.5" stroke="currentColor" strokeOpacity="0.4" strokeWidth="1" />
+                  <path d="M3.5 5.5V4a2.5 2.5 0 0 1 5 0v1.5" stroke="currentColor" strokeOpacity="0.4" strokeWidth="1" strokeLinecap="round" />
+                  <circle cx="6" cy="9.5" r="1" fill="currentColor" fillOpacity="0.4" />
+                </svg>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
+                  Tus datos están protegidos
+                </span>
+              </div>
+            </div>
+          </form>
+
+          {/* ─── Order summary — desktop ─── */}
+          <aside className="hidden lg:block w-[380px] shrink-0 sticky top-8">
+            <div className="border border-border p-8">
+              <OrderSummary items={items} subtotal={subtotal} shipping={shipping} />
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </main>
+  )
+}
+
+{/* ─── Order Summary component ─── */}
+
+function OrderSummary({
+  items,
+  subtotal,
+  shipping,
+}: {
+  items: CartItem[]
+  subtotal: number
+  shipping: number | null
+}) {
+  return (
+    <>
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <h2 className="text-base font-black uppercase tracking-tight text-foreground">
+          Tu pedido
+        </h2>
+        <span className="flex-1 h-px bg-gold" />
+      </div>
+
+      {/* Items */}
+      {items.length === 0 ? (
+        <div className="py-8 text-center">
+          <p className="text-sm leading-relaxed text-muted mb-4">
+            Tu carrito está vacío.
+          </p>
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground border border-foreground px-5 py-2.5 transition-colors hover:bg-foreground hover:text-background"
+          >
+            Ver productos <ArrowIcon size={14} className="shrink-0" />
+          </Link>
+        </div>
+      ) : (
+        <>
+          <ul className="flex flex-col gap-4 mb-6">
+            {items.map((item) => (
+              <li
+                key={`${item.product.id}-${item.size ?? 'ns'}`}
+                className="flex items-start gap-3"
+              >
+                <div className="relative w-12 h-12 shrink-0 border border-border bg-surface overflow-hidden">
+                  <Image
+                    src={item.product.image}
+                    alt={item.product.name}
+                    fill
+                    className="object-cover"
+                    sizes="48px"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground leading-tight truncate">
+                    {item.product.name}
+                  </p>
+                  {item.size && (
+                    <p className="text-[10px] text-muted uppercase tracking-[0.1em] mt-0.5">
+                      Talle {item.size}
+                    </p>
+                  )}
+                  <p className="text-[10px] text-muted mt-0.5">
+                    ×{item.quantity}
+                  </p>
+                </div>
+                <span className="text-sm font-semibold text-foreground shrink-0">
+                  {formatPrice(item.product.price * item.quantity)}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          {/* Divider */}
+          <div className="border-t border-border pt-4 flex flex-col gap-3">
+            <div className="flex justify-between items-baseline">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
+                Subtotal
+              </span>
+              <span className="text-sm font-semibold text-foreground">
+                {formatPrice(subtotal)}
+              </span>
+            </div>
+            <div className="flex justify-between items-baseline">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
+                Envío
+              </span>
+              <span className="text-sm font-semibold text-foreground">
+                {shipping === 0 ? (
+                  <span className="text-gold">Gratis</span>
+                ) : (
+                  'Calculado al confirmar'
+                )}
+              </span>
+            </div>
+            <div className="border-t border-border pt-3 flex justify-between items-baseline">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
+                Total
+              </span>
+              <span className="text-base font-semibold text-foreground">
+                {formatPrice(subtotal)}
+              </span>
+            </div>
+          </div>
+        </>
+      )}
+    </>
+  )
+}

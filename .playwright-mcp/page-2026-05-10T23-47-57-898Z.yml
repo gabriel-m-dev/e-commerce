@@ -1,0 +1,37 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - link "LUXE." [ref=e5] [cursor=pointer]:
+      - /url: /
+    - heading "Crear cuenta" [level=1] [ref=e6]
+    - generic [ref=e7]:
+      - button "Continuar con Google" [ref=e8]:
+        - img [ref=e9]
+        - generic [ref=e14]: Continuar con Google
+      - generic [ref=e17]: O
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - generic [ref=e21]: Nombre
+          - textbox "Nombre" [ref=e22]:
+            - /placeholder: Tu nombre
+        - generic [ref=e23]:
+          - generic [ref=e24]: Email
+          - textbox "Email" [ref=e25]:
+            - /placeholder: tu@email.com
+        - generic [ref=e26]:
+          - generic [ref=e27]: Contraseña
+          - textbox "Contraseña" [ref=e28]:
+            - /placeholder: ••••••••
+        - generic [ref=e29]:
+          - generic [ref=e30]: Confirmar contraseña
+          - textbox "Confirmar contraseña" [ref=e31]:
+            - /placeholder: ••••••••
+        - button "Crear cuenta" [ref=e32]:
+          - generic [ref=e33]: Crear cuenta
+          - img [ref=e34]
+    - paragraph [ref=e36]:
+      - text: ¿Ya tenés cuenta?
+      - link "Iniciá sesión" [ref=e37] [cursor=pointer]:
+        - /url: /login
+  - button "Open Next.js Dev Tools" [ref=e43] [cursor=pointer]:
+    - img [ref=e44]
+  - alert [ref=e47]
