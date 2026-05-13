@@ -296,9 +296,9 @@ export default async function HomePage() {
           />
         </div>
 
-        {/* Contenido — centrado matemáticamente */}
-        <div className="relative z-10 flex h-full flex-col items-center justify-center gap-3">
-          <h2 className="text-center text-[13px] font-medium uppercase tracking-[0.18em] text-foreground sm:text-sm lg:text-base">
+        {/* Contenido */}
+        <div className="relative z-10 flex h-full flex-col items-start justify-center gap-3 pl-6 pr-[45%] sm:items-center sm:pl-0 sm:pr-0">
+          <h2 className="text-left text-[11px] font-medium uppercase tracking-[0.18em] text-foreground sm:text-center sm:text-[13px] lg:text-base">
             Listo para comprar sin complicaciones.
           </h2>
           <Link

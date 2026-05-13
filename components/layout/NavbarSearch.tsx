@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { MOCK_PRODUCTS } from '@/lib/data/products'
 
-export default function NavbarSearch() {
+export default function NavbarSearch({ onOpenChange }: { onOpenChange?: (open: boolean) => void }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
@@ -40,12 +40,14 @@ export default function NavbarSearch() {
 
   function handleOpen() {
     setOpen(true)
+    onOpenChange?.(true)
     setTimeout(() => inputRef.current?.focus(), 50)
   }
 
   function handleClose() {
     setOpen(false)
     setQuery('')
+    onOpenChange?.(false)
   }
 
   return (
