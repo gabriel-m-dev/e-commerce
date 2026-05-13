@@ -17,8 +17,6 @@ function mockToDb(p: MockProduct): DbProduct {
   }
 }
 
-// Flat product shape used by all components — mirrors MockProduct
-// but sourced from the real database.
 export type DbProduct = {
   id: string
   name: string
@@ -35,15 +33,12 @@ export type DbProduct = {
   stock: number
 }
 
-// ─── Internal mapper ──────────────────────────────────────────────────────────
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toDbProduct(p: any): DbProduct {
   return {
     id: p.id as string,
     name: p.name as string,
     slug: p.slug as string,
-    // Prisma 7 returns Int fields as Decimal at the type level — coerce to number
     price: Number(p.price),
     category: p.category.name as string,
     categorySlug: p.category.slug as string,
@@ -54,8 +49,6 @@ function toDbProduct(p: any): DbProduct {
     stock: Number(p.stock),
   }
 }
-
-// ─── Queries ──────────────────────────────────────────────────────────────────
 
 export async function getProducts(options?: {
   categorySlug?: string
