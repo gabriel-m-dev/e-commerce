@@ -8,7 +8,7 @@ import ProductsWithFilters from '@/components/product/ProductsWithFilters'
 import ProductFeature from '@/components/product/ProductFeature'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: { absolute: 'LUXE. — Moda Premium Argentina' },

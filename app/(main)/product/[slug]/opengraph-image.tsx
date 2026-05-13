@@ -3,6 +3,7 @@ import { getProductBySlug } from '@/lib/queries/products'
 import { formatPrice } from '@/lib/utils'
 import { SITE_NAME } from '@/lib/constants'
 
+export const dynamic = 'force-dynamic'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 

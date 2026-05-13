@@ -2,6 +2,8 @@ import Image from 'next/image'
 import { getProducts } from '@/lib/queries/products'
 import { formatPrice } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminDashboardPage() {
   const products = await getProducts()
   const RECENT_PRODUCTS = products.slice(0, 5)

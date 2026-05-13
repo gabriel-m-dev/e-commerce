@@ -2,6 +2,8 @@ import type { MetadataRoute } from 'next'
 import { SITE_URL } from '@/lib/constants'
 import { getProducts } from '@/lib/queries/products'
 
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await getProducts()
 

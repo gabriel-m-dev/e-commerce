@@ -2,6 +2,8 @@ import { getProducts, getCategories } from '@/lib/queries/products'
 import CreateProductForm from '@/components/admin/CreateProductForm'
 import ProductsTable from '@/components/admin/ProductsTable'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminProductsPage() {
   const [products, categories] = await Promise.all([getProducts(), getCategories()])
 

@@ -5,12 +5,8 @@ import { notFound } from 'next/navigation'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import { getProductBySlug, getProducts } from '@/lib/queries/products'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
-export async function generateStaticParams() {
-  const products = await getProducts()
-  return products.map((p) => ({ slug: p.slug }))
-}
 import { formatPrice } from '@/lib/utils'
 import ProductDetail from '@/components/product/ProductDetail'
 import ArrowIcon from '@/components/ui/ArrowIcon'

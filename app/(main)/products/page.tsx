@@ -3,7 +3,7 @@ import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import { getProducts } from '@/lib/queries/products'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
 
-export const revalidate = 600
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Tienda',
