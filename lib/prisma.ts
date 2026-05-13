@@ -7,6 +7,7 @@ function createPrismaClient() {
     max: 5,
     connectionTimeoutMillis: 10_000,
     idleTimeoutMillis: 30_000,
+    ssl: { rejectUnauthorized: false },
   })
   return new PrismaClient({ adapter })
 }
