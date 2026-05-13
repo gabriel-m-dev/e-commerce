@@ -59,7 +59,7 @@ export default async function HomePage() {
         </div>
 
         <div className="mx-auto max-w-screen-xl px-6 lg:px-10">
-          <div className="grid min-h-[88vh] grid-cols-1 items-start lg:grid-cols-[1fr_460px] lg:items-center xl:grid-cols-[1fr_540px]">
+          <div className="grid min-h-[88svh] grid-cols-1 items-start lg:grid-cols-[1fr_460px] lg:items-center xl:grid-cols-[1fr_540px]">
 
             {/* Left — copy */}
             <div className="relative z-10 pt-5 pb-10 sm:pt-10 md:pt-20 lg:py-0 lg:pr-16">
@@ -92,7 +92,7 @@ export default async function HomePage() {
             </div>
 
             {/* Right — hero image (desktop only) */}
-            <div className="relative hidden h-[88vh] lg:block">
+            <div className="relative hidden h-[88svh] lg:block">
               <Image
                 src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=1080&auto=format&fit=crop&q=85"
                 alt="Puma — zapatilla destacada"
