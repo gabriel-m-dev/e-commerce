@@ -1,4 +1,21 @@
 import { prisma } from '@/lib/prisma'
+import { MOCK_PRODUCTS, type MockProduct } from '@/lib/data/products'
+
+function mockToDb(p: MockProduct): DbProduct {
+  return {
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    price: p.price,
+    category: p.category,
+    categorySlug: p.category.toLowerCase(),
+    image: p.image,
+    images: p.images,
+    description: p.description,
+    featured: p.featured ?? false,
+    stock: 99,
+  }
+}
 
 // Flat product shape used by all components — mirrors MockProduct
 // but sourced from the real database.
@@ -53,45 +70,70 @@ export async function getProducts(options?: {
     return { createdAt: 'desc' as const }
   })()
 
-  const results = await prisma.product.findMany({
-    where: {
-      active: true,
-      ...(categorySlug ? { category: { slug: categorySlug } } : {}),
-      ...(search
-        ? { name: { contains: search, mode: 'insensitive' as const } }
-        : {}),
-    },
-    include: { category: true },
-    orderBy,
-  })
-
-  return results.map(toDbProduct)
+  try {
+    const results = await prisma.product.findMany({
+      where: {
+        active: true,
+        ...(categorySlug ? { category: { slug: categorySlug } } : {}),
+        ...(search
+          ? { name: { contains: search, mode: 'insensitive' as const } }
+          : {}),
+      },
+      include: { category: true },
+      orderBy,
+    })
+    return results.map(toDbProduct)
+  } catch (e) {
+    console.error('[getProducts] DB unavailable, using mock data:', e)
+    return MOCK_PRODUCTS.map(mockToDb)
+  }
 }
 
 export async function getFeaturedProducts(limit = 4): Promise<DbProduct[]> {
-  const results = await prisma.product.findMany({
-    where: { featured: true, active: true },
-    include: { category: true },
-    take: limit,
-    orderBy: { createdAt: 'desc' },
-  })
-
-  return results.map(toDbProduct)
+  try {
+    const results = await prisma.product.findMany({
+      where: { featured: true, active: true },
+      include: { category: true },
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    })
+    return results.map(toDbProduct)
+  } catch (e) {
+    console.error('[getFeaturedProducts] DB unavailable, using mock data:', e)
+    return MOCK_PRODUCTS.filter(p => p.featured).map(mockToDb).slice(0, limit)
+  }
 }
 
 export async function getProductBySlug(slug: string): Promise<DbProduct | null> {
-  const product = await prisma.product.findUnique({
-    where: { slug },
-    include: { category: true },
-  })
-
-  if (!product) return null
-  return toDbProduct(product)
+  try {
+    const product = await prisma.product.findUnique({
+      where: { slug },
+      include: { category: true },
+    })
+    if (!product) return null
+    return toDbProduct(product)
+  } catch (e) {
+    console.error('[getProductBySlug] DB unavailable, using mock data:', e)
+    const mock = MOCK_PRODUCTS.find(p => p.slug === slug) ?? null
+    return mock ? mockToDb(mock) : null
+  }
 }
 
 export async function getCategories(): Promise<{ id: string; name: string; slug: string }[]> {
-  return prisma.category.findMany({
-    orderBy: { name: 'asc' },
-    select: { id: true, name: true, slug: true },
-  })
+  try {
+    return await prisma.category.findMany({
+      orderBy: { name: 'asc' },
+      select: { id: true, name: true, slug: true },
+    })
+  } catch (e) {
+    console.error('[getCategories] DB unavailable, using mock data:', e)
+    return [
+      { id: '1', name: 'Gorras',     slug: 'gorras'     },
+      { id: '2', name: 'Hoodies',    slug: 'hoodies'    },
+      { id: '3', name: 'Mochilas',   slug: 'mochilas'   },
+      { id: '4', name: 'Pantalones', slug: 'pantalones' },
+      { id: '5', name: 'Remeras',    slug: 'remeras'    },
+      { id: '6', name: 'Zapatillas', slug: 'zapatillas' },
+    ]
+  }
 }
