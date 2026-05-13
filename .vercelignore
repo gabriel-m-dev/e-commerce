@@ -1,0 +1,8 @@
+.git
+.next
+node_modules
+.env*
+.claude
+.playwright-mcp
+AGENTS.md
+CLAUDE.md
