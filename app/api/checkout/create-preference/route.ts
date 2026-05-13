@@ -86,7 +86,8 @@ export async function POST(request: NextRequest) {
           failure: `${SITE_URL}/checkout/failure`,
           pending: `${SITE_URL}/checkout/pending`,
         },
-        auto_return: 'approved',
+        // auto_return solo funciona con URLs públicas (no localhost)
+        ...(SITE_URL !== 'http://localhost:3000' && { auto_return: 'approved' as const }),
         notification_url: `${SITE_URL}/api/webhook/mercadopago`,
         external_reference: order.id,
       },

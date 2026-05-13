@@ -78,14 +78,15 @@ model Order {
   userId    String?
   user      User?       @relation(fields: [userId], references: [id])
   email     String
-  status    OrderStatus @default(PENDING)
-  subtotal  Int
-  shipping  Int
-  total     Int
-  items     OrderItem[]
-  address   Address?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  status          OrderStatus @default(PENDING)
+  trackingNumber  String?
+  subtotal        Int
+  shipping        Int
+  total           Int
+  items           OrderItem[]
+  address         Address?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
   @@index([userId])
   @@index([status])

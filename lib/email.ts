@@ -1,0 +1,214 @@
+import { Resend } from 'resend'
+import { SITE_NAME, SITE_URL } from '@/lib/constants'
+import { formatPrice } from '@/lib/utils'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
+const FROM = process.env.RESEND_FROM ?? `${SITE_NAME} <onboarding@resend.dev>`
+
+type OrderEmailData = {
+  orderId: string
+  email: string
+  items: { name: string; quantity: number; price: number; size?: string | null }[]
+  total: number
+  trackingNumber?: string | null
+}
+
+function itemsHtml(items: OrderEmailData['items']): string {
+  return items
+    .map(
+      (item) => `
+      <tr>
+        <td style="padding:8px 0;border-bottom:1px solid #e5e5e5;font-size:12px;color:#0a0a0a;">
+          ${item.name}${item.size ? ` <span style="color:#8a8a8a;">(${item.size})</span>` : ''}
+        </td>
+        <td style="padding:8px 0;border-bottom:1px solid #e5e5e5;font-size:12px;color:#8a8a8a;text-align:center;">
+          ×${item.quantity}
+        </td>
+        <td style="padding:8px 0;border-bottom:1px solid #e5e5e5;font-size:12px;color:#0a0a0a;text-align:right;">
+          ${formatPrice(item.price * item.quantity)}
+        </td>
+      </tr>`
+    )
+    .join('')
+}
+
+function baseLayout(content: string): string {
+  return `<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;padding:40px 0;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;max-width:560px;width:100%;">
+        <!-- Header -->
+        <tr>
+          <td style="padding:32px 40px;border-bottom:1px solid #e5e5e5;">
+            <a href="${SITE_URL}" style="text-decoration:none;font-size:20px;font-weight:900;letter-spacing:0.25em;text-transform:uppercase;color:#0a0a0a;">
+              ${SITE_NAME}
+            </a>
+          </td>
+        </tr>
+        <!-- Content -->
+        <tr><td style="padding:40px;">${content}</td></tr>
+        <!-- Footer -->
+        <tr>
+          <td style="padding:24px 40px;border-top:1px solid #e5e5e5;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#8a8a8a;text-align:center;">
+            ${SITE_NAME} · Argentina
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`
+}
+
+export async function sendOrderConfirmedEmail(order: OrderEmailData): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return
+
+  const shortId = order.orderId.slice(0, 8).toUpperCase()
+
+  const html = baseLayout(`
+    <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:#c9a96e;">
+      Pedido confirmado
+    </p>
+    <h1 style="margin:0 0 24px;font-size:18px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:#0a0a0a;">
+      ¡Gracias por tu compra!
+    </h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
+      Tu pago fue aprobado. Estamos preparando tu pedido y te avisaremos cuando sea despachado.
+    </p>
+
+    <p style="margin:0 0 8px;font-size:10px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#8a8a8a;">
+      N° de orden
+    </p>
+    <p style="margin:0 0 24px;font-size:14px;font-weight:700;color:#0a0a0a;">${shortId}</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <thead>
+        <tr>
+          <th style="padding:8px 0;border-bottom:2px solid #0a0a0a;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;text-align:left;">Producto</th>
+          <th style="padding:8px 0;border-bottom:2px solid #0a0a0a;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;text-align:center;">Cant.</th>
+          <th style="padding:8px 0;border-bottom:2px solid #0a0a0a;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;text-align:right;">Precio</th>
+        </tr>
+      </thead>
+      <tbody>${itemsHtml(order.items)}</tbody>
+    </table>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+      <tr>
+        <td style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#0a0a0a;">Total</td>
+        <td style="font-size:14px;font-weight:900;color:#0a0a0a;text-align:right;">${formatPrice(order.total)}</td>
+      </tr>
+    </table>
+
+    <a href="${SITE_URL}/account" style="display:inline-block;background:#0a0a0a;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
+      Ver mis pedidos →
+    </a>
+  `)
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: order.email,
+      subject: `Pedido confirmado — N° ${shortId}`,
+      html,
+    })
+  } catch (err) {
+    console.error('[email] sendOrderConfirmedEmail failed:', err)
+  }
+}
+
+export async function sendOrderCancelledEmail(order: OrderEmailData): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return
+
+  const shortId = order.orderId.slice(0, 8).toUpperCase()
+
+  const html = baseLayout(`
+    <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:#dc2626;">
+      Pedido cancelado
+    </p>
+    <h1 style="margin:0 0 24px;font-size:18px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:#0a0a0a;">
+      Tu pedido fue cancelado
+    </h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
+      Tu pedido N° <strong>${shortId}</strong> fue cancelado. Si realizaste un pago,
+      el reembolso se procesará según los tiempos de tu banco o billetera virtual.
+      Ante cualquier duda, contactanos.
+    </p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <thead>
+        <tr>
+          <th style="padding:8px 0;border-bottom:2px solid #0a0a0a;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;text-align:left;">Producto</th>
+          <th style="padding:8px 0;border-bottom:2px solid #0a0a0a;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;text-align:center;">Cant.</th>
+          <th style="padding:8px 0;border-bottom:2px solid #0a0a0a;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;text-align:right;">Precio</th>
+        </tr>
+      </thead>
+      <tbody>${itemsHtml(order.items)}</tbody>
+    </table>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+      <tr>
+        <td style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#0a0a0a;">Total</td>
+        <td style="font-size:14px;font-weight:900;color:#0a0a0a;text-align:right;">${formatPrice(order.total)}</td>
+      </tr>
+    </table>
+
+    <a href="${SITE_URL}/contact" style="display:inline-block;border:1px solid #0a0a0a;color:#0a0a0a;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
+      Contactarnos
+    </a>
+  `)
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: order.email,
+      subject: `Pedido cancelado — N° ${shortId}`,
+      html,
+    })
+  } catch (err) {
+    console.error('[email] sendOrderCancelledEmail failed:', err)
+  }
+}
+
+export async function sendOrderShippedEmail(order: OrderEmailData): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return
+
+  const shortId = order.orderId.slice(0, 8).toUpperCase()
+
+  const html = baseLayout(`
+    <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:#c9a96e;">
+      En camino
+    </p>
+    <h1 style="margin:0 0 24px;font-size:18px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:#0a0a0a;">
+      Tu pedido fue despachado
+    </h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
+      Tu pedido N° <strong>${shortId}</strong> ya está en camino.
+    </p>
+
+    ${order.trackingNumber ? `
+    <div style="background:#f5f5f5;padding:16px 20px;margin-bottom:24px;">
+      <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;">
+        Número de seguimiento
+      </p>
+      <p style="margin:0;font-size:14px;font-weight:700;color:#0a0a0a;">${order.trackingNumber}</p>
+    </div>` : ''}
+
+    <a href="${SITE_URL}/account" style="display:inline-block;background:#0a0a0a;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
+      Ver mi pedido →
+    </a>
+  `)
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: order.email,
+      subject: `Tu pedido fue despachado — N° ${shortId}`,
+      html,
+    })
+  } catch (err) {
+    console.error('[email] sendOrderShippedEmail failed:', err)
+  }
+}

@@ -350,15 +350,23 @@ export default function CheckoutPage() {
             <section className="mb-12">
               <SectionHeader number="03" title="Pago" />
               <div className="border border-border p-6 bg-surface">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gold mb-3">
-                  Próximamente
-                </p>
-                <p className="text-sm leading-relaxed text-muted mb-6">
-                  La integración con Mercado Pago estará disponible en breve.
-                  Por ahora coordinamos el pago luego de confirmar tu pedido.
-                </p>
+                <div className="flex items-start gap-4 mb-5">
+                  {/* MP logo simplified */}
+                  <div className="shrink-0 w-10 h-10 bg-[#009ee3] flex items-center justify-center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden>
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground mb-1">
+                      Mercado Pago
+                    </p>
+                    <p className="text-[11px] leading-relaxed text-muted">
+                      Al confirmar tu pedido serás redirigido a Mercado Pago para completar el pago de forma segura.
+                    </p>
+                  </div>
+                </div>
                 <div className="flex items-center gap-6 pt-4 border-t border-border">
-                  {/* Tarjeta */}
                   <div className="flex flex-col items-center gap-1.5">
                     <div className="w-10 h-7 border border-border bg-background flex items-center justify-center">
                       <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden>
@@ -369,7 +377,6 @@ export default function CheckoutPage() {
                     </div>
                     <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted">Tarjeta</span>
                   </div>
-                  {/* Transferencia */}
                   <div className="flex flex-col items-center gap-1.5">
                     <div className="w-10 h-7 border border-border bg-background flex items-center justify-center">
                       <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden>
@@ -378,7 +385,6 @@ export default function CheckoutPage() {
                     </div>
                     <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted">Transferencia</span>
                   </div>
-                  {/* Efectivo */}
                   <div className="flex flex-col items-center gap-1.5">
                     <div className="w-10 h-7 border border-border bg-background flex items-center justify-center">
                       <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden>
@@ -387,6 +393,15 @@ export default function CheckoutPage() {
                       </svg>
                     </div>
                     <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted">Efectivo</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-10 h-7 border border-border bg-background flex items-center justify-center">
+                      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden>
+                        <rect x="0.5" y="0.5" width="15" height="11" rx="0.5" stroke="currentColor" strokeOpacity="0.3"/>
+                        <path d="M4 6h8M4 8.5h5" stroke="currentColor" strokeOpacity="0.4" strokeWidth="1" strokeLinecap="round"/>
+                      </svg>
+                    </div>
+                    <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted">Cuotas</span>
                   </div>
                 </div>
               </div>
