@@ -33,14 +33,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Faltan campos requeridos o son inválidos' }, { status: 400 })
   }
 
-  // 4. Buscar la categoría por slug
-  const category = await prisma.category.findUnique({ where: { slug: categorySlug } })
-  if (!category) {
-    return NextResponse.json({ error: `Categoría '${categorySlug}' no encontrada` }, { status: 400 })
-  }
-
-  // 5. Crear el producto
   try {
+    const category = await prisma.category.findUnique({ where: { slug: categorySlug } })
+    if (!category) {
+      return NextResponse.json({ error: `Categoría '${categorySlug}' no encontrada` }, { status: 400 })
+    }
+
     const product = await prisma.product.create({
       data: {
         name: name.trim(),
@@ -58,14 +56,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ product }, { status: 201 })
   } catch (err: unknown) {
-    // Slug duplicado (unique constraint)
-    if (
-      err instanceof Error &&
-      err.message.includes('Unique constraint')
-    ) {
+    if (err instanceof Error && err.message.includes('Unique constraint')) {
       return NextResponse.json({ error: 'Ya existe un producto con ese slug' }, { status: 400 })
     }
     console.error('[POST /api/admin/products]', err)
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
+    return NextResponse.json({ error: 'Base de datos no disponible. Conectá la DB para crear productos.' }, { status: 503 })
   }
 }

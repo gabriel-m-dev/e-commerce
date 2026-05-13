@@ -34,15 +34,15 @@ export async function PUT(
     return NextResponse.json({ error: 'Faltan campos requeridos o son inválidos' }, { status: 400 })
   }
 
-  const category = await prisma.category.findUnique({ where: { slug: categorySlug } })
-  if (!category) {
-    return NextResponse.json({ error: `Categoría '${categorySlug}' no encontrada` }, { status: 400 })
-  }
-
-  const existing = await prisma.product.findUnique({ where: { id } })
-  if (!existing) return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 })
-
   try {
+    const category = await prisma.category.findUnique({ where: { slug: categorySlug } })
+    if (!category) {
+      return NextResponse.json({ error: `Categoría '${categorySlug}' no encontrada` }, { status: 400 })
+    }
+
+    const existing = await prisma.product.findUnique({ where: { id } })
+    if (!existing) return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 })
+
     const product = await prisma.product.update({
       where: { id },
       data: {
@@ -63,7 +63,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Ya existe un producto con ese slug' }, { status: 400 })
     }
     console.error('[PUT /api/admin/products/[id]]', err)
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
+    return NextResponse.json({ error: 'Base de datos no disponible. Conectá la DB para editar productos.' }, { status: 503 })
   }
 }
 
@@ -77,10 +77,10 @@ export async function DELETE(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const existing = await prisma.product.findUnique({ where: { id } })
-  if (!existing) return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 })
-
   try {
+    const existing = await prisma.product.findUnique({ where: { id } })
+    if (!existing) return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 })
+
     await prisma.product.delete({ where: { id } })
     return NextResponse.json({ success: true }, { status: 200 })
   } catch (err: unknown) {
@@ -91,6 +91,6 @@ export async function DELETE(
       )
     }
     console.error('[DELETE /api/admin/products/[id]]', err)
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
+    return NextResponse.json({ error: 'Base de datos no disponible. Conectá la DB para eliminar productos.' }, { status: 503 })
   }
 }
