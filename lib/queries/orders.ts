@@ -94,3 +94,25 @@ export async function getOrdersByEmail(email: string): Promise<OrderWithItems[]>
     return []
   }
 }
+
+export async function getOrdersByUserId(userId: string, email: string): Promise<OrderWithItems[]> {
+  try {
+    const orders = await prisma.order.findMany({
+      where: {
+        OR: [
+          { userId },
+          { email, userId: null },
+        ],
+      },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        items: { select: { id: true, name: true, price: true, quantity: true, size: true } },
+        address: true,
+      },
+    })
+    return orders.map(mapOrder)
+  } catch (e) {
+    console.error('[getOrdersByUserId] DB unavailable:', e)
+    return []
+  }
+}

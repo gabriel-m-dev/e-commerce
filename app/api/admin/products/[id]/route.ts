@@ -10,7 +10,7 @@ export async function PUT(
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!user || user.app_metadata?.role !== 'admin') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   let body: unknown
   try {
@@ -63,7 +63,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Ya existe un producto con ese slug' }, { status: 400 })
     }
     console.error('[PUT /api/admin/products/[id]]', err)
-    return NextResponse.json({ error: 'Base de datos no disponible. Conectá la DB para editar productos.' }, { status: 503 })
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 503 })
   }
 }
 
@@ -75,7 +75,7 @@ export async function DELETE(
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!user || user.app_metadata?.role !== 'admin') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
     const existing = await prisma.product.findUnique({ where: { id } })
@@ -91,6 +91,6 @@ export async function DELETE(
       )
     }
     console.error('[DELETE /api/admin/products/[id]]', err)
-    return NextResponse.json({ error: 'Base de datos no disponible. Conectá la DB para eliminar productos.' }, { status: 503 })
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 503 })
   }
 }

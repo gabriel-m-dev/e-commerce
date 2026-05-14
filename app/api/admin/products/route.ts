@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   // 1. Auth: verificar sesión Supabase
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
+  if (!user || user.app_metadata?.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -60,6 +60,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Ya existe un producto con ese slug' }, { status: 400 })
     }
     console.error('[POST /api/admin/products]', err)
-    return NextResponse.json({ error: 'Base de datos no disponible. Conectá la DB para crear productos.' }, { status: 503 })
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 503 })
   }
 }

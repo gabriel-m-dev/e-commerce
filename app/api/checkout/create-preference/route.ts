@@ -3,6 +3,8 @@ import { mp, Preference } from '@/lib/mercadopago'
 import { prisma } from '@/lib/prisma'
 import { SITE_URL } from '@/lib/constants'
 import type { CartItem } from '@/store/cart'
+import { createClient } from '@/lib/supabase/server'
+import { checkoutLimiter } from '@/lib/ratelimit'
 
 type Buyer = {
   email: string
@@ -24,8 +26,34 @@ type RequestBody = {
 }
 
 export async function POST(request: NextRequest) {
+  if (checkoutLimiter) {
+    const ip = request.headers.get('x-forwarded-for') ?? 'anonymous'
+    const { success } = await checkoutLimiter.limit(ip)
+    if (!success) {
+      return Response.json({ error: 'Demasiadas solicitudes. Intentá en unos minutos.' }, { status: 429 })
+    }
+  }
+
   const body: RequestBody = await request.json()
   const { items, buyer, shipping } = body
+
+  // Check if user is authenticated — link order to account if so
+  const supabase = await createClient()
+  const { data: { user: authUser } } = await supabase.auth.getUser()
+
+  let linkedUserId: string | null = null
+  if (authUser) {
+    await prisma.user.upsert({
+      where: { id: authUser.id },
+      create: {
+        id: authUser.id,
+        email: authUser.email!,
+        name: authUser.user_metadata?.name ?? null,
+      },
+      update: {},
+    })
+    linkedUserId = authUser.id
+  }
 
   if (!items || items.length === 0) {
     return Response.json({ error: 'El carrito está vacío' }, { status: 400 })
@@ -35,11 +63,25 @@ export async function POST(request: NextRequest) {
     const productIds = items.map((item) => item.product.id)
     const dbProducts = await prisma.product.findMany({
       where: { id: { in: productIds } },
-      select: { id: true, price: true },
+      select: { id: true, price: true, stock: true, active: true },
     })
 
     if (dbProducts.length !== productIds.length) {
       return Response.json({ error: 'Producto no encontrado' }, { status: 400 })
+    }
+
+    // Validate each item: product must be active and have enough stock
+    for (const item of items) {
+      const dbProduct = dbProducts.find((p) => p.id === item.product.id)!
+      if (!dbProduct.active) {
+        return Response.json({ error: `El producto "${item.product.name}" no está disponible.` }, { status: 400 })
+      }
+      if (dbProduct.stock < item.quantity) {
+        return Response.json(
+          { error: `Stock insuficiente para "${item.product.name}". Disponible: ${dbProduct.stock}.` },
+          { status: 400 }
+        )
+      }
     }
 
     const priceMap = new Map(dbProducts.map((p) => [p.id, p.price]))
@@ -51,7 +93,7 @@ export async function POST(request: NextRequest) {
 
     const order = await prisma.order.create({
       data: {
-        userId: null,
+        userId: linkedUserId,
         email: buyer.email,
         status: 'PENDING',
         subtotal,

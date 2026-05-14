@@ -4,6 +4,7 @@ import { Payment } from 'mercadopago'
 import { mp } from '@/lib/mercadopago'
 import { prisma } from '@/lib/prisma'
 import { sendOrderConfirmedEmail, sendOrderCancelledEmail } from '@/lib/email'
+import { webhookLimiter } from '@/lib/ratelimit'
 
 type MPWebhookBody = {
   type: string
@@ -34,6 +35,14 @@ function verifySignature(request: NextRequest, rawBody: string): boolean {
 }
 
 export async function POST(request: NextRequest) {
+  if (webhookLimiter) {
+    const ip = request.headers.get('x-forwarded-for') ?? 'anonymous'
+    const { success } = await webhookLimiter.limit(ip)
+    if (!success) {
+      return Response.json({ error: 'Too many requests' }, { status: 429 })
+    }
+  }
+
   try {
     const rawBody = await request.text()
 
@@ -83,8 +92,8 @@ export async function POST(request: NextRequest) {
             data: { status: 'PROCESSING' },
           }),
           ...order.items.map((item) =>
-            prisma.product.update({
-              where: { id: item.productId },
+            prisma.product.updateMany({
+              where: { id: item.productId, stock: { gte: item.quantity } },
               data: { stock: { decrement: item.quantity } },
             })
           ),

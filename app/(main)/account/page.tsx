@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from '@/components/auth/LogoutButton'
-import { getOrdersByEmail } from '@/lib/queries/orders'
+import { getOrdersByUserId } from '@/lib/queries/orders'
 import { formatPrice } from '@/lib/utils'
 
 export const metadata = {
@@ -47,7 +47,7 @@ export default async function AccountPage() {
   const email = user.email
   const role = user.user_metadata?.role
 
-  const orders = await getOrdersByEmail(email!)
+  const orders = await getOrdersByUserId(user.id, email!)
 
   return (
     <div className="pt-24 pb-20 px-6 max-w-2xl mx-auto">

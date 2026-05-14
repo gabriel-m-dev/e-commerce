@@ -7,7 +7,7 @@ function createPrismaClient() {
     max: 5,
     connectionTimeoutMillis: 10_000,
     idleTimeoutMillis: 30_000,
-    ssl: { rejectUnauthorized: false },
+    ssl: { rejectUnauthorized: process.env.NODE_ENV === 'production' },
   })
   return new PrismaClient({ adapter })
 }
