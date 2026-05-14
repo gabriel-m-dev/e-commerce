@@ -7,6 +7,7 @@ function mockToDb(p: MockProduct): DbProduct {
     name: p.name,
     slug: p.slug,
     price: p.price,
+    comparePrice: null,
     category: p.category,
     categorySlug: p.category.toLowerCase(),
     image: p.image,
@@ -14,6 +15,7 @@ function mockToDb(p: MockProduct): DbProduct {
     description: p.description,
     featured: p.featured ?? false,
     stock: 99,
+    createdAt: new Date().toISOString(),
   }
 }
 
@@ -22,6 +24,7 @@ export type DbProduct = {
   name: string
   slug: string
   price: number
+  comparePrice: number | null
   /** Category name as a plain string (e.g. "Zapatillas") */
   category: string
   categorySlug: string
@@ -31,6 +34,7 @@ export type DbProduct = {
   description: string
   featured: boolean
   stock: number
+  createdAt: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,6 +44,7 @@ function toDbProduct(p: any): DbProduct {
     name: p.name as string,
     slug: p.slug as string,
     price: Number(p.price),
+    comparePrice: p.comparePrice != null ? Number(p.comparePrice) : null,
     category: p.category.name as string,
     categorySlug: p.category.slug as string,
     image: (p.images as string[])[0] ?? '',
@@ -47,6 +52,7 @@ function toDbProduct(p: any): DbProduct {
     description: p.description as string,
     featured: p.featured as boolean,
     stock: Number(p.stock),
+    createdAt: (p.createdAt as Date).toISOString(),
   }
 }
 
@@ -109,6 +115,48 @@ export async function getProductBySlug(slug: string): Promise<DbProduct | null> 
     console.error('[getProductBySlug] DB unavailable, using mock data:', e)
     const mock = MOCK_PRODUCTS.find(p => p.slug === slug) ?? null
     return mock ? mockToDb(mock) : null
+  }
+}
+
+export async function getSaleProducts(): Promise<DbProduct[]> {
+  try {
+    const results = await prisma.product.findMany({
+      where: { active: true, comparePrice: { not: null } },
+      include: { category: true },
+      orderBy: { createdAt: 'desc' },
+    })
+    // Filter en JS porque Prisma no soporta comparación de dos campos nativamente
+    return results.filter(p => p.comparePrice! > p.price).map(toDbProduct)
+  } catch (e) {
+    console.error('[getSaleProducts] DB unavailable:', e)
+    return []
+  }
+}
+
+export async function getNewProducts(limit = 20): Promise<DbProduct[]> {
+  const since = new Date()
+  since.setDate(since.getDate() - 30)
+  try {
+    const results = await prisma.product.findMany({
+      where: { active: true, createdAt: { gte: since } },
+      include: { category: true },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    })
+    // Si no hay productos nuevos en los últimos 30 días, traer los últimos N
+    if (results.length === 0) {
+      const fallback = await prisma.product.findMany({
+        where: { active: true },
+        include: { category: true },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+      })
+      return fallback.map(toDbProduct)
+    }
+    return results.map(toDbProduct)
+  } catch (e) {
+    console.error('[getNewProducts] DB unavailable:', e)
+    return []
   }
 }
 

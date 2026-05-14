@@ -19,7 +19,7 @@ export async function PUT(
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { name, slug, price, categorySlug, images, description, stock, featured } =
+  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured } =
     body as Record<string, unknown>
 
   if (
@@ -50,6 +50,7 @@ export async function PUT(
         slug: slug.trim(),
         description: description.trim(),
         price: Math.round(price),
+        comparePrice: comparePrice != null ? Math.round(Number(comparePrice)) : null,
         images: images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0),
         categoryId: category.id,
         stock: Math.round(stock),

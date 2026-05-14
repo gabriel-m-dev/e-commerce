@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 3. Validar campos requeridos
-  const { name, slug, price, categorySlug, images, description, stock, featured } = body as Record<string, unknown>
+  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured } = body as Record<string, unknown>
 
   if (
     typeof name !== 'string' || !name.trim() ||
@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
         slug: slug.trim(),
         description: description.trim(),
         price: Math.round(price),
+        comparePrice: comparePrice != null ? Math.round(Number(comparePrice)) : null,
         images: images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0),
         categoryId: category.id,
         stock: Math.round(stock),

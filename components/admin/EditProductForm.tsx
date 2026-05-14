@@ -26,6 +26,7 @@ export default function EditProductForm({
     name: product.name,
     slug: product.slug,
     price: product.price.toString(),
+    comparePrice: product.comparePrice?.toString() ?? '',
     categorySlug: product.categorySlug,
     description: product.description,
     images: product.images.length > 0 ? [...product.images] : [''],
@@ -108,6 +109,7 @@ export default function EditProductForm({
           name: form.name.trim(),
           slug: form.slug.trim(),
           price: Number(form.price),
+          comparePrice: form.comparePrice ? Number(form.comparePrice) : null,
           categorySlug: form.categorySlug,
           images,
           description: form.description.trim(),
@@ -184,6 +186,17 @@ export default function EditProductForm({
               <input type="number" required min={1} step={1} value={form.price}
                 onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))}
                 className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full" />
+            </div>
+
+            {/* Precio anterior (oferta) */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Precio anterior (oferta)</label>
+              <input type="number" min={1} step={1} placeholder="Dejar vacío si no es oferta" value={form.comparePrice}
+                onChange={(e) => setForm((prev) => ({ ...prev, comparePrice: e.target.value }))}
+                className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full" />
+              <span className="text-[9px] text-muted uppercase tracking-[0.12em]">
+                Si es mayor al precio actual, aparece el badge de descuento
+              </span>
             </div>
 
             {/* Descripción */}

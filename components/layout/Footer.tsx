@@ -4,8 +4,8 @@ import { SITE_NAME, SOCIAL_INSTAGRAM, SOCIAL_FACEBOOK, SOCIAL_TIKTOK } from '@/l
 const FOOTER_LINKS = {
   Tienda: [
     { label: 'Todos los productos', href: '/products' },
-    { label: 'Nuevos ingresos', href: '/products?sort=newest' },
-    { label: 'Ofertas', href: '/products?sort=sale' },
+    { label: 'Nuevos ingresos', href: '/nuevos-ingresos' },
+    { label: 'Ofertas', href: '/ofertas' },
   ],
   Ayuda: [
     { label: 'Preguntas frecuentes', href: '/faq' },

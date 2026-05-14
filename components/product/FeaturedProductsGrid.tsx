@@ -82,6 +82,11 @@ export default function FeaturedProductsGrid({ products }: FeaturedProductsGridP
                 priority={index < 4}
               />
               <div className="absolute inset-0 bg-foreground/0 transition-colors duration-500 group-hover:bg-foreground/15" />
+              {product.comparePrice && product.comparePrice > product.price && (
+                <span className="absolute bottom-2 right-2 bg-destructive px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-white">
+                  {Math.round((1 - product.price / product.comparePrice) * 100)}% OFF
+                </span>
+              )}
             </Link>
 
             {/* Info */}
