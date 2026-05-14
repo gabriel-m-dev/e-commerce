@@ -6,12 +6,20 @@ import NavbarSearch from './NavbarSearch'
 import CartIconButton from './CartIconButton'
 import MobileMenu from './MobileMenu'
 
-export default function NavbarActions({ isLoggedIn }: { isLoggedIn: boolean }) {
+type SearchProduct = { id: string; name: string; slug: string; category: string }
+
+export default function NavbarActions({
+  isLoggedIn,
+  products,
+}: {
+  isLoggedIn: boolean
+  products: SearchProduct[]
+}) {
   const [searchOpen, setSearchOpen] = useState(false)
 
   return (
     <div className="flex items-center gap-5">
-      <NavbarSearch onOpenChange={setSearchOpen} />
+      <NavbarSearch products={products} onOpenChange={setSearchOpen} />
 
       {/* Estos ítems se ocultan en mobile cuando el search está abierto */}
       <div className={`flex items-center gap-5 ${searchOpen ? 'hidden sm:flex' : ''}`}>

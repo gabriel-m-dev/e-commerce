@@ -3,10 +3,13 @@ import { SITE_NAME } from '@/lib/constants'
 import NavLinks from './NavLinks'
 import NavbarActions from './NavbarActions'
 import { createClient } from '@/lib/supabase/server'
+import { getProducts } from '@/lib/queries/products'
 
 export default async function Navbar() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const allProducts = await getProducts()
+  const searchProducts = allProducts.map(({ id, name, slug, category }) => ({ id, name, slug, category }))
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
       <div className="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-6 lg:px-10">
@@ -28,7 +31,7 @@ export default async function Navbar() {
         </nav>
 
         {/* Actions: search + account + cart + mobile menu */}
-        <NavbarActions isLoggedIn={user !== null} />
+        <NavbarActions isLoggedIn={user !== null} products={searchProducts} />
 
       </div>
     </header>

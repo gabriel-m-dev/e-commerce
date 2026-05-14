@@ -1,6 +1,9 @@
 'use server'
 
 import { Resend } from 'resend'
+import { SITE_NAME } from '@/lib/constants'
+
+const FROM = process.env.RESEND_FROM ?? `${SITE_NAME} <onboarding@resend.dev>`
 
 export type ContactFormState = {
   success?: boolean
@@ -36,7 +39,7 @@ export async function sendContactEmail(
   const resend = new Resend(process.env.RESEND_API_KEY)
 
   const { error } = await resend.emails.send({
-    from: 'LUXE. <hola@luxe.com>',
+    from: FROM,
     to: 'hola@luxe.com',
     replyTo: email,
     subject: subject ? `[Contacto] ${subject}` : `[Contacto] Mensaje de ${name}`,

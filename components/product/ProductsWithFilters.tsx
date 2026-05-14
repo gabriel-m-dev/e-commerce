@@ -121,7 +121,7 @@ export default function ProductsWithFilters({
       {/* Product grid */}
       {filtered.length > 0 ? (
         <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4">
-          {filtered.map((product) => (
+          {filtered.map((product, index) => (
             <div key={product.id} className="group">
               {/* Imagen — Link individual */}
               <Link href={`/product/${product.slug}`} className="relative block aspect-square w-full overflow-hidden bg-surface">
@@ -131,6 +131,7 @@ export default function ProductsWithFilters({
                   fill
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
                   className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  priority={index < 4}
                 />
                 <div className="absolute inset-0 bg-foreground/0 transition-colors duration-500 group-hover:bg-foreground/15" />
               </Link>

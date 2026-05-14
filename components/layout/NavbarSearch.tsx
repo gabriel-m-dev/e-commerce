@@ -2,16 +2,23 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { MOCK_PRODUCTS } from '@/lib/data/products'
 
-export default function NavbarSearch({ onOpenChange }: { onOpenChange?: (open: boolean) => void }) {
+type SearchProduct = { id: string; name: string; slug: string; category: string }
+
+export default function NavbarSearch({
+  products,
+  onOpenChange,
+}: {
+  products: SearchProduct[]
+  onOpenChange?: (open: boolean) => void
+}) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const results = query.trim()
-    ? MOCK_PRODUCTS.filter((p) =>
+    ? products.filter((p) =>
         p.name.toLowerCase().includes(query.toLowerCase())
       ).slice(0, 5)
     : []

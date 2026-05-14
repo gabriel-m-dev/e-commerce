@@ -79,7 +79,7 @@ export default function FeaturedProductsGrid({ products }: FeaturedProductsGridP
                 fill
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
                 className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                priority={index < 2}
+                priority={index < 4}
               />
               <div className="absolute inset-0 bg-foreground/0 transition-colors duration-500 group-hover:bg-foreground/15" />
             </Link>
