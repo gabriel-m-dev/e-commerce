@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { createHmac } from 'crypto'
+import { createHmac, timingSafeEqual } from 'crypto'
 import { Payment } from 'mercadopago'
 import { mp } from '@/lib/mercadopago'
 import { prisma } from '@/lib/prisma'
@@ -12,7 +12,10 @@ type MPWebhookBody = {
 
 function verifySignature(request: NextRequest, rawBody: string): boolean {
   const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET
-  if (!secret) return true
+  if (!secret) {
+    console.error('[webhook/mercadopago] MERCADOPAGO_WEBHOOK_SECRET no está configurada — request rechazada')
+    return false
+  }
 
   const xSignature = request.headers.get('x-signature')
   const xRequestId = request.headers.get('x-request-id')
@@ -27,7 +30,7 @@ function verifySignature(request: NextRequest, rawBody: string): boolean {
 
   const template = `id:${dataId ?? ''};request-id:${xRequestId ?? ''};ts:${ts};`
   const hmac = createHmac('sha256', secret).update(template).digest('hex')
-  return hmac === v1
+  return timingSafeEqual(Buffer.from(hmac), Buffer.from(v1))
 }
 
 export async function POST(request: NextRequest) {

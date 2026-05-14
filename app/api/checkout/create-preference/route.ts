@@ -32,8 +32,20 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const productIds = items.map((item) => item.product.id)
+    const dbProducts = await prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: { id: true, price: true },
+    })
+
+    if (dbProducts.length !== productIds.length) {
+      return Response.json({ error: 'Producto no encontrado' }, { status: 400 })
+    }
+
+    const priceMap = new Map(dbProducts.map((p) => [p.id, p.price]))
+
     const subtotal = items.reduce(
-      (sum, item) => sum + item.product.price * item.quantity,
+      (sum, item) => sum + (priceMap.get(item.product.id) as number) * item.quantity,
       0
     )
 
@@ -49,7 +61,7 @@ export async function POST(request: NextRequest) {
           create: items.map((item) => ({
             productId: item.product.id,
             name: item.product.name,
-            price: item.product.price,
+            price: priceMap.get(item.product.id) as number,
             quantity: item.quantity,
             size: item.size ?? null,
           })),
@@ -75,7 +87,7 @@ export async function POST(request: NextRequest) {
           id: item.product.id,
           title: item.product.name,
           quantity: item.quantity,
-          unit_price: item.product.price,
+          unit_price: priceMap.get(item.product.id) as number,
           currency_id: 'ARS',
         })),
         payer: {
