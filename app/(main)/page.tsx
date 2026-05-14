@@ -113,16 +113,22 @@ export default async function HomePage() {
         <div className="mx-auto max-w-screen-xl px-6 py-20 lg:px-10">
 
           {/* Section header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="h-px w-8 bg-gold" aria-hidden />
-              <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
-                Productos Destacados
-              </h2>
+          <div>
+            <div className="flex items-center gap-2">
+              <div className="h-px w-6 bg-gold" aria-hidden />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-gold font-semibold">
+                CURATED SELECTION
+              </span>
             </div>
+            <h2 className="text-2xl font-black uppercase tracking-tight text-foreground leading-tight mt-3">
+              PRODUCTOS DESTACADOS
+            </h2>
+            <p className="text-[11px] text-muted mt-1.5">
+              Elegidos para elevar tu estilo, todos los días.
+            </p>
             <Link
               href="/products"
-              className="hidden items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-muted transition-colors duration-150 hover:text-foreground md:flex"
+              className="hidden items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-muted transition-colors duration-150 hover:text-foreground md:flex mt-4"
             >
               Ver todos <ArrowIcon className="shrink-0 text-gold" />
             </Link>

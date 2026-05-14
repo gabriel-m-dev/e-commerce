@@ -1,166 +1,142 @@
 'use client'
 
-import { useState } from 'react'
-import { toast } from 'sonner'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import useCartStore from '@/store/cart'
-import { SIZES_BY_CATEGORY } from '@/lib/data/products'
+import { toast } from 'sonner'
 import { type DbProduct } from '@/lib/queries/products'
 import { formatPrice } from '@/lib/utils'
+import useCartStore from '@/store/cart'
 
 interface FeaturedProductsGridProps {
   products: DbProduct[]
 }
 
 export default function FeaturedProductsGrid({ products }: FeaturedProductsGridProps) {
-  const addItem = useCartStore((s) => s.addItem)
   const router = useRouter()
-  const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({})
-  const [addedProductId, setAddedProductId] = useState<string | null>(null)
+  const addItem = useCartStore((s) => s.addItem)
+
+  const heroProduct = products[0]
+  const secondaryProducts = products.slice(1, 3)
+
+  if (!heroProduct) return null
 
   return (
-    <div className="mt-10 grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4">
-      {products.map((product, index) => {
-        const sizes = SIZES_BY_CATEGORY[product.category] ?? []
-        const selectedSize = selectedSizes[product.id]
-        const isAdded = addedProductId === product.id
-        const needsSize = sizes.length > 0 && !selectedSize
+    <div className="mt-8">
+      {/* Hero card */}
+      <div className="relative rounded-xl overflow-hidden shadow-sm">
+        {/* Image */}
+        <div className="relative aspect-[4/5] w-full">
+          <Image
+            src={heroProduct.image}
+            alt={heroProduct.name}
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority
+          />
+          {/* Overlay gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
+        </div>
 
-        function handleAddToCart() {
-          if (needsSize) { toast.error('Seleccioná un talle para continuar'); return }
-          addItem(
-            {
-              id: product.id,
-              name: product.name,
-              slug: product.slug,
-              price: product.price,
-              image: product.image,
-              category: product.category,
-            },
-            1,
-            selectedSize
-          )
-          toast.success('Agregado al carrito')
-          setAddedProductId(product.id)
-          setTimeout(() => {
-            setAddedProductId(null)
-          }, 1500)
-        }
+        {/* Badge */}
+        <div className="absolute top-4 left-4 bg-foreground px-2.5 py-1">
+          <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-gold">
+            DESTACADO
+          </span>
+        </div>
 
-        function handleBuyNow() {
-          if (needsSize) { toast.error('Seleccioná un talle para continuar'); return }
-          addItem(
-            {
-              id: product.id,
-              name: product.name,
-              slug: product.slug,
-              price: product.price,
-              image: product.image,
-              category: product.category,
-            },
-            1,
-            selectedSize
-          )
-          router.push('/checkout')
-        }
+        {/* Info overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-5">
+          <p className="text-[10px] uppercase tracking-[0.25em] text-white/60 font-medium">
+            {heroProduct.category}
+          </p>
+          <h3 className="text-xl font-black uppercase tracking-tight text-white leading-tight mt-1">
+            {heroProduct.name}
+          </h3>
+          <p className="text-[22px] font-bold text-white mt-2">
+            {formatPrice(heroProduct.price)}
+          </p>
+          <div className="h-px bg-gold w-10 mt-3 mb-4" />
+          <button
+            onClick={() => router.push(`/product/${heroProduct.slug}`)}
+            className="w-full bg-foreground border border-gold/60 py-3.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-background flex items-center justify-center gap-2"
+          >
+            COMPRAR AHORA →
+          </button>
+        </div>
+      </div>
 
-        return (
-          <div key={product.id} className="group">
-            {/* Imagen clickeable */}
-            <Link
-              href={`/product/${product.slug}`}
-              className="relative block aspect-square w-full overflow-hidden bg-surface"
-            >
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
-                className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                priority={index < 4}
-              />
-              <div className="absolute inset-0 bg-foreground/0 transition-colors duration-500 group-hover:bg-foreground/15" />
-              {product.comparePrice && product.comparePrice > product.price && (
-                <span className="absolute bottom-2 right-2 bg-destructive px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-white">
-                  {Math.round((1 - product.price / product.comparePrice) * 100)}% OFF
-                </span>
-              )}
-            </Link>
+      {/* Secondary cards */}
+      <div className="flex flex-col gap-3 mt-4">
+        {secondaryProducts.map((product) => {
+          const hasDiscount = product.comparePrice != null && product.comparePrice > product.price
+          const discountPct = hasDiscount
+            ? Math.round((1 - product.price / product.comparePrice!) * 100)
+            : 0
 
-            {/* Info */}
-            <div className="mt-3.5">
-              <Link
-                href={`/product/${product.slug}`}
-                className="block hover:opacity-70 transition-opacity"
-              >
-                <h3 className="text-[11px] font-medium uppercase tracking-wide text-foreground">
-                  {product.name}
-                </h3>
-                <p className="mt-1 text-sm font-semibold text-foreground">
-                  {formatPrice(product.price)}
-                </p>
-              </Link>
-            </div>
-
-            {/* Acciones — SIEMPRE visibles */}
-            <div className="mt-3 flex flex-col gap-2">
-              {/* MOBILE: select de altura fija (evita wrapping) */}
-              <div className="sm:hidden">
-                {sizes.length > 0 ? (
-                  <div className="relative">
-                    <select
-                      value={selectedSize ?? ''}
-                      onChange={(e) =>
-                        setSelectedSizes((prev) => ({ ...prev, [product.id]: e.target.value }))
-                      }
-                      className="h-7 w-full appearance-none border border-border bg-transparent px-2 text-[9px] font-semibold uppercase tracking-[0.15em] text-foreground outline-none cursor-pointer"
-                    >
-                      <option value="" disabled>Talle</option>
-                      {sizes.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
-                      <svg width="8" height="5" viewBox="0 0 8 5" fill="currentColor" className="text-muted" aria-hidden>
-                        <path d="M0 0l4 5 4-5z"/>
-                      </svg>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="h-7" />
+          return (
+            <div key={product.id} className="flex gap-0 rounded-xl overflow-hidden bg-surface shadow-sm">
+              {/* Image */}
+              <div className="relative w-36 shrink-0">
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  fill
+                  sizes="112px"
+                  className="object-cover h-full"
+                />
+                {hasDiscount && (
+                  <span className="absolute bottom-1.5 left-1.5 bg-destructive text-white text-[9px] font-black uppercase tracking-[0.1em] px-1.5 py-0.5">
+                    {discountPct}% OFF
+                  </span>
                 )}
               </div>
 
-              {/* DESKTOP sm+: botones de talle existentes (sin cambios) */}
-              <div className="hidden sm:flex flex-wrap gap-1.5 min-h-[1.75rem]">
-                {sizes.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() =>
-                      setSelectedSizes((prev) => ({ ...prev, [product.id]: s }))
-                    }
-                    className={`h-7 min-w-[2rem] px-2 text-[9px] font-semibold uppercase tracking-[0.15em] border transition-colors ${
-                      selectedSize === s
-                        ? 'border-foreground bg-foreground text-background'
-                        : 'border-border text-muted hover:border-foreground hover:text-foreground'
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
+              {/* Info */}
+              <div className="flex-1 flex flex-col justify-between py-4 px-4">
+                {/* Top row — category only */}
+                <div>
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-gold font-medium">
+                    {product.category}
+                  </span>
+                </div>
 
-              {/* Agregar al carrito */}
-              <button
-                onClick={handleAddToCart}
-                className="flex h-9 w-full items-center justify-center gap-2 bg-foreground text-[10px] font-semibold uppercase tracking-[0.18em] text-background transition-opacity hover:opacity-80"
-              >
-                {isAdded ? (
+                {/* Name */}
+                <h3 className="text-[15px] font-medium uppercase tracking-[0.12em] text-foreground leading-tight mt-2">
+                  {product.name}
+                </h3>
+
+                {/* Golden line */}
+                <div className="h-px bg-gold w-1/5 mt-2.5" />
+
+                {/* Price */}
+                <p className="text-[15px] font-normal tracking-[0.1em] text-foreground mt-2">
+                  {formatPrice(product.price)}
+                </p>
+
+                {/* CTA */}
+                <button
+                  onClick={() => {
+                    addItem(
+                      {
+                        id: product.id,
+                        name: product.name,
+                        slug: product.slug,
+                        price: product.price,
+                        image: product.image,
+                        category: product.category,
+                      },
+                      1,
+                      undefined
+                    )
+                    toast.success('Agregado al carrito')
+                  }}
+                  className="text-[11px] uppercase tracking-[0.25em] font-semibold text-foreground mt-3 flex items-center gap-1.5 w-fit border-b border-foreground pb-px"
+                >
+                  Añadir al carrito
                   <svg
-                    width="14"
-                    height="14"
+                    width="12"
+                    height="12"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -169,24 +145,14 @@ export default function FeaturedProductsGrid({ products }: FeaturedProductsGridP
                     strokeLinejoin="round"
                     aria-hidden
                   >
-                    <polyline points="20 6 9 17 4 12" />
+                    <path d="M5 12h14M13 6l6 6-6 6" />
                   </svg>
-                ) : (
-                  'Agregar al carrito'
-                )}
-              </button>
-
-              {/* Comprar ahora */}
-              <button
-                onClick={handleBuyNow}
-                className="flex h-9 w-full cursor-pointer items-center justify-center border border-gold text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground transition-all duration-150 hover:bg-foreground hover:text-background hover:border-transparent"
-              >
-                Comprar ahora
-              </button>
+                </button>
+              </div>
             </div>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
     </div>
   )
 }

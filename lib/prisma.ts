@@ -4,10 +4,9 @@ import { PrismaPg } from '@prisma/adapter-pg'
 function createPrismaClient() {
   const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL,
-    max: 5,
+    max: 1,
     connectionTimeoutMillis: 10_000,
-    idleTimeoutMillis: 30_000,
-    ssl: { rejectUnauthorized: process.env.NODE_ENV === 'production' },
+    ssl: { rejectUnauthorized: false },
   })
   return new PrismaClient({ adapter })
 }
