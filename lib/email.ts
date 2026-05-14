@@ -2,7 +2,6 @@ import { Resend } from 'resend'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
 const FROM = process.env.RESEND_FROM ?? `${SITE_NAME} <onboarding@resend.dev>`
 
 type OrderEmailData = {
@@ -65,6 +64,7 @@ function baseLayout(content: string): string {
 
 export async function sendOrderConfirmedEmail(order: OrderEmailData): Promise<void> {
   if (!process.env.RESEND_API_KEY) return
+  const resend = new Resend(process.env.RESEND_API_KEY)
 
   const shortId = order.orderId.slice(0, 8).toUpperCase()
 
@@ -121,6 +121,7 @@ export async function sendOrderConfirmedEmail(order: OrderEmailData): Promise<vo
 
 export async function sendOrderCancelledEmail(order: OrderEmailData): Promise<void> {
   if (!process.env.RESEND_API_KEY) return
+  const resend = new Resend(process.env.RESEND_API_KEY)
 
   const shortId = order.orderId.slice(0, 8).toUpperCase()
 
@@ -174,6 +175,7 @@ export async function sendOrderCancelledEmail(order: OrderEmailData): Promise<vo
 
 export async function sendOrderShippedEmail(order: OrderEmailData): Promise<void> {
   if (!process.env.RESEND_API_KEY) return
+  const resend = new Resend(process.env.RESEND_API_KEY)
 
   const shortId = order.orderId.slice(0, 8).toUpperCase()
 
