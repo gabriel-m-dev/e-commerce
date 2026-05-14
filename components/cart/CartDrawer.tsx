@@ -14,6 +14,8 @@ export default function CartDrawer() {
   const total = getTotal()
   const itemCount = getItemCount()
   const [mounted, setMounted] = useState(false)
+  const [confirmingId, setConfirmingId] = useState<string | null>(null)
+  const confirmTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const drawerRef = useRef<HTMLDivElement>(null)
 
@@ -36,6 +38,12 @@ export default function CartDrawer() {
       document.body.style.paddingRight = ''
     }
   }, [isOpen])
+
+  useEffect(() => {
+    return () => {
+      if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current)
+    }
+  }, [])
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     if (e.key === 'Escape') {
@@ -169,15 +177,55 @@ export default function CartDrawer() {
                         )}
                       </div>
                       {/* Remove */}
-                      <button
-                        onClick={() => removeItem(item.product.id, item.size)}
-                        aria-label={`Eliminar ${item.product.name}`}
-                        className="shrink-0 text-muted transition-colors hover:text-foreground"
-                      >
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden>
-                          <path d="M1 1l10 10M11 1L1 11" />
-                        </svg>
-                      </button>
+                      {confirmingId === key ? (
+                        <div className="flex shrink-0 items-center gap-1">
+                          {/* Confirmar */}
+                          <button
+                            onClick={() => {
+                              if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current)
+                              removeItem(item.product.id, item.size)
+                              setConfirmingId(null)
+                            }}
+                            aria-label="Confirmar eliminación"
+                            className="flex h-6 w-6 items-center justify-center text-[#16a34a] transition-opacity hover:opacity-70"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                              <polyline points="2 6 5 9 10 3" />
+                            </svg>
+                          </button>
+                          {/* Cancelar */}
+                          <button
+                            onClick={() => {
+                              if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current)
+                              setConfirmingId(null)
+                            }}
+                            aria-label="Cancelar"
+                            className="flex h-6 w-6 items-center justify-center text-muted transition-opacity hover:opacity-70"
+                          >
+                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden>
+                              <path d="M1 1l8 8M9 1L1 9" />
+                            </svg>
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current)
+                            setConfirmingId(key)
+                            confirmTimeoutRef.current = setTimeout(() => setConfirmingId(null), 3000)
+                          }}
+                          aria-label={`Eliminar ${item.product.name}`}
+                          className="shrink-0 transition-opacity hover:opacity-70"
+                        >
+                          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                            <path d="M2 5h14" />
+                            <path d="M6.5 5V4a1.5 1.5 0 0 1 1.5-1.5h1A1.5 1.5 0 0 1 10.5 4v1" />
+                            <rect x="3" y="5" width="12" height="10" rx="2" />
+                            <line x1="7" y1="8.5" x2="7" y2="12" />
+                            <line x1="11" y1="8.5" x2="11" y2="12" />
+                          </svg>
+                        </button>
+                      )}
                     </div>
 
                     {/* Quantity + Price */}

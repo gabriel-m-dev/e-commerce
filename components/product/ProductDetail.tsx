@@ -8,6 +8,7 @@ import { SIZES_BY_CATEGORY } from '@/lib/data/products'
 import { type DbProduct } from '@/lib/queries/products'
 import useCartStore from '@/store/cart'
 import ArrowIcon from '@/components/ui/ArrowIcon'
+import { toast } from 'sonner'
 
 export default function ProductDetail({ product }: { product: DbProduct }) {
   const router = useRouter()
@@ -22,6 +23,10 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
   const mainImage = product.images[activeThumb] ?? product.image
 
   function handleAddToCart() {
+    if (sizes.length > 0 && !selectedSize) {
+      toast.error('Seleccioná un talle para continuar')
+      return
+    }
     addItem(
       {
         id: product.id,
@@ -34,11 +39,16 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
       quantity,
       selectedSize ?? undefined
     )
+    toast.success('Agregado al carrito')
     setAdded(true)
     setTimeout(() => setAdded(false), 1800)
   }
 
   function handleBuyNow() {
+    if (sizes.length > 0 && !selectedSize) {
+      toast.error('Seleccioná un talle para continuar')
+      return
+    }
     addItem(
       {
         id: product.id,
