@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import { getProducts } from '@/lib/queries/products'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
+import BrandTagline from '@/components/product/BrandTagline'
 
 export const dynamic = 'force-dynamic'
 
@@ -128,6 +129,9 @@ export default async function ProductsPage({
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
               {sectionLabel}
             </p>
+            {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
+              <BrandTagline key={brandFilter} brand={brandFilter} />
+            )}
           </div>
 
           <div className={brandFilter ? 'lg:pr-[200px] xl:pr-[240px]' : ''}>
