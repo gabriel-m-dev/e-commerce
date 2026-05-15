@@ -92,11 +92,11 @@ export default async function ProductsPage({
       <main>
       <section className="relative overflow-hidden bg-background">
 
-        {/* Nike bg — desktop only, flush right edge */}
-        {brandFilter === 'NIKE' && (
+        {/* Brand bg — flush right edge */}
+        {(brandFilter === 'NIKE' || brandFilter === 'JORDAN') && (
           <div className="pointer-events-none absolute bottom-0 right-0 top-0 w-[120px] md:w-[160px] lg:w-[200px] xl:w-[240px]" aria-hidden>
             <Image
-              src="/nike_bg.png"
+              src={brandFilter === 'NIKE' ? '/nike_bg.png' : '/jordan_bg.png'}
               alt=""
               fill
               sizes="(min-width: 1280px) 240px, (min-width: 1024px) 200px, (min-width: 768px) 160px, 110px"
