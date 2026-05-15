@@ -243,13 +243,13 @@ export default function CartDrawer() {
                           </button>
                         </div>
                       ) : (
-                        <div className="flex shrink-0 items-center gap-2">
+                        <div className="flex shrink-0 items-center gap-3">
                           {/* Edit size — solo para productos con talle */}
                           {item.size && (
                             <button
                               onClick={() => setEditingId(editingId === key ? null : key)}
                               aria-label={`Editar talle de ${item.product.name}`}
-                              className="shrink-0 text-muted transition-opacity hover:opacity-70 cursor-pointer"
+                              className="flex h-8 w-8 items-center justify-center text-muted transition-opacity hover:opacity-70 cursor-pointer"
                             >
                               <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                                 <path d="M10.5 1.5l3 3L5 13H2v-3L10.5 1.5z" />
@@ -265,7 +265,7 @@ export default function CartDrawer() {
                               confirmTimeoutRef.current = setTimeout(() => setConfirmingId(null), 3000)
                             }}
                             aria-label={`Eliminar ${item.product.name}`}
-                            className="shrink-0 transition-opacity hover:opacity-70 cursor-pointer"
+                            className="flex h-8 w-8 items-center justify-center transition-opacity hover:opacity-70 cursor-pointer"
                           >
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                               <path d="M2 5h14" />
