@@ -14,8 +14,10 @@ function SuccessContent() {
   const paymentId = searchParams.get('payment_id')
 
   useEffect(() => {
-    clearCart()
-  }, [clearCart])
+    if (paymentId) {
+      clearCart()
+    }
+  }, [clearCart, paymentId])
 
   return (
     <div className="max-w-screen-xl mx-auto px-6 lg:px-10 py-24 flex flex-col items-center text-center">
