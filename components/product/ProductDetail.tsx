@@ -13,7 +13,6 @@ import { toast } from 'sonner'
 export default function ProductDetail({ product }: { product: DbProduct }) {
   const router = useRouter()
   const addItem = useCartStore((s) => s.addItem)
-  const cartItems = useCartStore((s) => s.items)
 
   const [activeThumb, setActiveThumb] = useState(0)
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
@@ -51,8 +50,9 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
       return
     }
     const size = selectedSize ?? undefined
-    const alreadyInCart = cartItems.some(
-      (i) => i.product.id === product.id && i.size === size
+    const currentItems = useCartStore.getState().items
+    const alreadyInCart = currentItems.some(
+      (i) => i.product.id === product.id && (i.size ?? '') === (size ?? '')
     )
     if (!alreadyInCart) {
       addItem(
