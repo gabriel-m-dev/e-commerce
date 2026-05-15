@@ -37,9 +37,14 @@ export default async function ProductsPage({
     JORDAN: 'Jordan',
     ADIDAS: 'Adidas',
   }
+  const BRAND_LOGOS: Record<string, { src: string; width: number; height: number }> = {
+    NIKE:   { src: '/nike_logo.png',   width: 48, height: 24 },
+    JORDAN: { src: '/jordan_logo.png', width: 28, height: 28 },
+  }
   const sectionLabel = brandFilter && BRAND_LABELS[brandFilter]
     ? BRAND_LABELS[brandFilter]
     : 'Todos los productos'
+  const brandLogo = brandFilter ? BRAND_LOGOS[brandFilter] : null
 
   return (
     <>
@@ -106,6 +111,15 @@ export default async function ProductsPage({
           {/* Section label */}
           <div className="mb-10 flex items-center gap-4">
             <div className="h-px w-8 bg-gold" aria-hidden />
+            {brandLogo && (
+              <Image
+                src={brandLogo.src}
+                alt={sectionLabel}
+                width={brandLogo.width}
+                height={brandLogo.height}
+                className="object-contain mix-blend-multiply"
+              />
+            )}
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
               {sectionLabel}
             </p>
