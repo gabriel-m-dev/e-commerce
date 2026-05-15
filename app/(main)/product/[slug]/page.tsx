@@ -187,6 +187,7 @@ export default async function ProductPage({
                         price: rel.price,
                         image: rel.image,
                         category: rel.category,
+                        stock: rel.stock,
                       }}
                     />
                   </div>

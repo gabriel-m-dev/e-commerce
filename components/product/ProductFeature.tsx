@@ -14,6 +14,7 @@ const PRODUCT = {
   price: 119900,
   image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=85',
   category: 'Zapatillas',
+  stock: 10,
 }
 
 const SIZES = [38, 39, 40, 41, 42, 43]

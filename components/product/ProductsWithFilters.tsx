@@ -174,7 +174,7 @@ export default function ProductsWithFilters({
 
                 function handleAddToCart() {
                   if (needsSize) { toast.error('Seleccioná un talle para continuar'); return }
-                  addItem({ id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category }, 1, selectedSize)
+                  addItem({ id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category, stock: product.stock }, 1, selectedSize)
                   toast.success('Agregado al carrito')
                   setAddedProductId(product.id)
                   setTimeout(() => {
@@ -185,7 +185,7 @@ export default function ProductsWithFilters({
 
                 function handleBuyNow() {
                   if (needsSize) { toast.error('Seleccioná un talle para continuar'); return }
-                  addItem({ id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category }, 1, selectedSize)
+                  addItem({ id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category, stock: product.stock }, 1, selectedSize)
                   router.push('/checkout')
                 }
 

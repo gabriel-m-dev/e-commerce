@@ -8,6 +8,7 @@ export type CartProduct = {
   price: number
   image: string
   category: string
+  stock: number
 }
 
 export type CartItem = {

@@ -123,6 +123,7 @@ export default function FeaturedProductsGrid({ products }: FeaturedProductsGridP
                         price: product.price,
                         image: product.image,
                         category: product.category,
+                        stock: product.stock,
                       },
                       1,
                       undefined

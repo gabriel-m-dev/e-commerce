@@ -35,6 +35,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         price: product.price,
         image: product.image,
         category: product.category,
+        stock: product.stock,
       },
       quantity,
       selectedSize ?? undefined
@@ -63,6 +64,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
           price: product.price,
           image: product.image,
           category: product.category,
+          stock: product.stock,
         },
         quantity,
         size
