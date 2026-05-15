@@ -82,7 +82,7 @@ export default function NewArrivalsSection({ products }: { products: DbProduct[]
         {/* CTA */}
         <Link
           href="/nuevos-ingresos"
-          className="mt-10 flex w-full items-center justify-center gap-3 border border-foreground py-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground transition-colors hover:bg-foreground hover:text-background"
+          className="mt-10 mx-auto flex w-fit items-center gap-3 border border-foreground px-8 py-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground transition-colors hover:bg-foreground hover:text-background"
         >
           VER TODOS LOS NUEVOS INGRESOS <ArrowIcon size={14} className="text-gold" />
         </Link>
