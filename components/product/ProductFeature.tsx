@@ -61,7 +61,7 @@ export default function ProductFeature() {
                 <button
                   key={i}
                   onClick={() => setActiveThumb(i)}
-                  className={`relative h-[72px] w-[72px] shrink-0 overflow-hidden bg-surface transition-opacity ${
+                  className={`relative h-[72px] w-[72px] shrink-0 overflow-hidden bg-surface transition-opacity cursor-pointer ${
                     i === activeThumb
                       ? 'ring-1 ring-foreground ring-offset-0'
                       : 'opacity-60 hover:opacity-100'
@@ -121,7 +121,7 @@ export default function ProductFeature() {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size === selectedSize ? null : size)}
-                    className={`h-9 w-11 border text-xs font-medium transition-colors ${
+                    className={`h-9 w-11 border text-xs font-medium transition-colors cursor-pointer ${
                       size === selectedSize
                         ? 'border-foreground bg-foreground text-background'
                         : 'border-border bg-background text-foreground hover:border-foreground'
@@ -141,7 +141,7 @@ export default function ProductFeature() {
               <div className="inline-flex items-center border border-border">
                 <button
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface"
+                  className="px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface cursor-pointer"
                   aria-label="Reducir cantidad"
                 >
                   −
@@ -151,7 +151,7 @@ export default function ProductFeature() {
                 </span>
                 <button
                   onClick={() => setQuantity((q) => q + 1)}
-                  className="px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface"
+                  className="px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface cursor-pointer"
                   aria-label="Aumentar cantidad"
                 >
                   +
@@ -163,13 +163,13 @@ export default function ProductFeature() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 onClick={handleAddToCart}
-                className="flex-1 bg-foreground py-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 disabled:opacity-40"
+                className="flex-1 bg-foreground py-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 disabled:opacity-40 cursor-pointer"
               >
                 {added ? 'Agregado ✓' : 'Agregar al carrito'}
               </button>
               <button
                 onClick={handleBuyNow}
-                className="flex-1 border border-foreground py-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground transition-colors hover:bg-foreground hover:text-background"
+                className="flex-1 border border-foreground py-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground transition-colors hover:bg-foreground hover:text-background cursor-pointer"
               >
                 Comprar ahora
               </button>

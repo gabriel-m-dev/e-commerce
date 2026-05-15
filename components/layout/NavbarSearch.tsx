@@ -75,7 +75,7 @@ export default function NavbarSearch({
       <button
         onClick={open ? handleClose : handleOpen}
         aria-label="Buscar"
-        className="text-foreground transition-opacity hover:opacity-60 ml-0 flex items-center"
+        className="text-foreground transition-opacity hover:opacity-60 ml-0 flex items-center cursor-pointer"
       >
         <svg
           width="18"

@@ -72,7 +72,7 @@ export default function ProductsWithFilters({
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`-mb-px px-4 pb-3 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors duration-150 ${
+              className={`-mb-px px-4 pb-3 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors duration-150 cursor-pointer ${
                 activeCategory === cat
                   ? 'border-b-2 border-foreground text-foreground'
                   : 'border-b-2 border-transparent text-muted hover:text-foreground'
@@ -155,7 +155,7 @@ export default function ProductsWithFilters({
                 <button
                   onClick={() => setOpenProductId(openProductId === product.id ? null : product.id)}
                   aria-label={`Agregar ${product.name} al carrito`}
-                  className="flex h-7 w-7 shrink-0 items-center justify-center border border-border text-foreground transition-colors hover:border-foreground"
+                  className="flex h-7 w-7 shrink-0 items-center justify-center border border-border text-foreground transition-colors hover:border-foreground cursor-pointer"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
@@ -198,7 +198,7 @@ export default function ProductsWithFilters({
                           <button
                             key={s}
                             onClick={() => setSelectedSizes((prev) => ({ ...prev, [product.id]: s }))}
-                            className={`h-7 min-w-[2rem] px-2 text-[9px] font-semibold uppercase tracking-[0.15em] border transition-colors ${
+                            className={`h-7 min-w-[2rem] px-2 text-[9px] font-semibold uppercase tracking-[0.15em] border transition-colors cursor-pointer ${
                               selectedSize === s
                                 ? 'border-foreground bg-foreground text-background'
                                 : 'border-border text-muted hover:border-foreground hover:text-foreground'
@@ -213,7 +213,7 @@ export default function ProductsWithFilters({
                     {/* Agregar al carrito */}
                     <button
                       onClick={handleAddToCart}
-                      className="flex h-9 w-full items-center justify-center gap-2 bg-foreground text-[10px] font-semibold uppercase tracking-[0.18em] text-background transition-opacity hover:opacity-80"
+                      className="flex h-9 w-full items-center justify-center gap-2 bg-foreground text-[10px] font-semibold uppercase tracking-[0.18em] text-background transition-opacity hover:opacity-80 cursor-pointer"
                     >
                       {isAdded ? (
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -227,7 +227,7 @@ export default function ProductsWithFilters({
                     {/* Comprar ahora */}
                     <button
                       onClick={handleBuyNow}
-                      className="flex h-9 w-full items-center justify-center border border-gold text-[10px] font-semibold uppercase tracking-[0.18em] text-gold transition-opacity hover:opacity-70"
+                      className="flex h-9 w-full items-center justify-center border border-gold text-[10px] font-semibold uppercase tracking-[0.18em] text-gold transition-opacity hover:opacity-70 cursor-pointer"
                     >
                       Comprar ahora
                     </button>

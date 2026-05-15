@@ -29,7 +29,7 @@ export default function MobileMenu() {
         aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex h-8 w-8 flex-col items-center justify-center gap-[5px] text-foreground transition-opacity hover:opacity-60 md:hidden"
+        className="flex h-8 w-8 flex-col items-center justify-center gap-[5px] text-foreground transition-opacity hover:opacity-60 md:hidden cursor-pointer"
       >
         <span className={`block h-[1.5px] w-5 bg-current transition-all duration-300 ${open ? 'translate-y-[6.5px] rotate-45' : ''}`} />
         <span className={`block h-[1.5px] w-5 bg-current transition-all duration-300 ${open ? 'opacity-0' : ''}`} />
@@ -51,7 +51,7 @@ export default function MobileMenu() {
           <button
             aria-label="Cerrar menú"
             onClick={handleClose}
-            className="text-background transition-opacity hover:opacity-60"
+            className="text-background transition-opacity hover:opacity-60 cursor-pointer"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M18 6 6 18M6 6l12 12" />
@@ -72,7 +72,7 @@ export default function MobileMenu() {
                   {/* Título con sub-menú — botón que hace toggle */}
                   <button
                     onClick={() => toggleItem(i)}
-                    className="group flex w-full items-baseline gap-3 py-3 text-left"
+                    className="group flex w-full items-baseline gap-3 py-3 text-left cursor-pointer"
                   >
                     <span className="text-[10px] font-semibold tracking-widest text-background/40 tabular-nums">
                       {String(i + 1).padStart(2, '0')}

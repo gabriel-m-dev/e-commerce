@@ -130,7 +130,7 @@ export default function CartDrawer() {
             </div>
             <button
               onClick={closeCart}
-              className="mt-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground transition-opacity hover:opacity-60"
+              className="mt-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground transition-opacity hover:opacity-60 cursor-pointer"
             >
               Explorar tienda <ArrowIcon className="text-gold" />
             </button>
@@ -187,7 +187,7 @@ export default function CartDrawer() {
                               setConfirmingId(null)
                             }}
                             aria-label="Confirmar eliminación"
-                            className="flex h-6 w-6 items-center justify-center text-[#16a34a] transition-opacity hover:opacity-70"
+                            className="flex h-6 w-6 items-center justify-center text-[#16a34a] transition-opacity hover:opacity-70 cursor-pointer"
                           >
                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                               <polyline points="2 6 5 9 10 3" />
@@ -200,7 +200,7 @@ export default function CartDrawer() {
                               setConfirmingId(null)
                             }}
                             aria-label="Cancelar"
-                            className="flex h-6 w-6 items-center justify-center text-muted transition-opacity hover:opacity-70"
+                            className="flex h-6 w-6 items-center justify-center text-muted transition-opacity hover:opacity-70 cursor-pointer"
                           >
                             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden>
                               <path d="M1 1l8 8M9 1L1 9" />
@@ -215,7 +215,7 @@ export default function CartDrawer() {
                             confirmTimeoutRef.current = setTimeout(() => setConfirmingId(null), 3000)
                           }}
                           aria-label={`Eliminar ${item.product.name}`}
-                          className="shrink-0 transition-opacity hover:opacity-70"
+                          className="shrink-0 transition-opacity hover:opacity-70 cursor-pointer"
                         >
                           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                             <path d="M2 5h14" />
@@ -234,7 +234,7 @@ export default function CartDrawer() {
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.size)}
                           aria-label="Reducir"
-                          className="flex h-7 w-7 items-center justify-center text-xs text-foreground transition-colors hover:bg-surface"
+                          className="flex h-7 w-7 items-center justify-center text-xs text-foreground transition-colors hover:bg-surface cursor-pointer"
                         >
                           −
                         </button>
@@ -244,7 +244,7 @@ export default function CartDrawer() {
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.size)}
                           aria-label="Aumentar"
-                          className="flex h-7 w-7 items-center justify-center text-xs text-foreground transition-colors hover:bg-surface"
+                          className="flex h-7 w-7 items-center justify-center text-xs text-foreground transition-colors hover:bg-surface cursor-pointer"
                         >
                           +
                         </button>
