@@ -125,10 +125,12 @@ export default async function ProductsPage({
             </p>
           </div>
 
-          <ProductsWithFilters
-            products={products}
-            initialCategory={category ?? 'Todo'}
-          />
+          <div className={brandFilter ? 'lg:pr-[200px] xl:pr-[240px]' : ''}>
+            <ProductsWithFilters
+              products={products}
+              initialCategory={category ?? 'Todo'}
+            />
+          </div>
 
         </div>
       </section>
