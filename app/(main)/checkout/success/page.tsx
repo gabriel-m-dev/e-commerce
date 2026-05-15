@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import ArrowIcon from '@/components/ui/ArrowIcon'
@@ -12,10 +12,16 @@ function SuccessContent() {
   const clearCart = useCartStore((s) => s.clearCart)
   const searchParams = useSearchParams()
   const paymentId = searchParams.get('payment_id')
+  const [orderId, setOrderId] = useState<string | null>(null)
 
   useEffect(() => {
     if (paymentId) {
       clearCart()
+    }
+    const stored = sessionStorage.getItem('luxe-last-order-id')
+    if (stored) {
+      setOrderId(stored)
+      sessionStorage.removeItem('luxe-last-order-id')
     }
   }, [clearCart, paymentId])
 
@@ -36,10 +42,10 @@ function SuccessContent() {
       </h1>
 
       {/* ─── Subtitle ─── */}
-      {paymentId && (
+      {orderId && (
         <p className="text-sm leading-relaxed text-muted max-w-sm mb-2">
-          Número de orden:{' '}
-          <span className="font-semibold text-foreground">{paymentId}</span>
+          N° de pedido:{' '}
+          <span className="font-semibold text-foreground">{orderId.slice(0, 8).toUpperCase()}</span>
         </p>
       )}
 

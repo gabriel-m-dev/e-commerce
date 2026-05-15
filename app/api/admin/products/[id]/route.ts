@@ -19,7 +19,7 @@ export async function PUT(
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand } =
+  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand, active } =
     body as Record<string, unknown>
 
   if (
@@ -60,6 +60,7 @@ export async function PUT(
         categoryId: category.id,
         stock: Math.round(stock),
         featured: featured === true,
+        active: active !== false,
         brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
       },
       include: { category: true },

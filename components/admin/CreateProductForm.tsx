@@ -33,6 +33,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
     images: [''],
     stock: '0',
     featured: false,
+    active: true,
   })
 
   function handleNameChange(value: string) {
@@ -79,6 +80,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
       images: [''],
       stock: '0',
       featured: false,
+      active: true,
     })
     setSlugManuallyEdited(false)
     setError(null)
@@ -117,6 +119,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
           description: form.description.trim(),
           stock: Number(form.stock),
           featured: form.featured,
+          active: form.active,
         }),
       })
 
@@ -409,6 +412,20 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
                 />
                 <label htmlFor="featured" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted cursor-pointer">
                   Producto destacado
+                </label>
+              </div>
+
+              {/* Activo */}
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="active"
+                  checked={form.active}
+                  onChange={(e) => setForm((prev) => ({ ...prev, active: e.target.checked }))}
+                  className="h-4 w-4 cursor-pointer accent-foreground"
+                />
+                <label htmlFor="active" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted cursor-pointer">
+                  Producto activo
                 </label>
               </div>
 

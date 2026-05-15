@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import ArrowIcon from '@/components/ui/ArrowIcon'
@@ -111,9 +112,16 @@ function FieldError({ message }: { message?: string }) {
 export default function CheckoutPage() {
   const items = useCartStore((s) => s.items)
   const getTotal = useCartStore((s) => s.getTotal)
+  const router = useRouter()
 
   const subtotal = getTotal()
   const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : null
+
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+  useEffect(() => {
+    if (mounted && items.length === 0) router.replace('/cart')
+  }, [mounted, items, router])
 
   const [fields, setFields] = useState<FormFields>({
     email: '',
@@ -177,7 +185,8 @@ export default function CheckoutPage() {
         return
       }
 
-      const { initPoint } = await res.json()
+      const { initPoint, orderId } = await res.json()
+      if (orderId) sessionStorage.setItem('luxe-last-order-id', orderId)
       window.location.href = initPoint
     } catch {
       setSubmitError('Error de conexión. Verificá tu internet e intentá de nuevo.')

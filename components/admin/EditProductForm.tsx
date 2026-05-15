@@ -19,7 +19,7 @@ export default function EditProductForm({
 }: EditProductFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false)
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(true)
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null)
 
   const [form, setForm] = useState({
@@ -33,6 +33,7 @@ export default function EditProductForm({
     images: product.images.length > 0 ? [...product.images] : [''],
     stock: product.stock.toString(),
     featured: product.featured,
+    active: product.active,
   })
 
   function handleNameChange(value: string) {
@@ -117,6 +118,7 @@ export default function EditProductForm({
           description: form.description.trim(),
           stock: Number(form.stock),
           featured: form.featured,
+          active: form.active,
         }),
       })
 
@@ -276,6 +278,16 @@ export default function EditProductForm({
                 className="h-4 w-4 cursor-pointer accent-foreground" />
               <label htmlFor="edit-featured" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted cursor-pointer">
                 Producto destacado
+              </label>
+            </div>
+
+            {/* Activo */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" id="edit-active" checked={form.active}
+                onChange={(e) => setForm((prev) => ({ ...prev, active: e.target.checked }))}
+                className="h-4 w-4 cursor-pointer accent-foreground" />
+              <label htmlFor="edit-active" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted cursor-pointer">
+                Producto activo
               </label>
             </div>
 
