@@ -31,6 +31,15 @@ export default async function ProductsPage({
   const brandFilter = brand ? brand.toUpperCase() : undefined
   const products = await getProducts({ brand: brandFilter })
 
+  const BRAND_LABELS: Record<string, string> = {
+    NIKE: 'Nike',
+    JORDAN: 'Jordan',
+    ADIDAS: 'Adidas',
+  }
+  const sectionLabel = brandFilter && BRAND_LABELS[brandFilter]
+    ? BRAND_LABELS[brandFilter]
+    : 'Todos los productos'
+
   return (
     <>
       <script
@@ -82,7 +91,7 @@ export default async function ProductsPage({
           <div className="mb-10 flex items-center gap-4">
             <div className="h-px w-8 bg-gold" aria-hidden />
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
-              Todos los productos
+              {sectionLabel}
             </p>
           </div>
 
