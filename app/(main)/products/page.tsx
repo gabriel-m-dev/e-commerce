@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import { getProducts } from '@/lib/queries/products'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
+import BrandBgImage from '@/components/product/BrandBgImage'
 import BrandTagline from '@/components/product/BrandTagline'
 
 export const dynamic = 'force-dynamic'
@@ -96,20 +97,7 @@ export default async function ProductsPage({
 
         {/* Brand bg — flush right edge */}
         {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
-          <div className="pointer-events-none absolute bottom-0 right-0 top-0 w-[120px] md:w-[160px] lg:w-[200px] xl:w-[240px]" aria-hidden>
-            <Image
-              src={
-                brandFilter === 'NIKE'   ? '/nike_bg.png'    :
-                brandFilter === 'JORDAN' ? '/jordan_bg.png'  :
-                                           '/adidas_bg.png'
-              }
-              alt=""
-              fill
-              sizes="(min-width: 1280px) 240px, (min-width: 1024px) 200px, (min-width: 768px) 160px, 110px"
-              className="object-contain object-right-top"
-              priority
-            />
-          </div>
+          <BrandBgImage key={brandFilter} brand={brandFilter} />
         )}
 
         <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
