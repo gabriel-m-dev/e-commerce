@@ -39,7 +39,7 @@ export default async function ProductsPage({
   }
   const BRAND_LOGOS: Record<string, { src: string; width: number; height: number }> = {
     NIKE:   { src: '/nike_logo.png',   width: 48, height: 24 },
-    JORDAN: { src: '/jordan_logo.png', width: 28, height: 28 },
+    JORDAN: { src: '/jordan_logo.png', width: 39, height: 39 },
   }
   const sectionLabel = brandFilter && BRAND_LABELS[brandFilter]
     ? BRAND_LABELS[brandFilter]
@@ -117,7 +117,7 @@ export default async function ProductsPage({
                 alt={sectionLabel}
                 width={brandLogo.width}
                 height={brandLogo.height}
-                className="object-contain mix-blend-multiply"
+                className="object-contain"
               />
             )}
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
