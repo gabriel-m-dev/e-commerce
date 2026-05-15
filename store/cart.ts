@@ -25,6 +25,7 @@ type CartStore = {
   addItem: (product: CartProduct, quantity?: number, size?: string) => void
   removeItem: (productId: string, size?: string) => void
   updateQuantity: (productId: string, quantity: number, size?: string) => void
+  updateSize: (productId: string, oldSize: string | undefined, newSize: string | undefined) => void
   clearCart: () => void
   getItemCount: () => number
   getTotal: () => number
@@ -77,6 +78,35 @@ const useCartStore = create<CartStore>()(
               : i
           ),
         }))
+      },
+
+      updateSize: (productId, oldSize, newSize) => {
+        set((state) => {
+          const existing = state.items.find(
+            (i) => i.product.id === productId && (i.size ?? '') === (newSize ?? '')
+          )
+          if (existing) {
+            const current = state.items.find(
+              (i) => i.product.id === productId && (i.size ?? '') === (oldSize ?? '')
+            )
+            return {
+              items: state.items
+                .filter((i) => !(i.product.id === productId && (i.size ?? '') === (oldSize ?? '')))
+                .map((i) =>
+                  i.product.id === productId && (i.size ?? '') === (newSize ?? '')
+                    ? { ...i, quantity: i.quantity + (current?.quantity ?? 1) }
+                    : i
+                ),
+            }
+          }
+          return {
+            items: state.items.map((i) =>
+              i.product.id === productId && (i.size ?? '') === (oldSize ?? '')
+                ? { ...i, size: newSize }
+                : i
+            ),
+          }
+        })
       },
 
       clearCart: () => set({ items: [] }),

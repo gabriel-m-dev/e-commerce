@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { SIZES_BY_CATEGORY } from '@/lib/data/products'
 import { type DbProduct } from '@/lib/queries/products'
 import { formatPrice } from '@/lib/utils'
 import useCartStore from '@/store/cart'
@@ -16,6 +18,7 @@ const SECONDARY_BADGES = ['BEST SELLER', 'NUEVO DROP']
 export default function FeaturedProductsGrid({ products }: FeaturedProductsGridProps) {
   const router = useRouter()
   const addItem = useCartStore((s) => s.addItem)
+  const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({})
   const heroProduct = products[0]
   const secondaryProducts = products.slice(1, 3)
 
@@ -113,40 +116,59 @@ export default function FeaturedProductsGrid({ products }: FeaturedProductsGridP
                   {formatPrice(product.price)}
                 </p>
 
-                <button
-                  onClick={() => {
-                    addItem(
-                      {
-                        id: product.id,
-                        name: product.name,
-                        slug: product.slug,
-                        price: product.price,
-                        image: product.image,
-                        category: product.category,
-                        stock: product.stock,
-                      },
-                      1,
-                      undefined
-                    )
-                    toast.success('Agregado al carrito')
-                  }}
-                  className="text-[11px] uppercase tracking-[0.25em] font-semibold text-foreground mt-3 flex items-center gap-1.5 w-fit border-b border-foreground pb-px cursor-pointer"
-                >
-                  Añadir al carrito
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden
-                  >
-                    <path d="M5 12h14M13 6l6 6-6 6" />
-                  </svg>
-                </button>
+                {(() => {
+                  const sizes = SIZES_BY_CATEGORY[product.categorySlug] ?? []
+                  const selectedSize = selectedSizes[product.id]
+                  return (
+                    <>
+                      {sizes.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {sizes.map((s) => (
+                            <button
+                              key={s}
+                              onClick={() => setSelectedSizes((prev) => ({ ...prev, [product.id]: s }))}
+                              className={`h-6 min-w-[1.75rem] px-1.5 text-[9px] font-semibold uppercase tracking-[0.1em] border transition-colors cursor-pointer ${
+                                selectedSize === s
+                                  ? 'border-foreground bg-foreground text-background'
+                                  : 'border-border text-muted hover:border-foreground hover:text-foreground'
+                              }`}
+                            >
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      <button
+                        onClick={() => {
+                          if (sizes.length > 0 && !selectedSize) {
+                            toast.error('Seleccioná un talle para continuar')
+                            return
+                          }
+                          addItem(
+                            {
+                              id: product.id,
+                              name: product.name,
+                              slug: product.slug,
+                              price: product.price,
+                              image: product.image,
+                              category: product.category,
+                              stock: product.stock,
+                            },
+                            1,
+                            selectedSize
+                          )
+                          toast.success('Agregado al carrito')
+                        }}
+                        className="text-[11px] uppercase tracking-[0.25em] font-semibold text-foreground mt-3 flex items-center gap-1.5 w-fit border-b border-foreground pb-px cursor-pointer"
+                      >
+                        Añadir al carrito
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="M5 12h14M13 6l6 6-6 6" />
+                        </svg>
+                      </button>
+                    </>
+                  )
+                })()}
               </div>
             </div>
           )

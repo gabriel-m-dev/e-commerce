@@ -167,7 +167,7 @@ export default function ProductsWithFilters({
 
               {/* Panel expandible */}
               {openProductId === product.id && (() => {
-                const sizes = SIZES_BY_CATEGORY[product.category] ?? []
+                const sizes = SIZES_BY_CATEGORY[product.categorySlug] ?? []
                 const selectedSize = selectedSizes[product.id]
                 const isAdded = addedProductId === product.id
                 const needsSize = sizes.length > 0 && !selectedSize
