@@ -25,30 +25,53 @@ export default function NewArrivalsSection({ products }: { products: DbProduct[]
           Descubrí lo último que llegó a LUXE.
         </p>
 
-        {/* Product list */}
-        <ul className="mt-8 divide-y divide-border">
+        {/*
+          Mobile:  lista vertical, imagen izquierda 128px, contenido derecha
+          sm:      imagen crece a 144px (XL phones)
+          md:      grid 2 col, imagen arriba aspect-[3/4], contenido abajo
+          lg:      grid 4 col
+        */}
+        <ul className="mt-8 divide-y divide-border md:divide-y-0 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-10 lg:grid-cols-4 lg:gap-x-5">
           {products.map((product) => (
-            <li key={product.id} className="flex items-center gap-5 py-6">
+            <li
+              key={product.id}
+              className="flex items-center gap-5 py-6 md:flex-col md:items-start md:gap-0 md:py-0"
+            >
               {/* Image */}
-              <Link href={`/product/${product.slug}`} className="relative h-32 w-32 shrink-0 overflow-hidden bg-surface block">
-                <Image src={product.image} alt={product.name} fill sizes="128px" className="object-cover" />
+              <Link
+                href={`/product/${product.slug}`}
+                className="relative h-32 w-32 shrink-0 overflow-hidden bg-surface block sm:h-36 sm:w-36 md:h-auto md:w-full md:aspect-[3/4]"
+              >
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  fill
+                  sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 144px"
+                  className="object-cover"
+                />
                 <span className="absolute top-0 left-0 bg-foreground px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.15em] text-gold">
                   Nuevo
                 </span>
               </Link>
 
               {/* Info */}
-              <div className="flex flex-1 flex-col gap-1.5 min-w-0">
+              <div className="flex flex-1 flex-col gap-1.5 min-w-0 md:flex-none md:w-full md:mt-4">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
                   {product.category}
                 </span>
-                <Link href={`/product/${product.slug}`} className="text-[15px] font-medium uppercase tracking-[0.1em] text-foreground leading-tight hover:opacity-70 transition-opacity truncate">
+                <Link
+                  href={`/product/${product.slug}`}
+                  className="text-[15px] font-medium uppercase tracking-[0.08em] text-foreground leading-tight hover:opacity-70 transition-opacity truncate md:text-[13px] md:whitespace-normal md:line-clamp-2"
+                >
                   {product.name}
                 </Link>
-                <p className="text-[16px] font-semibold text-foreground">
+                <p className="text-[16px] font-semibold text-foreground md:text-[15px]">
                   {formatPrice(product.price)}
                 </p>
-                <Link href={`/product/${product.slug}`} className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted hover:text-foreground transition-colors mt-1">
+                <Link
+                  href={`/product/${product.slug}`}
+                  className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted hover:text-foreground transition-colors mt-1"
+                >
                   Ver producto <ArrowIcon size={12} className="text-gold" />
                 </Link>
               </div>
