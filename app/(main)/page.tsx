@@ -8,6 +8,7 @@ import ProductsWithFilters from '@/components/product/ProductsWithFilters'
 import ProductFeature from '@/components/product/ProductFeature'
 import NewArrivalsSection from '@/components/product/NewArrivalsSection'
 import ArrowIcon from '@/components/ui/ArrowIcon'
+import HeroSection from '@/components/layout/HeroSection'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,76 +40,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ─── Hero ─── */}
-      <section className="relative overflow-hidden [background:#131313] lg:[background:#111111]">
-
-        {/* Slide indicator — mobile only, pinned to bottom */}
-        <div className="absolute bottom-4 left-6 z-10 flex items-center gap-3 lg:hidden">
-          <span className="text-[11px] font-medium text-background/60">01</span>
-          <div className="h-px w-10 bg-gold" aria-hidden />
-          <span className="text-[11px] font-medium text-background/25">03</span>
-        </div>
-
-        {/* Mobile — shoe floating at bottom-right as depth element */}
-        <div className="absolute bottom-10 right-[-30px] h-[65%] w-[100%] lg:hidden" aria-hidden>
-          <Image
-            src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=1080&auto=format&fit=crop&q=85"
-            alt=""
-            fill
-            sizes="85vw"
-            className="object-contain object-right-bottom"
-            priority
-          />
-        </div>
-
-        <div className="mx-auto max-w-screen-xl px-6 lg:px-10">
-          <div className="grid min-h-[88svh] grid-cols-1 items-start lg:grid-cols-[1fr_460px] lg:items-center xl:grid-cols-[1fr_540px]">
-
-            {/* Left — copy */}
-            <div className="relative z-10 pt-5 pb-10 sm:pt-10 md:pt-20 lg:py-0 lg:pr-16">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-gold">
-                Nueva Colección
-              </p>
-              <h1
-                className="mt-4 font-black uppercase leading-[0.88] tracking-tighter text-background lg:mt-5"
-                style={{ fontSize: 'clamp(2.6rem, 7.5vw, 5.8rem)' }}
-              >
-                Diseño que<br />se siente.
-              </h1>
-              <p className="mt-4 text-sm font-semibold uppercase tracking-widest text-background/55 lg:mt-5 lg:text-base">
-                Calidad que se nota.
-              </p>
-              <div className="mt-5 lg:mt-10">
-                <Link
-                  href="/products"
-                  className="inline-flex items-center gap-2 border border-background/60 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-background transition-colors duration-200 hover:border-background hover:bg-background hover:text-foreground lg:gap-3 lg:px-7 lg:py-3.5 lg:text-[11px]"
-                >
-                  Comprar ahora <ArrowIcon className="shrink-0 text-gold" size={14} />
-                </Link>
-              </div>
-              {/* Slide indicator — desktop only (inline flow) */}
-              <div className="mt-20 hidden items-center gap-3 lg:flex">
-                <span className="text-[11px] font-medium text-background/60">01</span>
-                <div className="h-px w-10 bg-gold" aria-hidden />
-                <span className="text-[11px] font-medium text-background/25">03</span>
-              </div>
-            </div>
-
-            {/* Right — hero image (desktop only) */}
-            <div className="relative hidden h-[88svh] lg:block">
-              <Image
-                src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=1080&auto=format&fit=crop&q=85"
-                alt="Puma — zapatilla destacada"
-                fill
-                sizes="(max-width: 1280px) 460px, 540px"
-                className="object-cover object-center"
-                priority
-              />
-              <div className="absolute inset-0 bg-foreground/20" />
-            </div>
-
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* ─── Featured Products ─── */}
       <section className="bg-background">
