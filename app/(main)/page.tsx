@@ -2,10 +2,11 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SITE_DESCRIPTION } from '@/lib/constants'
-import { getProducts, getFeaturedProducts } from '@/lib/queries/products'
+import { getProducts, getFeaturedProducts, getNewProducts } from '@/lib/queries/products'
 import FeaturedProductsGrid from '@/components/product/FeaturedProductsGrid'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
 import ProductFeature from '@/components/product/ProductFeature'
+import NewArrivalsSection from '@/components/product/NewArrivalsSection'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 
 export const dynamic = 'force-dynamic'
@@ -29,9 +30,10 @@ export const metadata: Metadata = {
 
 
 export default async function HomePage() {
-  const [featuredProducts, allProducts] = await Promise.all([
+  const [featuredProducts, allProducts, newProducts] = await Promise.all([
     getFeaturedProducts(4),
     getProducts(),
+    getNewProducts(4),
   ])
 
   return (
@@ -246,6 +248,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ─── Nuevos Ingresos ─── */}
+      <NewArrivalsSection products={newProducts} />
 
       {/* ─── Todos los Productos ─── */}
       <section className="bg-background">
