@@ -89,7 +89,7 @@ export default async function ProductsPage({
 
         {/* Nike bg — desktop only, flush right edge */}
         {brandFilter === 'NIKE' && (
-          <div className="pointer-events-none absolute right-0 top-0 hidden h-full w-[200px] xl:w-[240px] lg:block" aria-hidden>
+          <div className="pointer-events-none absolute right-0 top-0 h-full w-[110px] md:w-[160px] lg:w-[200px] xl:w-[240px]" aria-hidden>
             <Image
               src="/nike_bg.png"
               alt=""
