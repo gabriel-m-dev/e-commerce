@@ -24,6 +24,15 @@ export const NAV_LINKS: NavLink[] = [
     ],
   },
   {
+    label: 'Marcas',
+    href: '/products',
+    children: [
+      { label: 'Nike',   href: '/products?brand=nike'   },
+      { label: 'Jordan', href: '/products?brand=jordan' },
+      { label: 'Adidas', href: '/products?brand=adidas' },
+    ],
+  },
+  {
     label: 'Nosotros',
     href: '/about',
     children: [

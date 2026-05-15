@@ -46,6 +46,7 @@ model Product {
   stock        Int         @default(0)
   featured     Boolean     @default(false)
   active       Boolean     @default(true)
+  brand        Brand       @default(OTROS)
   cartItems    CartItem[]
   orderItems   OrderItem[]
   createdAt    DateTime    @default(now())
@@ -53,6 +54,7 @@ model Product {
 
   @@index([categoryId])
   @@index([featured, active])
+  @@index([brand])
 }
 
 // ─── Cart ─────────────────────────────────────────────────────────────────────
@@ -121,6 +123,13 @@ model Address {
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Brand {
+  NIKE
+  JORDAN
+  ADIDAS
+  OTROS
+}
 
 enum OrderStatus {
   PENDING

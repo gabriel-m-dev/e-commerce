@@ -25,10 +25,11 @@ export const metadata: Metadata = {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>
+  searchParams: Promise<{ category?: string; brand?: string }>
 }) {
-  const { category } = await searchParams
-  const products = await getProducts()
+  const { category, brand } = await searchParams
+  const brandFilter = brand ? brand.toUpperCase() : undefined
+  const products = await getProducts({ brand: brandFilter })
 
   return (
     <>

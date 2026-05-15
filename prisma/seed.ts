@@ -35,6 +35,7 @@ const products = [
     description: 'Diseño limpio, estructura premium. La Gorra LUXE. está hecha para los que no necesitan explicar su estilo.',
     featured:    true,
     stock:       50,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Hoodie Oversize',
@@ -49,6 +50,7 @@ const products = [
     description: 'Corte oversize, tela pesada, acabado mate. El Hoodie que no se nota que es caro, pero se siente.',
     featured:    true,
     stock:       40,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Remera Premium',
@@ -63,6 +65,7 @@ const products = [
     description: 'Algodón peinado 220g/m². Cuando la simpleza es intencional, se llama diseño.',
     featured:    true,
     stock:       60,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Mochila LUXE.',
@@ -77,6 +80,7 @@ const products = [
     description: 'Compartimentos inteligentes, materiales resistentes, estética sin concesiones. Para ir a cualquier lado sin sacrificar el look.',
     featured:    true,
     stock:       25,
+    brand:       'OTROS' as const,
   },
   {
     name:         'LUXE AIR',
@@ -92,6 +96,7 @@ const products = [
     description: 'Diseñadas para quienes buscan estilo, comodidad y calidad en cada paso. Suela ultraligera, upper de malla técnica.',
     featured:    false,
     stock:       30,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Buzo Esencial',
@@ -106,6 +111,7 @@ const products = [
     description: 'Sin logos llamativos. Sin excesos. Solo una silueta perfecta y una tela que dura.',
     featured:    false,
     stock:       45,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Pantalón LUXE.',
@@ -120,6 +126,7 @@ const products = [
     description: 'Corte recto, caída perfecta. El pantalón que no tenés que pensar dos veces antes de ponerte.',
     featured:    false,
     stock:       35,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Gorra Snapback',
@@ -134,6 +141,7 @@ const products = [
     description: 'Cierre snapback ajustable, visera plana, bordado minimal. Clásico sin esfuerzo.',
     featured:    false,
     stock:       55,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Remera Oversize LUXE.',
@@ -147,6 +155,7 @@ const products = [
     description: 'Corte oversize estructurado, algodón compacto 200g/m². La remera que te hace ver que estás pensando en todo.',
     featured:    false,
     stock:       45,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Remera Esencial Negra',
@@ -161,6 +170,7 @@ const products = [
     description: 'Negro puro, cuello redondo reforzado, sin texto. La base de cualquier outfit que sabe a qué va.',
     featured:    false,
     stock:       60,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Zapatilla LUXE. Runner',
@@ -175,6 +185,7 @@ const products = [
     description: 'Perfil bajo, suela de goma vulcanizada, upper de nylon técnico. Velocidad sin alardes.',
     featured:    false,
     stock:       25,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Zapatilla LUXE. Court',
@@ -189,6 +200,7 @@ const products = [
     description: 'Inspirada en las canchas, refinada para la calle. Cuero sintético premium con forro acolchado.',
     featured:    false,
     stock:       20,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Mochila Urban LUXE.',
@@ -203,6 +215,7 @@ const products = [
     description: 'Capacidad 20L, correas acolchadas, compartimento laptop 15". Minimalismo que carga lo que necesitás.',
     featured:    false,
     stock:       30,
+    brand:       'OTROS' as const,
   },
   {
     name:         'Pantalón Cargo LUXE.',
@@ -217,6 +230,7 @@ const products = [
     description: 'Bolsillos funcionales, tela ripstop liviana, corte relaxed. El pantalón de quienes van a todos lados.',
     featured:    false,
     stock:       35,
+    brand:       'OTROS' as const,
   },
 ] as const
 
@@ -253,6 +267,7 @@ async function main() {
         description: p.description,
         featured:    p.featured,
         stock:       p.stock,
+        brand:       p.brand,
         categoryId,
       },
       create: {
@@ -263,6 +278,7 @@ async function main() {
         description: p.description,
         featured:    p.featured,
         stock:       p.stock,
+        brand:       p.brand,
         active:      true,
         categoryId,
       },

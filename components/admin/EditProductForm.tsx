@@ -28,6 +28,7 @@ export default function EditProductForm({
     price: product.price.toString(),
     comparePrice: product.comparePrice?.toString() ?? '',
     categorySlug: product.categorySlug,
+    brand: product.brand ?? 'OTROS',
     description: product.description,
     images: product.images.length > 0 ? [...product.images] : [''],
     stock: product.stock.toString(),
@@ -111,6 +112,7 @@ export default function EditProductForm({
           price: Number(form.price),
           comparePrice: form.comparePrice ? Number(form.comparePrice) : null,
           categorySlug: form.categorySlug,
+          brand: form.brand,
           images,
           description: form.description.trim(),
           stock: Number(form.stock),
@@ -177,6 +179,21 @@ export default function EditProductForm({
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.slug}>{cat.name}</option>
                 ))}
+              </select>
+            </div>
+
+            {/* Marca */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Marca</label>
+              <select
+                value={form.brand}
+                onChange={(e) => setForm((prev) => ({ ...prev, brand: e.target.value }))}
+                className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full cursor-pointer"
+              >
+                <option value="OTROS">Otros / LUXE.</option>
+                <option value="NIKE">Nike</option>
+                <option value="JORDAN">Jordan</option>
+                <option value="ADIDAS">Adidas</option>
               </select>
             </div>
 

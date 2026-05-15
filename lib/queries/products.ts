@@ -15,6 +15,7 @@ function mockToDb(p: MockProduct): DbProduct {
     description: p.description,
     featured: p.featured ?? false,
     stock: 99,
+    brand: 'OTROS',
     createdAt: new Date().toISOString(),
   }
 }
@@ -34,6 +35,7 @@ export type DbProduct = {
   description: string
   featured: boolean
   stock: number
+  brand: string
   createdAt: string
 }
 
@@ -52,6 +54,7 @@ function toDbProduct(p: any): DbProduct {
     description: p.description as string,
     featured: p.featured as boolean,
     stock: Number(p.stock),
+    brand: p.brand as string,
     createdAt: (p.createdAt as Date).toISOString(),
   }
 }
@@ -60,8 +63,9 @@ export async function getProducts(options?: {
   categorySlug?: string
   search?: string
   sort?: string
+  brand?: string
 }): Promise<DbProduct[]> {
-  const { categorySlug, search, sort } = options ?? {}
+  const { categorySlug, search, sort, brand } = options ?? {}
 
   const orderBy = (() => {
     if (sort === 'price_asc') return { price: 'asc' as const }
@@ -77,6 +81,7 @@ export async function getProducts(options?: {
         ...(search
           ? { name: { contains: search, mode: 'insensitive' as const } }
           : {}),
+        ...(brand ? { brand: brand as import('../generated/prisma/client').Brand } : {}),
       },
       include: { category: true },
       orderBy,

@@ -19,7 +19,7 @@ export async function PUT(
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured } =
+  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand } =
     body as Record<string, unknown>
 
   if (
@@ -32,6 +32,11 @@ export async function PUT(
     typeof stock !== 'number' || stock < 0
   ) {
     return NextResponse.json({ error: 'Faltan campos requeridos o son inválidos' }, { status: 400 })
+  }
+
+  const VALID_BRANDS = ['NIKE', 'JORDAN', 'ADIDAS', 'OTROS']
+  if (brand !== undefined && !VALID_BRANDS.includes(brand as string)) {
+    return NextResponse.json({ error: 'Marca inválida' }, { status: 400 })
   }
 
   try {
@@ -55,6 +60,7 @@ export async function PUT(
         categoryId: category.id,
         stock: Math.round(stock),
         featured: featured === true,
+        brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
       },
       include: { category: true },
     })

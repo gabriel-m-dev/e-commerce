@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 3. Validar campos requeridos
-  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured } = body as Record<string, unknown>
+  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand } = body as Record<string, unknown>
 
   if (
     typeof name !== 'string' || !name.trim() ||
@@ -31,6 +31,11 @@ export async function POST(request: NextRequest) {
     typeof stock !== 'number' || stock < 0
   ) {
     return NextResponse.json({ error: 'Faltan campos requeridos o son inválidos' }, { status: 400 })
+  }
+
+  const VALID_BRANDS = ['NIKE', 'JORDAN', 'ADIDAS', 'OTROS']
+  if (brand !== undefined && !VALID_BRANDS.includes(brand as string)) {
+    return NextResponse.json({ error: 'Marca inválida' }, { status: 400 })
   }
 
   try {
@@ -51,6 +56,7 @@ export async function POST(request: NextRequest) {
         stock: Math.round(stock),
         featured: featured === true,
         active: true,
+        brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
       },
       include: { category: true },
     })
