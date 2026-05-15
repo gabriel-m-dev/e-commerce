@@ -5,16 +5,18 @@ import Image from 'next/image'
 import Link from 'next/link'
 import useCartStore from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
+import { SIZES_BY_CATEGORY } from '@/lib/data/products'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 
 export default function CartDrawer() {
-  const { isOpen, closeCart, items, removeItem, updateQuantity, getTotal, getItemCount } =
+  const { isOpen, closeCart, items, removeItem, updateQuantity, updateSize, getTotal, getItemCount } =
     useCartStore()
 
   const total = getTotal()
   const itemCount = getItemCount()
   const [mounted, setMounted] = useState(false)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const confirmTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const drawerRef = useRef<HTMLDivElement>(null)
@@ -175,10 +177,43 @@ export default function CartDrawer() {
                             Talle {item.size}
                           </p>
                         )}
+                        {/* Size editor */}
+                        {editingId === key && item.size && (() => {
+                          const sizes = SIZES_BY_CATEGORY[item.product.category.toLowerCase()] ?? []
+                          return (
+                            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                              {sizes.map((s) => (
+                                <button
+                                  key={s}
+                                  onClick={() => {
+                                    if (s !== item.size) updateSize(item.product.id, item.size, s)
+                                    setEditingId(null)
+                                  }}
+                                  className={`h-7 min-w-[2rem] border px-1.5 text-[10px] font-medium transition-colors cursor-pointer ${
+                                    s === item.size
+                                      ? 'border-foreground bg-foreground text-background'
+                                      : 'border-border text-foreground hover:border-foreground'
+                                  }`}
+                                >
+                                  {s}
+                                </button>
+                              ))}
+                              <button
+                                onClick={() => setEditingId(null)}
+                                aria-label="Cancelar edición"
+                                className="flex h-7 w-7 items-center justify-center text-muted hover:text-foreground transition-colors cursor-pointer"
+                              >
+                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden>
+                                  <path d="M1 1l8 8M9 1L1 9" />
+                                </svg>
+                              </button>
+                            </div>
+                          )
+                        })()}
                       </div>
-                      {/* Remove */}
+                      {/* Actions */}
                       {confirmingId === key ? (
-                        <div className="flex shrink-0 items-center gap-1">
+                        <div className="flex shrink-0 items-center gap-3">
                           {/* Confirmar */}
                           <button
                             onClick={() => {
@@ -187,10 +222,10 @@ export default function CartDrawer() {
                               setConfirmingId(null)
                             }}
                             aria-label="Confirmar eliminación"
-                            className="flex h-6 w-6 items-center justify-center text-[#16a34a] transition-opacity hover:opacity-70 cursor-pointer"
+                            className="flex h-8 w-8 items-center justify-center text-[#16a34a] transition-opacity hover:opacity-70 cursor-pointer"
                           >
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                              <polyline points="2 6 5 9 10 3" />
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                              <polyline points="2 8 6 12 14 4" />
                             </svg>
                           </button>
                           {/* Cancelar */}
@@ -200,31 +235,47 @@ export default function CartDrawer() {
                               setConfirmingId(null)
                             }}
                             aria-label="Cancelar"
-                            className="flex h-6 w-6 items-center justify-center text-muted transition-opacity hover:opacity-70 cursor-pointer"
+                            className="flex h-8 w-8 items-center justify-center text-muted transition-opacity hover:opacity-70 cursor-pointer"
                           >
-                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden>
-                              <path d="M1 1l8 8M9 1L1 9" />
+                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden>
+                              <path d="M1 1l11 11M12 1L1 12" />
                             </svg>
                           </button>
                         </div>
                       ) : (
-                        <button
-                          onClick={() => {
-                            if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current)
-                            setConfirmingId(key)
-                            confirmTimeoutRef.current = setTimeout(() => setConfirmingId(null), 3000)
-                          }}
-                          aria-label={`Eliminar ${item.product.name}`}
-                          className="shrink-0 transition-opacity hover:opacity-70 cursor-pointer"
-                        >
-                          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                            <path d="M2 5h14" />
-                            <path d="M6.5 5V4a1.5 1.5 0 0 1 1.5-1.5h1A1.5 1.5 0 0 1 10.5 4v1" />
-                            <rect x="3" y="5" width="12" height="10" rx="2" />
-                            <line x1="7" y1="8.5" x2="7" y2="12" />
-                            <line x1="11" y1="8.5" x2="11" y2="12" />
-                          </svg>
-                        </button>
+                        <div className="flex shrink-0 items-center gap-2">
+                          {/* Edit size — solo para productos con talle */}
+                          {item.size && (
+                            <button
+                              onClick={() => setEditingId(editingId === key ? null : key)}
+                              aria-label={`Editar talle de ${item.product.name}`}
+                              className="shrink-0 text-muted transition-opacity hover:opacity-70 cursor-pointer"
+                            >
+                              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                                <path d="M10.5 1.5l3 3L5 13H2v-3L10.5 1.5z" />
+                              </svg>
+                            </button>
+                          )}
+                          {/* Delete */}
+                          <button
+                            onClick={() => {
+                              if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current)
+                              setEditingId(null)
+                              setConfirmingId(key)
+                              confirmTimeoutRef.current = setTimeout(() => setConfirmingId(null), 3000)
+                            }}
+                            aria-label={`Eliminar ${item.product.name}`}
+                            className="shrink-0 transition-opacity hover:opacity-70 cursor-pointer"
+                          >
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                              <path d="M2 5h14" />
+                              <path d="M6.5 5V4a1.5 1.5 0 0 1 1.5-1.5h1A1.5 1.5 0 0 1 10.5 4v1" />
+                              <rect x="3" y="5" width="12" height="10" rx="2" />
+                              <line x1="7" y1="8.5" x2="7" y2="12" />
+                              <line x1="11" y1="8.5" x2="11" y2="12" />
+                            </svg>
+                          </button>
+                        </div>
                       )}
                     </div>
 
