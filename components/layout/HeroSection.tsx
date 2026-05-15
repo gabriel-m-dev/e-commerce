@@ -25,7 +25,7 @@ export default function HeroSection() {
   const totalLabel = String(SLIDES.length).padStart(2, '0')
 
   return (
-    <section className="relative overflow-hidden [background:#131313] lg:[background:#111111]">
+    <section className="relative overflow-hidden bg-foreground">
 
       {/* Slide indicator — mobile only, pinned to bottom */}
       <div className="absolute bottom-4 left-6 z-10 flex items-center gap-3 lg:hidden">
