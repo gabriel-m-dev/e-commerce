@@ -21,12 +21,6 @@ export const NAV_LINKS: NavLink[] = [
       { label: 'Todos los productos', href: '/products' },
       { label: 'Ofertas', href: '/ofertas' },
       { label: 'Nuevos ingresos', href: '/nuevos-ingresos' },
-    ],
-  },
-  {
-    label: 'Marcas',
-    href: '/products',
-    children: [
       { label: 'Nike',   href: '/products?brand=nike'   },
       { label: 'Jordan', href: '/products?brand=jordan' },
       { label: 'Adidas', href: '/products?brand=adidas' },

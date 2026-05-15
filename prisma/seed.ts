@@ -96,7 +96,7 @@ const products = [
     description: 'Diseñadas para quienes buscan estilo, comodidad y calidad en cada paso. Suela ultraligera, upper de malla técnica.',
     featured:    false,
     stock:       30,
-    brand:       'OTROS' as const,
+    brand:       'NIKE' as const,
   },
   {
     name:         'Buzo Esencial',
