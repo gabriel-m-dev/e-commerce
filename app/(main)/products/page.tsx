@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import { getProducts } from '@/lib/queries/products'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
@@ -84,8 +85,24 @@ export default async function ProductsPage({
         }}
       />
       <main>
-      <section className="bg-background">
-        <div className="mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
+      <section className="relative overflow-hidden bg-background">
+
+        {/* Nike bg — desktop only, positioned right */}
+        {brandFilter === 'NIKE' && (
+          <div className="pointer-events-none absolute right-0 top-0 hidden h-full w-[320px] xl:w-[400px] lg:block" aria-hidden>
+            <Image
+              src="/nike_bg.png"
+              alt=""
+              fill
+              sizes="400px"
+              className="object-cover object-top"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent" />
+          </div>
+        )}
+
+        <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
 
           {/* Section label */}
           <div className="mb-10 flex items-center gap-4">
