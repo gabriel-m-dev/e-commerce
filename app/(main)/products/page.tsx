@@ -40,6 +40,7 @@ export default async function ProductsPage({
   const BRAND_LOGOS: Record<string, { src: string; width: number; height: number }> = {
     NIKE:   { src: '/nike_logo.png',   width: 62, height: 31 },
     JORDAN: { src: '/jordan_logo.png', width: 51, height: 51 },
+    ADIDAS: { src: '/adidas_logo.png', width: 60, height: 36 },
   }
   const sectionLabel = brandFilter && BRAND_LABELS[brandFilter]
     ? BRAND_LABELS[brandFilter]
@@ -93,10 +94,14 @@ export default async function ProductsPage({
       <section className="relative overflow-hidden bg-background">
 
         {/* Brand bg — flush right edge */}
-        {(brandFilter === 'NIKE' || brandFilter === 'JORDAN') && (
+        {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
           <div className="pointer-events-none absolute bottom-0 right-0 top-0 w-[120px] md:w-[160px] lg:w-[200px] xl:w-[240px]" aria-hidden>
             <Image
-              src={brandFilter === 'NIKE' ? '/nike_bg.png' : '/jordan_bg.png'}
+              src={
+                brandFilter === 'NIKE'   ? '/nike_bg.png'    :
+                brandFilter === 'JORDAN' ? '/jordan_bg.png'  :
+                                           '/adidas_bg.png'
+              }
               alt=""
               fill
               sizes="(min-width: 1280px) 240px, (min-width: 1024px) 200px, (min-width: 768px) 160px, 110px"
