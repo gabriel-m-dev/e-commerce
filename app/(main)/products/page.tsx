@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import { getProducts } from '@/lib/queries/products'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
@@ -36,9 +37,15 @@ export default async function ProductsPage({
     JORDAN: 'Jordan',
     ADIDAS: 'Adidas',
   }
+  const BRAND_LOGOS: Record<string, { src: string; width: number; height: number }> = {
+    NIKE:   { src: '/nike_logo.png',   width: 62, height: 31 },
+    JORDAN: { src: '/jordan_logo.png', width: 51, height: 51 },
+    ADIDAS: { src: '/adidas_logo.png', width: 60, height: 36 },
+  }
   const sectionLabel = brandFilter && BRAND_LABELS[brandFilter]
     ? BRAND_LABELS[brandFilter]
     : 'Todos los productos'
+  const brandLogo = brandFilter ? BRAND_LOGOS[brandFilter] : null
 
   return (
     <>
@@ -84,21 +91,51 @@ export default async function ProductsPage({
         }}
       />
       <main>
-      <section className="bg-background">
-        <div className="mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
+      <section className="relative overflow-hidden bg-background">
+
+        {/* Brand bg — flush right edge */}
+        {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
+          <div className="pointer-events-none absolute bottom-0 right-0 top-0 w-[120px] md:w-[160px] lg:w-[200px] xl:w-[240px]" aria-hidden>
+            <Image
+              src={
+                brandFilter === 'NIKE'   ? '/nike_bg.png'    :
+                brandFilter === 'JORDAN' ? '/jordan_bg.png'  :
+                                           '/adidas_bg.png'
+              }
+              alt=""
+              fill
+              sizes="(min-width: 1280px) 240px, (min-width: 1024px) 200px, (min-width: 768px) 160px, 110px"
+              className="object-contain object-right-top"
+              priority
+            />
+          </div>
+        )}
+
+        <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
 
           {/* Section label */}
           <div className="mb-10 flex items-center gap-4">
             <div className="h-px w-8 bg-gold" aria-hidden />
+            {brandLogo && (
+              <Image
+                src={brandLogo.src}
+                alt={sectionLabel}
+                width={brandLogo.width}
+                height={brandLogo.height}
+                className="object-contain"
+              />
+            )}
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
               {sectionLabel}
             </p>
           </div>
 
-          <ProductsWithFilters
-            products={products}
-            initialCategory={category ?? 'Todo'}
-          />
+          <div className={brandFilter ? 'lg:pr-[200px] xl:pr-[240px]' : ''}>
+            <ProductsWithFilters
+              products={products}
+              initialCategory={category ?? 'Todo'}
+            />
+          </div>
 
         </div>
       </section>
