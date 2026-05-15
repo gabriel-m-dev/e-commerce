@@ -87,18 +87,17 @@ export default async function ProductsPage({
       <main>
       <section className="relative overflow-hidden bg-background">
 
-        {/* Nike bg — desktop only, positioned right */}
+        {/* Nike bg — desktop only, flush right edge */}
         {brandFilter === 'NIKE' && (
-          <div className="pointer-events-none absolute right-0 top-0 hidden h-full w-[320px] xl:w-[400px] lg:block" aria-hidden>
+          <div className="pointer-events-none absolute right-0 top-0 hidden h-full w-[200px] xl:w-[240px] lg:block" aria-hidden>
             <Image
               src="/nike_bg.png"
               alt=""
               fill
-              sizes="400px"
-              className="object-cover object-top"
+              sizes="240px"
+              className="object-contain object-right-top"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent" />
           </div>
         )}
 
