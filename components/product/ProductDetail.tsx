@@ -13,13 +13,14 @@ import { toast } from 'sonner'
 export default function ProductDetail({ product }: { product: DbProduct }) {
   const router = useRouter()
   const addItem = useCartStore((s) => s.addItem)
+  const cartItems = useCartStore((s) => s.items)
 
   const [activeThumb, setActiveThumb] = useState(0)
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
 
-  const sizes = SIZES_BY_CATEGORY[product.category] ?? []
+  const sizes = SIZES_BY_CATEGORY[product.categorySlug] ?? []
   const mainImage = product.images[activeThumb] ?? product.image
 
   function handleAddToCart() {
@@ -49,18 +50,24 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
       toast.error('Seleccioná un talle para continuar')
       return
     }
-    addItem(
-      {
-        id: product.id,
-        name: product.name,
-        slug: product.slug,
-        price: product.price,
-        image: product.image,
-        category: product.category,
-      },
-      quantity,
-      selectedSize ?? undefined
+    const size = selectedSize ?? undefined
+    const alreadyInCart = cartItems.some(
+      (i) => i.product.id === product.id && i.size === size
     )
+    if (!alreadyInCart) {
+      addItem(
+        {
+          id: product.id,
+          name: product.name,
+          slug: product.slug,
+          price: product.price,
+          image: product.image,
+          category: product.category,
+        },
+        quantity,
+        size
+      )
+    }
     router.push('/checkout')
   }
 
@@ -209,11 +216,15 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
             <button
               onClick={() => setQuantity((q) => q + 1)}
               aria-label="Aumentar cantidad"
-              className="px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface"
+              disabled={quantity >= product.stock}
+              className="px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface disabled:opacity-40 disabled:cursor-not-allowed"
             >
               +
             </button>
           </div>
+          {quantity === product.stock && (
+            <p className="mt-2 text-[10px] text-muted">Stock disponible: {product.stock}</p>
+          )}
         </div>
 
         {/* CTA buttons */}

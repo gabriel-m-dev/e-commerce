@@ -143,12 +143,12 @@ export const PRODUCT_CATEGORIES = [
 ] as const
 
 export const SIZES_BY_CATEGORY: Record<string, string[]> = {
-  Zapatillas: ['38', '39', '40', '41', '42', '43'],
-  Hoodies: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-  Remeras: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-  Pantalones: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-  Gorras: [],
-  Mochilas: [],
+  zapatillas: ['38', '39', '40', '41', '42', '43'],
+  hoodies: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+  remeras: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+  pantalones: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+  gorras: [],
+  mochilas: [],
 }
 
 export const LUXE_AIR_THUMBNAILS = MOCK_PRODUCTS.find(
