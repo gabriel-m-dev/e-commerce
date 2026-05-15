@@ -38,8 +38,8 @@ export default async function ProductsPage({
     ADIDAS: 'Adidas',
   }
   const BRAND_LOGOS: Record<string, { src: string; width: number; height: number }> = {
-    NIKE:   { src: '/nike_logo.png',   width: 48, height: 24 },
-    JORDAN: { src: '/jordan_logo.png', width: 39, height: 39 },
+    NIKE:   { src: '/nike_logo.png',   width: 62, height: 31 },
+    JORDAN: { src: '/jordan_logo.png', width: 51, height: 51 },
   }
   const sectionLabel = brandFilter && BRAND_LABELS[brandFilter]
     ? BRAND_LABELS[brandFilter]
