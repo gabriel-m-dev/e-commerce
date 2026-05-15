@@ -19,7 +19,7 @@ export async function PUT(
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand, active } =
+  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, spotlight, brand, active } =
     body as Record<string, unknown>
 
   if (
@@ -48,6 +48,10 @@ export async function PUT(
     const existing = await prisma.product.findUnique({ where: { id } })
     if (!existing) return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 })
 
+    if (spotlight === true) {
+      await prisma.product.updateMany({ where: { spotlight: true, NOT: { id } }, data: { spotlight: false } })
+    }
+
     const product = await prisma.product.update({
       where: { id },
       data: {
@@ -60,6 +64,7 @@ export async function PUT(
         categoryId: category.id,
         stock: Math.round(stock),
         featured: featured === true,
+        spotlight: spotlight === true,
         active: active !== false,
         brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
       },

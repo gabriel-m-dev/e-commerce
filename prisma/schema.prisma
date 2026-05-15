@@ -45,6 +45,7 @@ model Product {
   category     Category    @relation(fields: [categoryId], references: [id])
   stock        Int         @default(0)
   featured     Boolean     @default(false)
+  spotlight    Boolean     @default(false)
   active       Boolean     @default(true)
   brand        Brand       @default(OTROS)
   cartItems    CartItem[]

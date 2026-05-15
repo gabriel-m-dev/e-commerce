@@ -33,6 +33,7 @@ export default function EditProductForm({
     images: product.images.length > 0 ? [...product.images] : [''],
     stock: product.stock.toString(),
     featured: product.featured,
+    spotlight: product.spotlight,
     active: product.active,
   })
 
@@ -118,6 +119,7 @@ export default function EditProductForm({
           description: form.description.trim(),
           stock: Number(form.stock),
           featured: form.featured,
+          spotlight: form.spotlight,
           active: form.active,
         }),
       })
@@ -278,6 +280,16 @@ export default function EditProductForm({
                 className="h-4 w-4 cursor-pointer accent-foreground" />
               <label htmlFor="edit-featured" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted cursor-pointer">
                 Producto destacado
+              </label>
+            </div>
+
+            {/* Spotlight */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" id="edit-spotlight" checked={form.spotlight}
+                onChange={(e) => setForm((prev) => ({ ...prev, spotlight: e.target.checked }))}
+                className="h-4 w-4 cursor-pointer accent-foreground" />
+              <label htmlFor="edit-spotlight" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted cursor-pointer">
+                Producto spotlight (homepage)
               </label>
             </div>
 

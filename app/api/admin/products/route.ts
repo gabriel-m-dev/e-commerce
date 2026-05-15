@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 3. Validar campos requeridos
-  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand, active } = body as Record<string, unknown>
+  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, spotlight, brand, active } = body as Record<string, unknown>
 
   if (
     typeof name !== 'string' || !name.trim() ||
@@ -44,6 +44,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Categoría '${categorySlug}' no encontrada` }, { status: 400 })
     }
 
+    if (spotlight === true) {
+      await prisma.product.updateMany({ where: { spotlight: true }, data: { spotlight: false } })
+    }
+
     const product = await prisma.product.create({
       data: {
         name: name.trim(),
@@ -55,6 +59,7 @@ export async function POST(request: NextRequest) {
         categoryId: category.id,
         stock: Math.round(stock),
         featured: featured === true,
+        spotlight: spotlight === true,
         active: active !== false,
         brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
       },

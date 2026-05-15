@@ -33,6 +33,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
     images: [''],
     stock: '0',
     featured: false,
+    spotlight: false,
     active: true,
   })
 
@@ -80,6 +81,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
       images: [''],
       stock: '0',
       featured: false,
+      spotlight: false,
       active: true,
     })
     setSlugManuallyEdited(false)
@@ -119,6 +121,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
           description: form.description.trim(),
           stock: Number(form.stock),
           featured: form.featured,
+          spotlight: form.spotlight,
           active: form.active,
         }),
       })
@@ -412,6 +415,16 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
                 />
                 <label htmlFor="featured" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted cursor-pointer">
                   Producto destacado
+                </label>
+              </div>
+
+              {/* Spotlight */}
+              <div className="flex items-center gap-3">
+                <input type="checkbox" id="spotlight" checked={form.spotlight}
+                  onChange={(e) => setForm((prev) => ({ ...prev, spotlight: e.target.checked }))}
+                  className="h-4 w-4 cursor-pointer accent-foreground" />
+                <label htmlFor="spotlight" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted cursor-pointer">
+                  Producto spotlight (homepage)
                 </label>
               </div>
 

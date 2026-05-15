@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SITE_DESCRIPTION } from '@/lib/constants'
-import { getProducts, getFeaturedProducts, getNewProducts } from '@/lib/queries/products'
+import { getProducts, getFeaturedProducts, getNewProducts, getSpotlightProduct } from '@/lib/queries/products'
 import FeaturedProductsGrid from '@/components/product/FeaturedProductsGrid'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
 import ProductFeature from '@/components/product/ProductFeature'
@@ -31,10 +31,11 @@ export const metadata: Metadata = {
 
 
 export default async function HomePage() {
-  const [featuredProducts, allProducts, newProducts] = await Promise.all([
+  const [featuredProducts, allProducts, newProducts, spotlightProduct] = await Promise.all([
     getFeaturedProducts(4),
     getProducts(),
     getNewProducts(4),
+    getSpotlightProduct(),
   ])
 
   return (
@@ -136,7 +137,7 @@ export default async function HomePage() {
       </section>
 
       {/* ─── Product Feature ─── */}
-      <ProductFeature />
+      {spotlightProduct && <ProductFeature product={spotlightProduct} />}
 
       {/* ─── Features Strip ─── */}
       <section className="bg-surface">

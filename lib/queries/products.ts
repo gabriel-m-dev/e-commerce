@@ -14,6 +14,7 @@ function mockToDb(p: MockProduct): DbProduct {
     images: p.images,
     description: p.description,
     featured: p.featured ?? false,
+    spotlight: false,
     stock: 99,
     brand: 'OTROS',
     active: true,
@@ -35,6 +36,7 @@ export type DbProduct = {
   images: string[]
   description: string
   featured: boolean
+  spotlight: boolean
   active: boolean
   stock: number
   brand: string
@@ -55,6 +57,7 @@ function toDbProduct(p: any): DbProduct {
     images: p.images as string[],
     description: p.description as string,
     featured: p.featured as boolean,
+    spotlight: p.spotlight as boolean,
     active: p.active as boolean,
     stock: Number(p.stock),
     brand: p.brand as string,
@@ -165,6 +168,19 @@ export async function getNewProducts(limit = 20): Promise<DbProduct[]> {
   } catch (e) {
     console.error('[getNewProducts] DB unavailable:', e)
     return []
+  }
+}
+
+export async function getSpotlightProduct(): Promise<DbProduct | null> {
+  try {
+    const result = await prisma.product.findFirst({
+      where: { spotlight: true, active: true },
+      include: { category: true },
+    })
+    return result ? toDbProduct(result) : null
+  } catch (e) {
+    console.error('[getSpotlightProduct] DB unavailable:', e)
+    return null
   }
 }
 
