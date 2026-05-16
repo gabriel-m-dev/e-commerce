@@ -344,7 +344,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
                     ?
                   </span>
                 </span>
-                {adidasPhase === 'answer' && (
+                {adidasPhase === 'answer' ? (
                   <span className="adidas-line2-in max-[470px]:block">
                     {copy.line2}
                     <span className="relative ml-1 inline-flex h-[0.8em] w-[0.8em] align-middle">
@@ -353,6 +353,10 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
                         aria-hidden
                       />
                     </span>
+                  </span>
+                ) : (
+                  <span className="invisible max-[470px]:block" aria-hidden>
+                    {copy.line2}
                   </span>
                 )}
               </>
