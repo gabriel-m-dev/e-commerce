@@ -92,7 +92,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
 
     const syncNavbarPosition = () => {
       if (!(navbar instanceof HTMLElement)) return
-      navbar.style.position = mediaQuery.matches ? previousNavbarPosition : 'relative'
+      navbar.style.position = 'relative'
     }
 
     const syncLogoHeight = () => {
@@ -101,7 +101,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
     }
 
     const syncCollapsedState = () => {
-      if (!logoRowRef.current || mediaQuery.matches) {
+      if (!logoRowRef.current) {
         setIsLogoCollapsed(false)
         return
       }
@@ -133,7 +133,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
     const intersectionObserver = typeof IntersectionObserver !== 'undefined'
       ? new IntersectionObserver(
           ([entry]) => {
-            setIsLogoPinned(!entry.isIntersecting && !mediaQuery.matches)
+            setIsLogoPinned(!entry.isIntersecting)
           },
           { threshold: 0 },
         )
@@ -147,10 +147,6 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
       syncNavbarPosition()
       syncLogoHeight()
       syncCollapsedState()
-      if (mediaQuery.matches) {
-        setIsLogoPinned(false)
-        setIsLogoCollapsed(false)
-      }
     }
 
     mediaQuery.addEventListener('change', handleViewportChange)
@@ -231,7 +227,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
 
       <div
         ref={logoRowRef}
-        className="brand-row1 sticky top-0 z-50 pt-2 lg:static"
+        className="brand-row1 sticky top-0 z-50 pt-2"
         style={{
           marginLeft: 'calc(50% - 50vw)',
           marginRight: 'calc(50% - 50vw)',

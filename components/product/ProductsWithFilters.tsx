@@ -54,7 +54,7 @@ export default function ProductsWithFilters({
   const [sort, setSort] = useState<SortKey>('relevancia')
   const [search, setSearch] = useState('')
   const mobileNavSentinelRef = useRef<HTMLDivElement>(null)
-  const [isMobileNavPinned, setIsMobileNavPinned] = useState(false)
+  const [isNavPinned, setIsNavPinned] = useState(false)
 
   const addItem = useCartStore((s) => s.addItem)
   const router = useRouter()
@@ -72,32 +72,18 @@ export default function ProductsWithFilters({
   useEffect(() => {
     if (!usesGroupedNav) return
 
-    const mediaQuery = window.matchMedia('(min-width: 1024px)')
     const observer = typeof IntersectionObserver !== 'undefined'
       ? new IntersectionObserver(
-          ([entry]) => {
-            setIsMobileNavPinned(!entry.isIntersecting && !mediaQuery.matches)
-          },
+          ([entry]) => { setIsNavPinned(!entry.isIntersecting) },
           { threshold: 0 },
         )
       : null
-
-    const handleViewportChange = () => {
-      if (mediaQuery.matches) {
-        setIsMobileNavPinned(false)
-      }
-    }
 
     if (mobileNavSentinelRef.current && observer) {
       observer.observe(mobileNavSentinelRef.current)
     }
 
-    mediaQuery.addEventListener('change', handleViewportChange)
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleViewportChange)
-      observer?.disconnect()
-    }
+    return () => { observer?.disconnect() }
   }, [usesGroupedNav])
 
   const filtered = useMemo(() => {
@@ -122,17 +108,17 @@ export default function ProductsWithFilters({
       {usesGroupedNav ? (
         // === EDITORIAL BRAND layout ===
         <>
-          <div ref={mobileNavSentinelRef} className="h-px w-full lg:hidden" aria-hidden />
+          <div ref={mobileNavSentinelRef} className="h-px w-full" aria-hidden />
 
           {/* Overlay para cerrar submenú al tocar afuera */}
           {openMenu && (
             <div className="fixed inset-0 z-10" onClick={() => setOpenMenu(null)} aria-hidden />
           )}
 
-          {/* Grouped nav — hasta lg */}
+          {/* Grouped nav — todos los breakpoints */}
           <div
             data-brand-mobile-nav={brand}
-            className="sticky z-40 pb-1 lg:hidden"
+            className="sticky z-40 pb-1"
             style={{
               top: `calc(var(${stickyVarName}, 77px) - 1px)`,
               marginLeft: 'calc(50% - 50vw)',
@@ -143,7 +129,7 @@ export default function ProductsWithFilters({
           >
             <div
               className={`absolute inset-0 transition-opacity duration-200 ${
-                isMobileNavPinned ? 'opacity-100' : 'opacity-0'
+                isNavPinned ? 'opacity-100' : 'opacity-0'
               }`}
               style={{
                 backgroundColor: editorialTheme === 'dark' ? '#0a0a0a' : '#ffffff',
@@ -151,7 +137,7 @@ export default function ProductsWithFilters({
               }}
               aria-hidden
             />
-            <div className="relative flex flex-wrap gap-2">
+            <div className={`relative flex flex-wrap gap-2 ${isNavPinned ? 'lg:justify-center' : ''}`}>
             {NAV_GROUPS.map((group) => {
               const isActive = group.sub
                 ? group.sub.includes(activeCategory)
@@ -225,26 +211,6 @@ export default function ProductsWithFilters({
             </div>
           </div>
 
-          {/* Flat nav — lg+ */}
-          <div className="hidden lg:flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {PRODUCT_CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => { setActiveCategory(cat); setOpenMenu(null) }}
-                className={`shrink-0 rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors cursor-pointer ${
-                  activeCategory === cat
-                    ? editorialTheme === 'dark'
-                      ? 'bg-white text-black'
-                      : 'bg-foreground text-background'
-                    : editorialTheme === 'dark'
-                      ? 'text-white/70 hover:text-white'
-                      : 'text-muted hover:text-foreground'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
         </>
       ) : (
         // === LIGHT (default) layout — UNCHANGED ===
