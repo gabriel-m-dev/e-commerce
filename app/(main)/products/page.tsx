@@ -93,7 +93,7 @@ export default async function ProductsPage({
         }}
       />
       <main>
-      <section className="relative overflow-hidden bg-background">
+      <section className="relative overflow-hidden" style={{ backgroundColor: brandFilter ? '#F7F6F3' : 'var(--background)' }}>
 
         {/* Brand bg — flush right edge */}
         {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
