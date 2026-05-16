@@ -110,7 +110,7 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setIsSloganAccentSwapped(true)
-    }, 2000)
+    }, 500)
 
     return () => {
       window.clearTimeout(timeoutId)
