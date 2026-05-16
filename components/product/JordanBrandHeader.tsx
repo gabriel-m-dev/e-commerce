@@ -275,15 +275,10 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
               </span>
               <span className="relative ml-1 inline-flex h-[0.8em] w-[0.8em] align-middle">
                 <span
-                  className={`absolute inset-0 flex items-center justify-center text-white transition-opacity duration-150 ${
-                    activeSloganSweepIndex === 6 ? 'opacity-0' : 'opacity-100'
-                  }`}
-                >
-                  .
-                </span>
-                <span
-                  className={`absolute left-1/2 top-[76%] h-[0.22em] w-[0.22em] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold transition-all duration-150 ${
-                    activeSloganSweepIndex === 6 ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
+                  className={`absolute left-1/2 top-[76%] h-[0.22em] w-[0.22em] -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-150 ${
+                    activeSloganSweepIndex === 6
+                      ? 'scale-100 bg-gold opacity-100'
+                      : 'scale-100 bg-white opacity-100'
                   }`}
                   aria-hidden
                 />
