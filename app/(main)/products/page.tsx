@@ -95,6 +95,32 @@ export default async function ProductsPage({
       <main>
       <section className="relative overflow-hidden" style={{ backgroundColor: brandFilter ? '#F7F6F3' : 'var(--background)' }}>
 
+        {/* Jordan editorial watermark — behind sneaker image */}
+        {brandFilter === 'JORDAN' && (
+          <div
+            className="pointer-events-none select-none absolute right-0 top-0 bottom-0 flex items-start justify-end"
+            aria-hidden
+          >
+            <span
+              style={{
+                fontSize: '260px',
+                fontWeight: 900,
+                color: 'transparent',
+                WebkitTextStroke: '1px rgba(0,0,0,0.05)',
+                writingMode: 'vertical-rl',
+                textOrientation: 'mixed',
+                lineHeight: 1,
+                letterSpacing: '-0.02em',
+                filter: 'blur(0.3px)',
+                WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
+                maskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
+              }}
+            >
+              JORDAN
+            </span>
+          </div>
+        )}
+
         {/* Brand bg — flush right edge */}
         {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
           <BrandBgImage
