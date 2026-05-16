@@ -36,6 +36,7 @@ const products = [
     featured:    true,
     stock:       50,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Hoodie Oversize',
@@ -51,6 +52,7 @@ const products = [
     featured:    true,
     stock:       40,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Remera Premium',
@@ -66,6 +68,7 @@ const products = [
     featured:    true,
     stock:       60,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Mochila LUXE.',
@@ -81,6 +84,7 @@ const products = [
     featured:    true,
     stock:       25,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'LUXE AIR',
@@ -97,6 +101,7 @@ const products = [
     featured:    false,
     stock:       30,
     brand:       'NIKE' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Buzo Esencial',
@@ -112,6 +117,7 @@ const products = [
     featured:    false,
     stock:       45,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Pantalón LUXE.',
@@ -127,6 +133,7 @@ const products = [
     featured:    false,
     stock:       35,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Gorra Snapback',
@@ -142,6 +149,7 @@ const products = [
     featured:    false,
     stock:       55,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Remera Oversize LUXE.',
@@ -156,6 +164,7 @@ const products = [
     featured:    false,
     stock:       45,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Remera Esencial Negra',
@@ -171,6 +180,7 @@ const products = [
     featured:    false,
     stock:       60,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Zapatilla LUXE. Runner',
@@ -186,6 +196,7 @@ const products = [
     featured:    false,
     stock:       25,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Zapatilla LUXE. Court',
@@ -201,6 +212,7 @@ const products = [
     featured:    false,
     stock:       20,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Mochila Urban LUXE.',
@@ -216,6 +228,7 @@ const products = [
     featured:    false,
     stock:       30,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
   {
     name:         'Pantalón Cargo LUXE.',
@@ -231,6 +244,7 @@ const products = [
     featured:    false,
     stock:       35,
     brand:       'OTROS' as const,
+    colors:      [] as string[],
   },
 ] as const
 
@@ -268,6 +282,7 @@ async function main() {
         featured:    p.featured,
         stock:       p.stock,
         brand:       p.brand,
+        colors:      [...p.colors],
         categoryId,
       },
       create: {
@@ -279,6 +294,7 @@ async function main() {
         featured:    p.featured,
         stock:       p.stock,
         brand:       p.brand,
+        colors:      [...p.colors],
         active:      true,
         categoryId,
       },

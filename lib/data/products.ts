@@ -8,6 +8,7 @@ export type MockProduct = {
   images: string[]
   description: string
   featured?: boolean
+  colors?: string[]
 }
 
 export const MOCK_PRODUCTS: MockProduct[] = [

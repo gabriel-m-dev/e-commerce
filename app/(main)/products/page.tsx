@@ -5,6 +5,7 @@ import { getProducts } from '@/lib/queries/products'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
 import BrandBgImage from '@/components/product/BrandBgImage'
 import BrandTagline from '@/components/product/BrandTagline'
+import JordanBrandHeader from '@/components/product/JordanBrandHeader'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,6 +34,7 @@ export default async function ProductsPage({
   const { category, brand } = await searchParams
   const brandFilter = brand ? brand.toUpperCase() : undefined
   const products = await getProducts({ brand: brandFilter })
+  const isJordan = brandFilter === 'JORDAN'
 
   const BRAND_LABELS: Record<string, string> = {
     NIKE: 'Nike',
@@ -93,85 +95,130 @@ export default async function ProductsPage({
         }}
       />
       <main>
-      <section className="relative bg-background overflow-hidden">
+      <section className={`relative overflow-hidden ${isJordan ? 'bg-[#0a0a0a] text-white' : 'bg-background'}`}>
 
         {/* Jordan editorial watermark — first in DOM = behind bg image */}
-        {/* wrapper width = font-size → visual right edge lands flush at right-0 */}
+        {/* Rotamos un wrapper completo: [nike_logo] [JORDAN] → después de -90deg, logo queda justo debajo de la J */}
         {brandFilter === 'JORDAN' && (
           <div
             className="pointer-events-none select-none absolute right-[-16px] top-0 bottom-0 w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center"
             aria-hidden
           >
-            <span
-              className="text-[80px] lg:text-[110px]"
+            <div
               style={{
-                fontWeight: 900,
-                color: 'transparent',
-                WebkitTextStroke: '1px rgba(0,0,0,0.15)',
-                whiteSpace: 'nowrap',
-                lineHeight: 1,
-                letterSpacing: '0.12em',
-                filter: 'blur(0.3px)',
                 transform: 'rotate(-90deg)',
-                display: 'block',
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '16px',
+                whiteSpace: 'nowrap',
               }}
             >
-              JORDAN
-            </span>
+              {/* Nike logo — dorado semitransparente, justo antes de la J */}
+              <Image
+                src="/nike_logo.png"
+                alt=""
+                width={52}
+                height={26}
+                className="object-contain shrink-0"
+                style={{
+                  filter: 'brightness(0) saturate(100%) invert(76%) sepia(28%) saturate(700%) hue-rotate(358deg)',
+                }}
+              />
+              <span
+                className="text-[80px] lg:text-[110px]"
+                style={{
+                  fontWeight: 900,
+                  color: 'transparent',
+                  WebkitTextStroke: '1px rgba(255,255,255,0.08)',
+                  lineHeight: 1,
+                  letterSpacing: '0.12em',
+                  filter: 'blur(0.3px)',
+                  display: 'block',
+                }}
+              >
+                JORDAN
+              </span>
+            </div>
           </div>
         )}
 
-        {/* BrandBgImage — second in DOM = above watermark */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-          {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
-            <BrandBgImage
-              key={brandFilter}
-              brand={brandFilter}
-              objectPosition={brandFilter === 'NIKE' ? 'center top' : 'right top'}
+        {/* Jordan sneaker image — top-right, flush to window edge, behind content */}
+        {isJordan && (
+          <div
+            className="pointer-events-none select-none absolute right-0 top-0 w-[160px] h-[220px] max-[374px]:w-[120px] max-[374px]:h-[170px] sm:w-[200px] sm:h-[275px] md:w-[250px] md:h-[340px] lg:w-[310px] lg:h-[420px] z-[2] jordan-bg-img"
+            aria-hidden
+          >
+            <Image
+              src="/jordan_bg.png"
+              alt=""
+              fill
+              sizes="160px"
+              className="object-contain object-right-top"
+              priority
             />
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* BrandBgImage — only for NIKE / ADIDAS. Jordan uses inline header image. */}
+        {!isJordan && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
+            {(brandFilter === 'NIKE' || brandFilter === 'ADIDAS') && (
+              <BrandBgImage
+                key={brandFilter}
+                brand={brandFilter}
+                objectPosition={brandFilter === 'NIKE' ? 'center top' : 'right top'}
+              />
+            )}
+          </div>
+        )}
 
         <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
 
-          {/* Section label */}
-          <div className="mb-10">
-            {/* Row 1: logo + name. Desktop adds gold line before. */}
-            <div className="flex items-center gap-4">
-              <div className={brandLogo ? 'hidden md:block h-px w-8 bg-gold' : 'h-px w-8 bg-gold'} aria-hidden />
-              {brandLogo && (
-                <Image
-                  src={brandLogo.src}
-                  alt={sectionLabel}
-                  width={brandLogo.width}
-                  height={brandLogo.height}
-                  className="object-contain"
-                />
-              )}
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
-                {sectionLabel}
-              </p>
-              {/* Tagline inline — desktop only */}
-              {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
-                <span className="hidden md:flex">
-                  <BrandTagline key={brandFilter} brand={brandFilter} />
-                </span>
+          {isJordan ? (
+            <JordanBrandHeader brand="JORDAN" />
+          ) : (
+            /* Section label — light / non-Jordan */
+            <div className="mb-10">
+              {/* Row 1: logo + name. Desktop adds gold line before. */}
+              <div className="flex items-center gap-4">
+                <div className={brandLogo ? 'hidden md:block h-px w-8 bg-gold' : 'h-px w-8 bg-gold'} aria-hidden />
+                {brandLogo && (
+                  <Image
+                    src={brandLogo.src}
+                    alt={sectionLabel}
+                    width={brandLogo.width}
+                    height={brandLogo.height}
+                    className="object-contain"
+                  />
+                )}
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
+                  {sectionLabel}
+                </p>
+                {/* Tagline inline — desktop only */}
+                {(brandFilter === 'NIKE' || brandFilter === 'ADIDAS') && (
+                  <span className="hidden md:flex">
+                    <BrandTagline key={brandFilter} brand={brandFilter} />
+                  </span>
+                )}
+              </div>
+
+              {/* Row 2: gold line + large tagline — mobile only */}
+              {(brandFilter === 'NIKE' || brandFilter === 'ADIDAS') && (
+                <div className="flex items-center gap-3 mt-3 md:hidden">
+                  <div className="h-px w-8 bg-gold shrink-0" aria-hidden />
+                  <BrandTagline key={`${brandFilter}-lg`} brand={brandFilter} large />
+                </div>
               )}
             </div>
+          )}
 
-            {/* Row 2: gold line + large tagline — mobile only */}
-            {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
-              <div className="flex items-center gap-3 mt-3 md:hidden">
-                <div className="h-px w-8 bg-gold shrink-0" aria-hidden />
-                <BrandTagline key={`${brandFilter}-lg`} brand={brandFilter} large />
-              </div>
-            )}
-          </div>
-
-          <div className={brandFilter ? 'lg:pr-[200px] xl:pr-[240px]' : ''}>
+          <div className={!isJordan && brandFilter ? 'lg:pr-[200px] xl:pr-[240px]' : ''}>
             <ProductsWithFilters
               products={products}
               initialCategory={category ?? 'Todo'}
+              dark={isJordan}
+              brand={brandFilter}
             />
           </div>
 

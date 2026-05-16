@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 3. Validar campos requeridos
-  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand, active } = body as Record<string, unknown>
+  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand, active, colors } = body as Record<string, unknown>
 
   if (
     typeof name !== 'string' || !name.trim() ||
@@ -38,6 +38,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Marca inválida' }, { status: 400 })
   }
 
+  const HEX_RE = /^#[0-9A-Fa-f]{6}$/
+  let normalizedColors: string[] = []
+  if (colors !== undefined) {
+    if (!Array.isArray(colors) || !colors.every((c) => typeof c === 'string' && HEX_RE.test(c))) {
+      return NextResponse.json(
+        { error: 'colors debe ser un array de hex codes válidos (#RRGGBB)' },
+        { status: 400 }
+      )
+    }
+    normalizedColors = (colors as string[]).map((c) => c.toUpperCase())
+  }
+
   try {
     const category = await prisma.category.findUnique({ where: { slug: categorySlug } })
     if (!category) {
@@ -52,6 +64,7 @@ export async function POST(request: NextRequest) {
         price: Math.round(price),
         comparePrice: comparePrice != null ? Math.round(Number(comparePrice)) : null,
         images: images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0),
+        colors: normalizedColors,
         categoryId: category.id,
         stock: Math.round(stock),
         featured: featured === true,

@@ -19,7 +19,7 @@ export async function PUT(
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand, active } =
+  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand, active, colors } =
     body as Record<string, unknown>
 
   if (
@@ -37,6 +37,18 @@ export async function PUT(
   const VALID_BRANDS = ['NIKE', 'JORDAN', 'ADIDAS', 'OTROS']
   if (brand !== undefined && !VALID_BRANDS.includes(brand as string)) {
     return NextResponse.json({ error: 'Marca inválida' }, { status: 400 })
+  }
+
+  const HEX_RE = /^#[0-9A-Fa-f]{6}$/
+  let normalizedColors: string[] = []
+  if (colors !== undefined) {
+    if (!Array.isArray(colors) || !colors.every((c) => typeof c === 'string' && HEX_RE.test(c))) {
+      return NextResponse.json(
+        { error: 'colors debe ser un array de hex codes válidos (#RRGGBB)' },
+        { status: 400 }
+      )
+    }
+    normalizedColors = (colors as string[]).map((c) => c.toUpperCase())
   }
 
   try {
@@ -57,6 +69,7 @@ export async function PUT(
         price: Math.round(price),
         comparePrice: comparePrice != null ? Math.round(Number(comparePrice)) : null,
         images: images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0),
+        colors: normalizedColors,
         categoryId: category.id,
         stock: Math.round(stock),
         featured: featured === true,

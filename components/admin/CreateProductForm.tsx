@@ -36,6 +36,33 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
     active: true,
   })
 
+  const [colors, setColors] = useState<string[]>([])
+  const [colorInput, setColorInput] = useState('')
+  const [colorError, setColorError] = useState<string | null>(null)
+
+  const HEX_RE = /^#[0-9A-Fa-f]{6}$/
+
+  function addColor() {
+    const raw = colorInput.trim()
+    if (!raw) return
+    if (!HEX_RE.test(raw)) {
+      setColorError('Formato inválido. Usá #RRGGBB (ej: #000000)')
+      return
+    }
+    const normalized = raw.toUpperCase()
+    if (colors.includes(normalized)) {
+      setColorError('Ese color ya está agregado')
+      return
+    }
+    setColors((prev) => [...prev, normalized])
+    setColorInput('')
+    setColorError(null)
+  }
+
+  function removeColor(hex: string) {
+    setColors((prev) => prev.filter((c) => c !== hex))
+  }
+
   function handleNameChange(value: string) {
     setForm((prev) => ({
       ...prev,
@@ -82,6 +109,9 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
       featured: false,
       active: true,
     })
+    setColors([])
+    setColorInput('')
+    setColorError(null)
     setSlugManuallyEdited(false)
     setError(null)
   }
@@ -120,6 +150,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
           stock: Number(form.stock),
           featured: form.featured,
           active: form.active,
+          colors,
         }),
       })
 
@@ -383,6 +414,68 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
                     + Agregar imagen
                   </button>
                 </div>
+              </div>
+
+              {/* Colores */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+                  Colores (hex)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={colorInput}
+                    placeholder="#000000"
+                    onChange={(e) => {
+                      setColorInput(e.target.value)
+                      if (colorError) setColorError(null)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        addColor()
+                      }
+                    }}
+                    className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors flex-1"
+                  />
+                  <button
+                    type="button"
+                    onClick={addColor}
+                    className="flex h-[38px] items-center border border-border px-3 text-[9px] font-semibold uppercase tracking-[0.15em] text-muted transition-colors hover:border-foreground hover:text-foreground shrink-0"
+                  >
+                    Agregar
+                  </button>
+                </div>
+                {colorError && (
+                  <p className="text-[11px] font-medium text-destructive">{colorError}</p>
+                )}
+                {colors.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {colors.map((c) => (
+                      <span
+                        key={c}
+                        className="flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs"
+                      >
+                        <span
+                          aria-hidden
+                          className="inline-block h-3 w-3 border border-border"
+                          style={{ backgroundColor: c }}
+                        />
+                        <span className="font-mono">{c}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeColor(c)}
+                          className="text-muted hover:text-destructive transition-colors"
+                          aria-label={`Eliminar ${c}`}
+                        >
+                          <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+                            <path d="M1 1l8 8M9 1L1 9" />
+                          </svg>
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Stock */}

@@ -41,6 +41,7 @@ model Product {
   price        Int
   comparePrice Int?
   images       String[]
+  colors       String[]    @default([])
   categoryId   String
   category     Category    @relation(fields: [categoryId], references: [id])
   stock        Int         @default(0)

@@ -14,6 +14,7 @@ export type CartProduct = {
 export type CartItem = {
   product: CartProduct
   size?: string
+  color?: string
   quantity: number
 }
 
@@ -22,10 +23,10 @@ type CartStore = {
   isOpen: boolean
   openCart: () => void
   closeCart: () => void
-  addItem: (product: CartProduct, quantity?: number, size?: string) => void
-  removeItem: (productId: string, size?: string) => void
-  updateQuantity: (productId: string, quantity: number, size?: string) => void
-  updateSize: (productId: string, oldSize: string | undefined, newSize: string) => void
+  addItem: (product: CartProduct, quantity?: number, size?: string, color?: string) => void
+  removeItem: (productId: string, size?: string, color?: string) => void
+  updateQuantity: (productId: string, quantity: number, size?: string, color?: string) => void
+  updateSize: (productId: string, oldSize: string | undefined, newSize: string, color?: string) => void
   clearCart: () => void
   getItemCount: () => number
   getTotal: () => number
@@ -40,61 +41,72 @@ const useCartStore = create<CartStore>()(
       openCart: () => set({ isOpen: true }),
       closeCart: () => set({ isOpen: false }),
 
-      addItem: (product, quantity = 1, size) => {
+      addItem: (product, quantity = 1, size, color) => {
         set((state) => {
           const existing = state.items.find(
-            (i) => i.product.id === product.id && i.size === size
+            (i) => i.product.id === product.id && i.size === size && i.color === color
           )
           if (existing) {
             return {
               items: state.items.map((i) =>
-                i.product.id === product.id && i.size === size
+                i.product.id === product.id && i.size === size && i.color === color
                   ? { ...i, quantity: i.quantity + quantity }
                   : i
               ),
             }
           }
-          return { items: [...state.items, { product, size, quantity }] }
+          return { items: [...state.items, { product, size, color, quantity }] }
         })
       },
 
-      removeItem: (productId, size) => {
+      removeItem: (productId, size, color) => {
         set((state) => ({
           items: state.items.filter(
-            (i) => !(i.product.id === productId && i.size === size)
+            (i) => !(i.product.id === productId && i.size === size && i.color === color)
           ),
         }))
       },
 
-      updateQuantity: (productId, quantity, size) => {
+      updateQuantity: (productId, quantity, size, color) => {
         if (quantity <= 0) {
-          get().removeItem(productId, size)
+          get().removeItem(productId, size, color)
           return
         }
         set((state) => ({
           items: state.items.map((i) =>
-            i.product.id === productId && i.size === size
+            i.product.id === productId && i.size === size && i.color === color
               ? { ...i, quantity }
               : i
           ),
         }))
       },
 
-      updateSize: (productId, oldSize, newSize) => {
+      updateSize: (productId, oldSize, newSize, color) => {
         set((state) => {
           const item = state.items.find(
-            (i) => i.product.id === productId && (i.size ?? '') === (oldSize ?? '')
+            (i) =>
+              i.product.id === productId &&
+              (i.size ?? '') === (oldSize ?? '') &&
+              i.color === color
           )
           if (!item) return state
           const conflict = state.items.find(
-            (i) => i.product.id === productId && i.size === newSize
+            (i) =>
+              i.product.id === productId && i.size === newSize && i.color === color
           )
           if (conflict) {
             return {
               items: state.items
-                .filter((i) => !(i.product.id === productId && (i.size ?? '') === (oldSize ?? '')))
+                .filter(
+                  (i) =>
+                    !(
+                      i.product.id === productId &&
+                      (i.size ?? '') === (oldSize ?? '') &&
+                      i.color === color
+                    )
+                )
                 .map((i) =>
-                  i.product.id === productId && i.size === newSize
+                  i.product.id === productId && i.size === newSize && i.color === color
                     ? { ...i, quantity: i.quantity + item.quantity }
                     : i
                 ),
@@ -102,7 +114,9 @@ const useCartStore = create<CartStore>()(
           }
           return {
             items: state.items.map((i) =>
-              i.product.id === productId && (i.size ?? '') === (oldSize ?? '')
+              i.product.id === productId &&
+              (i.size ?? '') === (oldSize ?? '') &&
+              i.color === color
                 ? { ...i, size: newSize }
                 : i
             ),
