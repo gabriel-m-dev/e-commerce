@@ -128,7 +128,7 @@ export default function ProductsWithFilters({
             data-jordan-mobile-nav
             className="sticky z-40 pb-1 lg:hidden"
             style={{
-              top: 'var(--jordan-logo-height, 77px)',
+              top: 'calc(var(--jordan-logo-height, 77px) - 1px)',
               marginLeft: 'calc(50% - 50vw)',
               marginRight: 'calc(50% - 50vw)',
               paddingLeft: 'calc(50vw - 50%)',
@@ -139,6 +139,7 @@ export default function ProductsWithFilters({
               className={`absolute inset-0 bg-[#0a0a0a] transition-opacity duration-200 ${
                 isMobileNavPinned ? 'opacity-100' : 'opacity-0'
               }`}
+              style={{ top: '-1px' }}
               aria-hidden
             />
             <div className="relative flex flex-wrap gap-2">

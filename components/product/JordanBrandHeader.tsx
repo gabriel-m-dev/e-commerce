@@ -142,17 +142,18 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
           className={`absolute inset-0 bg-[#0a0a0a] transition-opacity duration-200 ${
             isLogoPinned ? 'opacity-100' : 'opacity-0'
           }`}
+          style={{ bottom: '-1px' }}
           aria-hidden
         />
         <div
-          className={`relative flex items-center transition-[justify-content] duration-300 ${
+          className={`relative flex items-center transition-[justify-content] duration-180 ${
             isLogoCollapsed ? 'justify-center' : 'justify-start'
           }`}
         >
           <div
-            className={`relative shrink-0 transition-all duration-300 ${
+            className={`relative shrink-0 transition-all duration-180 ${
               isLogoCollapsed
-                ? 'h-[84.8px] w-[84.8px] max-[374px]:h-16 max-[374px]:w-16 sm:h-[102.4px] sm:w-[102.4px] md:h-[121.6px] md:w-[121.6px]'
+                ? 'h-[100.7px] w-[100.7px] max-[374px]:h-[76px] max-[374px]:w-[76px] sm:h-[121.6px] sm:w-[121.6px] md:h-[144.4px] md:w-[144.4px]'
                 : 'h-[53px] w-[53px] max-[374px]:h-[40px] max-[374px]:w-[40px] sm:h-[64px] sm:w-[64px] md:h-[76px] md:w-[76px] lg:h-[88px] lg:w-[88px]'
             }`}
           >
