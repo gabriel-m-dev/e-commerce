@@ -285,7 +285,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
         />
         <div className="relative flex items-center">
           <div
-            className={`relative h-[90px] w-[90px] shrink-0 transition-opacity duration-150 max-[374px]:h-[68px] max-[374px]:w-[68px] sm:h-[109px] sm:w-[109px] md:h-[129px] md:w-[129px] lg:h-[150px] lg:w-[150px] ${
+            className={`relative h-[53px] w-[53px] shrink-0 transition-opacity duration-150 max-[374px]:h-[40px] max-[374px]:w-[40px] sm:h-[64px] sm:w-[64px] md:h-[76px] md:w-[76px] lg:h-[88px] lg:w-[88px] ${
               isLogoCollapsed ? 'opacity-0' : 'opacity-100'
             }`}
           >
@@ -293,7 +293,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
               src={copy.logoSrc}
               alt={copy.logoAlt}
               fill
-              sizes="(max-width: 374px) 68px, (max-width: 640px) 90px, (max-width: 768px) 109px, (max-width: 1024px) 129px, 150px"
+              sizes="(max-width: 374px) 40px, (max-width: 640px) 53px, (max-width: 768px) 64px, (max-width: 1024px) 76px, 88px"
               className="object-contain"
               style={isDark ? { filter: GOLD_FILTER } : undefined}
             />
@@ -313,12 +313,12 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
             }`}
             aria-hidden
           >
-            <div className="relative h-[111px] w-[111px] max-[374px]:h-[84px] max-[374px]:w-[84px] sm:h-[134px] sm:w-[134px] md:h-[160px] md:w-[160px] lg:h-[185px] lg:w-[185px]">
+            <div className="relative h-[100.7px] w-[100.7px] max-[374px]:h-[76px] max-[374px]:w-[76px] sm:h-[121.6px] sm:w-[121.6px] md:h-[144.4px] md:w-[144.4px]">
               <Image
                 src={copy.logoSrc}
                 alt=""
                 fill
-                sizes="(max-width: 374px) 84px, (max-width: 640px) 111px, (max-width: 768px) 134px, (max-width: 1024px) 160px, 185px"
+                sizes="(max-width: 374px) 76px, (max-width: 640px) 100px, (max-width: 768px) 122px, 144px"
                 className="object-contain"
                 style={isDark ? { filter: GOLD_FILTER } : undefined}
               />
