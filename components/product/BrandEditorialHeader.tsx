@@ -100,6 +100,9 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
       rootStyle.setProperty(heightVarName, `${logoRowRef.current.offsetHeight}px`)
     }
 
+    let prevCollapsed: boolean | null = null
+    let alignTimeoutId: number | undefined
+
     const syncCollapsedState = () => {
       if (!logoRowRef.current) {
         setIsLogoCollapsed(false)
@@ -120,7 +123,20 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
 
       const navInner = mobileNav.querySelector('[data-brand-nav-inner]')
       if (navInner instanceof HTMLElement) {
-        navInner.style.justifyContent = collapsed ? 'center' : ''
+        const stateChanged = prevCollapsed !== null && collapsed !== prevCollapsed
+        prevCollapsed = collapsed
+
+        if (stateChanged) {
+          window.clearTimeout(alignTimeoutId)
+          navInner.style.transition = 'opacity 90ms ease'
+          navInner.style.opacity = '0'
+          alignTimeoutId = window.setTimeout(() => {
+            navInner.style.justifyContent = collapsed ? 'center' : ''
+            navInner.style.opacity = '1'
+          }, 90)
+        } else {
+          navInner.style.justifyContent = collapsed ? 'center' : ''
+        }
       }
 
       const navCollapsedBg = mobileNav.querySelector('[data-brand-nav-collapsed-bg]')
@@ -178,9 +194,13 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
         navbar.style.position = previousNavbarPosition
       }
 
+      window.clearTimeout(alignTimeoutId)
+
       const mobileNav = document.querySelector(`[data-brand-mobile-nav="${brand}"]`)
       const navInner = mobileNav?.querySelector('[data-brand-nav-inner]')
       if (navInner instanceof HTMLElement) {
+        navInner.style.transition = ''
+        navInner.style.opacity = ''
         navInner.style.justifyContent = ''
       }
       const navCollapsedBg = mobileNav?.querySelector('[data-brand-nav-collapsed-bg]')

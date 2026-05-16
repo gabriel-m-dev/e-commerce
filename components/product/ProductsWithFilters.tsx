@@ -140,7 +140,7 @@ export default function ProductsWithFilters({
             <div
               data-brand-nav-collapsed-bg
               className="pointer-events-none absolute inset-0"
-              style={{ top: '-1px', backgroundColor: '#000000', opacity: 0, transition: 'opacity 200ms' }}
+              style={{ top: '-1px', backgroundColor: editorialTheme === 'dark' ? '#0a0a0a' : '#ffffff', opacity: 0, transition: 'opacity 180ms' }}
               aria-hidden
             />
             <div data-brand-nav-inner className="relative flex flex-wrap gap-2">
