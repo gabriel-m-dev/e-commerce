@@ -12,6 +12,7 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
   const stickySentinelRef = useRef<HTMLDivElement>(null)
   const [isLogoPinned, setIsLogoPinned] = useState(false)
   const [isLogoCollapsed, setIsLogoCollapsed] = useState(false)
+  const [isSloganAccentSwapped, setIsSloganAccentSwapped] = useState(false)
 
   void brand
 
@@ -103,6 +104,16 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
       if (navbar instanceof HTMLElement) {
         navbar.style.position = previousNavbarPosition
       }
+    }
+  }, [])
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setIsSloganAccentSwapped(true)
+    }, 2000)
+
+    return () => {
+      window.clearTimeout(timeoutId)
     }
   }, [])
 
@@ -200,8 +211,34 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
         <div className="jordan-row2 mt-3 flex items-center gap-3 max-[374px]:mt-2 sm:mt-4 sm:gap-4">
           <div className="h-px w-8 max-[374px]:w-6 sm:w-10 md:w-12 bg-gold shrink-0" aria-hidden />
           <p className="text-3xl max-[374px]:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold uppercase tracking-[0.07em] text-white leading-tight">
-            <span className="max-[470px]:block">DREAM IT,</span>
-            <span className="max-[470px]:block">DO IT<span className="text-gold ml-1"> .</span></span>
+            <span className="max-[470px]:block">
+              DREAM IT
+              <span
+                className={`transition-colors duration-300 ${
+                  isSloganAccentSwapped ? 'text-white' : 'text-gold'
+                }`}
+              >
+                ,
+              </span>
+            </span>
+            <span className="max-[470px]:block">
+              DO IT
+              <span className="relative ml-1 inline-flex h-[0.8em] w-[0.8em] align-middle">
+                <span
+                  className={`absolute inset-0 flex items-center justify-center text-white transition-opacity duration-300 ${
+                    isSloganAccentSwapped ? 'opacity-0' : 'opacity-100'
+                  }`}
+                >
+                  .
+                </span>
+                <span
+                  className={`absolute left-1/2 top-[76%] h-[0.22em] w-[0.22em] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold transition-all duration-300 ${
+                    isSloganAccentSwapped ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
+                  }`}
+                  aria-hidden
+                />
+              </span>
+            </span>
           </p>
         </div>
       </div>
