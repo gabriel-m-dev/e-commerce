@@ -93,9 +93,34 @@ export default async function ProductsPage({
         }}
       />
       <main>
-      <section className="relative bg-background min-h-[960px] lg:min-h-[1320px]">
+      <section className="relative bg-background overflow-hidden">
 
-        {/* Overflow-hidden wrapper: clips BrandBgImage slide-in animation only */}
+        {/* Jordan editorial watermark — first in DOM = behind bg image */}
+        {brandFilter === 'JORDAN' && (
+          <div
+            className="pointer-events-none select-none absolute right-0 top-0 bottom-0 w-[120px] flex items-center justify-center"
+            aria-hidden
+          >
+            <span
+              style={{
+                fontSize: '80px',
+                fontWeight: 900,
+                color: 'transparent',
+                WebkitTextStroke: '1.5px rgba(0,0,0,0.15)',
+                whiteSpace: 'nowrap',
+                lineHeight: 1,
+                letterSpacing: '0.12em',
+                filter: 'blur(0.3px)',
+                transform: 'rotate(-90deg)',
+                display: 'block',
+              }}
+            >
+              JORDAN
+            </span>
+          </div>
+        )}
+
+        {/* BrandBgImage — second in DOM = above watermark */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
           {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
             <BrandBgImage
@@ -105,30 +130,6 @@ export default async function ProductsPage({
             />
           )}
         </div>
-
-        {/* Jordan editorial watermark — full word, no fade */}
-        {brandFilter === 'JORDAN' && (
-          <div
-            className="pointer-events-none select-none absolute right-0 top-0"
-            aria-hidden
-          >
-            <span
-              className="block text-[160px] lg:text-[220px]"
-              style={{
-                fontWeight: 900,
-                color: 'transparent',
-                WebkitTextStroke: '1.5px rgba(0,0,0,0.12)',
-                writingMode: 'vertical-rl',
-                textOrientation: 'mixed',
-                lineHeight: 1,
-                letterSpacing: '-0.02em',
-                filter: 'blur(0.3px)',
-              }}
-            >
-              JORDAN
-            </span>
-          </div>
-        )}
 
         <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
 
