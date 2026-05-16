@@ -97,7 +97,11 @@ export default async function ProductsPage({
 
         {/* Brand bg — flush right edge */}
         {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
-          <BrandBgImage key={brandFilter} brand={brandFilter} />
+          <BrandBgImage
+            key={brandFilter}
+            brand={brandFilter}
+            objectPosition={brandFilter === 'NIKE' ? 'center top' : 'right top'}
+          />
         )}
 
         <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">

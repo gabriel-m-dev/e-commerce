@@ -10,9 +10,10 @@ const BRAND_IMAGES = {
 
 interface BrandBgImageProps {
   brand: keyof typeof BRAND_IMAGES
+  objectPosition?: string
 }
 
-export default function BrandBgImage({ brand }: BrandBgImageProps) {
+export default function BrandBgImage({ brand, objectPosition = 'right top' }: BrandBgImageProps) {
   return (
     <>
       <style>{`
@@ -30,8 +31,9 @@ export default function BrandBgImage({ brand }: BrandBgImageProps) {
           src={BRAND_IMAGES[brand]}
           alt=""
           fill
-          sizes="(min-width: 1280px) 240px, (min-width: 1024px) 200px, (min-width: 768px) 160px, 120px"
-          className="object-contain object-right-top"
+          sizes="(min-width: 1280px) 240px, (min-width: 1024px) 200px, (min-width: 768px) 160px, 168px"
+          className="object-contain"
+          style={{ objectPosition }}
           priority
         />
       </div>
