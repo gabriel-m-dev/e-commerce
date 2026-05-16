@@ -212,7 +212,7 @@ export default async function ProductsPage({
         <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
 
           {isEditorialBrand && brandFilter ? (
-            <BrandEditorialHeader brand={brandFilter as 'NIKE' | 'JORDAN' | 'ADIDAS'} theme={isJordan ? 'dark' : 'light'} />
+            <BrandEditorialHeader key={brandFilter} brand={brandFilter as 'NIKE' | 'JORDAN' | 'ADIDAS'} theme={isJordan ? 'dark' : 'light'} />
           ) : (
             /* Section label — light / non-Jordan */
             <div className="mb-10">
