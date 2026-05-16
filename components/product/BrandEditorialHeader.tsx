@@ -221,6 +221,11 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
         }
         .brand-row1 { animation: brand-row1-in 0.5s ease-out 0s both; }
         .brand-row2 { animation: brand-row2-in 0.5s ease-out 0.15s both; }
+        @keyframes adidas-line2-in {
+          from { opacity: 0; transform: translateY(5px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .adidas-line2-in { animation: adidas-line2-in 0.45s ease-out both; }
       `}</style>
       <div ref={stickySentinelRef} className="h-px w-full" aria-hidden />
 
@@ -339,19 +344,17 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
                     ?
                   </span>
                 </span>
-                <span
-                  className={`max-[470px]:block transition-opacity duration-500 ${
-                    adidasPhase === 'answer' ? 'opacity-100' : 'opacity-0'
-                  }`}
-                >
-                  {copy.line2}
-                  <span className="relative ml-1 inline-flex h-[0.8em] w-[0.8em] align-middle">
-                    <span
-                      className="absolute left-1/2 top-[76%] h-[0.22em] w-[0.22em] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold"
-                      aria-hidden
-                    />
+                {adidasPhase === 'answer' && (
+                  <span className="adidas-line2-in max-[470px]:block">
+                    {copy.line2}
+                    <span className="relative ml-1 inline-flex h-[0.8em] w-[0.8em] align-middle">
+                      <span
+                        className="absolute left-1/2 top-[76%] h-[0.22em] w-[0.22em] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold"
+                        aria-hidden
+                      />
+                    </span>
                   </span>
-                </span>
+                )}
               </>
             ) : (
               <>
