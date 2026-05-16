@@ -30,7 +30,7 @@ export default function BrandTagline({ brand, large }: BrandTaglineProps) {
       `}</style>
       <div className="flex items-center gap-3" style={{ animation: 'brand-tagline-in 0.5s ease-out 0.15s both' }}>
         {!large && <span className="w-px h-3 bg-foreground/20" aria-hidden />}
-        <p className={`font-semibold uppercase leading-tight ${large ? 'text-sm tracking-[0.18em] text-foreground/70' : 'text-[11px] tracking-[0.22em] text-foreground/60'}`}>
+        <p className={`font-black uppercase leading-tight ${large ? 'text-3xl tracking-tight text-foreground' : 'text-[11px] font-semibold tracking-[0.22em] text-foreground/60'}`}>
           {lines.map((line, i) => (
             <span key={i} className="btagline-line">
               {line}
