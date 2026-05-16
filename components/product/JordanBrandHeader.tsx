@@ -11,6 +11,7 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
   const logoRowRef = useRef<HTMLDivElement>(null)
   const stickySentinelRef = useRef<HTMLDivElement>(null)
   const [isLogoPinned, setIsLogoPinned] = useState(false)
+  const [isLogoCollapsed, setIsLogoCollapsed] = useState(false)
 
   void brand
 
@@ -30,8 +31,29 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
       rootStyle.setProperty('--jordan-logo-height', `${logoRowRef.current.offsetHeight}px`)
     }
 
+    const syncCollapsedState = () => {
+      if (!logoRowRef.current || mediaQuery.matches) {
+        setIsLogoCollapsed(false)
+        return
+      }
+
+      const mobileNav = document.querySelector('[data-jordan-mobile-nav]')
+
+      if (!(mobileNav instanceof HTMLElement)) {
+        setIsLogoCollapsed(false)
+        return
+      }
+
+      const logoRect = logoRowRef.current.getBoundingClientRect()
+      const navRect = mobileNav.getBoundingClientRect()
+      const navTouchesLogo = navRect.top <= logoRect.bottom + 1
+
+      setIsLogoCollapsed(navTouchesLogo)
+    }
+
     syncNavbarPosition()
     syncLogoHeight()
+    syncCollapsedState()
 
     const resizeObserver = typeof ResizeObserver !== 'undefined'
       ? new ResizeObserver(syncLogoHeight)
@@ -57,17 +79,23 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
     const handleViewportChange = () => {
       syncNavbarPosition()
       syncLogoHeight()
+      syncCollapsedState()
       if (mediaQuery.matches) {
         setIsLogoPinned(false)
+        setIsLogoCollapsed(false)
       }
     }
 
     mediaQuery.addEventListener('change', handleViewportChange)
     window.addEventListener('resize', syncLogoHeight)
+    window.addEventListener('resize', syncCollapsedState)
+    window.addEventListener('scroll', syncCollapsedState, { passive: true })
 
     return () => {
       mediaQuery.removeEventListener('change', handleViewportChange)
       window.removeEventListener('resize', syncLogoHeight)
+      window.removeEventListener('resize', syncCollapsedState)
+      window.removeEventListener('scroll', syncCollapsedState)
       resizeObserver?.disconnect()
       intersectionObserver?.disconnect()
       rootStyle.removeProperty('--jordan-logo-height')
@@ -116,8 +144,18 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
           }`}
           aria-hidden
         />
-        <div className="relative flex items-center gap-3 max-[374px]:gap-2 sm:gap-4">
-          <div className="relative h-[53px] w-[53px] shrink-0 max-[374px]:h-[40px] max-[374px]:w-[40px] sm:h-[64px] sm:w-[64px] md:h-[76px] md:w-[76px] lg:h-[88px] lg:w-[88px]">
+        <div
+          className={`relative flex items-center transition-[justify-content] duration-300 ${
+            isLogoCollapsed ? 'justify-center' : 'justify-start'
+          }`}
+        >
+          <div
+            className={`relative shrink-0 transition-all duration-300 ${
+              isLogoCollapsed
+                ? 'h-[84.8px] w-[84.8px] max-[374px]:h-16 max-[374px]:w-16 sm:h-[102.4px] sm:w-[102.4px] md:h-[121.6px] md:w-[121.6px]'
+                : 'h-[53px] w-[53px] max-[374px]:h-[40px] max-[374px]:w-[40px] sm:h-[64px] sm:w-[64px] md:h-[76px] md:w-[76px] lg:h-[88px] lg:w-[88px]'
+            }`}
+          >
             <Image
               src="/jordan_logo.png"
               alt="Jordan"
@@ -130,7 +168,13 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
               }}
             />
           </div>
-          <p className="text-[12px] max-[374px]:text-[10px] sm:text-[14px] md:text-[16px] lg:text-[19px] font-semibold uppercase tracking-[0.28em] text-gold">
+          <p
+            className={`ml-3 text-[12px] font-semibold uppercase tracking-[0.28em] text-gold transition-all duration-300 max-[374px]:ml-2 max-[374px]:text-[10px] sm:ml-4 sm:text-[14px] md:text-[16px] lg:text-[19px] ${
+              isLogoCollapsed
+                ? 'pointer-events-none max-w-0 translate-x-2 opacity-0'
+                : 'max-w-[240px] translate-x-0 opacity-100'
+            }`}
+          >
             JORDAN
           </p>
         </div>

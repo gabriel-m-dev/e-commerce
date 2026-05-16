@@ -125,6 +125,7 @@ export default function ProductsWithFilters({
 
           {/* Grouped nav — hasta lg */}
           <div
+            data-jordan-mobile-nav
             className="sticky z-40 pb-1 lg:hidden"
             style={{
               top: 'var(--jordan-logo-height, 77px)',
