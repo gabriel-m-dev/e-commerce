@@ -93,7 +93,8 @@ export default async function ProductsPage({
         {/* Editorial watermark for brand pages */}
         {brandFilter === 'JORDAN' && (
           <div
-            className="pointer-events-none select-none absolute right-[-16px] top-0 bottom-0 w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center z-[20]"
+            className="pointer-events-none select-none absolute right-[-16px] top-0 w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center z-[20]"
+            style={{ height: 'clamp(300px, 38vh, 520px)' }}
             aria-hidden
           >
             <div

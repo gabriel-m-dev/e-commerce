@@ -153,6 +153,8 @@ export default function ProductsWithFilters({
     return list
   }, [products, activeCategory, sort, search])
 
+  const isDarkJordanEmpty = dark && brand === 'JORDAN' && filtered.length === 0
+
   return (
     <div>
       {/* Header row: tabs + sort + count */}
@@ -451,7 +453,7 @@ export default function ProductsWithFilters({
       )}
 
       {/* Sort (editorial brand pages) */}
-      {usesGroupedNav && (
+      {usesGroupedNav && !isDarkJordanEmpty && (
         <div className="mt-4 flex items-center gap-2">
           <span className={`text-[9px] uppercase tracking-[0.2em] ${dark ? 'text-white/40' : 'text-muted'}`}>
             Ordenar
@@ -481,13 +483,15 @@ export default function ProductsWithFilters({
       )}
 
       {/* Result count */}
-      <p
-        className={`mt-4 text-[10px] uppercase tracking-[0.18em] ${
-          dark ? 'text-white/40' : 'text-muted'
-        }`}
-      >
-        {filtered.length} {filtered.length === 1 ? 'producto' : 'productos'}
-      </p>
+      {!isDarkJordanEmpty && (
+        <p
+          className={`mt-4 text-[10px] uppercase tracking-[0.18em] ${
+            dark ? 'text-white/40' : 'text-muted'
+          }`}
+        >
+          {filtered.length} {filtered.length === 1 ? 'producto' : 'productos'}
+        </p>
+      )}
 
       {/* Product grid */}
       {filtered.length > 0 ? (
@@ -826,7 +830,7 @@ export default function ProductsWithFilters({
             )
           })}
         </div>
-      ) : (
+      ) : !isDarkJordanEmpty ? (
         <div className="mt-20 flex flex-col items-center gap-3 text-center">
           <p
             className={`text-[11px] font-semibold uppercase tracking-[0.22em] ${
@@ -841,7 +845,7 @@ export default function ProductsWithFilters({
               : 'No hay productos en esta categoría.'}
           </p>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }
