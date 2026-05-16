@@ -93,7 +93,7 @@ export default async function ProductsPage({
         }}
       />
       <main>
-      <section className="relative bg-background">
+      <section className="relative bg-background min-h-[960px] lg:min-h-[1320px]">
 
         {/* Overflow-hidden wrapper: clips BrandBgImage slide-in animation only */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
@@ -106,22 +106,18 @@ export default async function ProductsPage({
           )}
         </div>
 
-        {/* Jordan editorial watermark — gradient mask on wrapper so fade completes before clip */}
+        {/* Jordan editorial watermark — full word, no fade */}
         {brandFilter === 'JORDAN' && (
           <div
-            className="pointer-events-none select-none absolute right-0 top-0 bottom-0 overflow-hidden flex items-start justify-end"
+            className="pointer-events-none select-none absolute right-0 top-0"
             aria-hidden
-            style={{
-              WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 55%, transparent 92%)',
-              maskImage: 'linear-gradient(to bottom, black 0%, black 55%, transparent 92%)',
-            }}
           >
             <span
+              className="block text-[160px] lg:text-[220px]"
               style={{
-                fontSize: '260px',
                 fontWeight: 900,
                 color: 'transparent',
-                WebkitTextStroke: '1px rgba(0,0,0,0.05)',
+                WebkitTextStroke: '1.5px rgba(0,0,0,0.12)',
                 writingMode: 'vertical-rl',
                 textOrientation: 'mixed',
                 lineHeight: 1,
