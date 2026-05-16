@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { LUXE_AIR_THUMBNAILS } from '@/lib/data/products'
 import { formatPrice } from '@/lib/utils'
 import useCartStore from '@/store/cart'
@@ -31,21 +32,21 @@ export default function ProductFeature() {
   const mainImage = LUXE_AIR_THUMBNAILS[activeThumb] ?? PRODUCT.image
 
   function handleAddToCart() {
-    addItem(
-      { ...PRODUCT },
-      quantity,
-      selectedSize ? String(selectedSize) : undefined
-    )
+    if (!selectedSize) {
+      toast.error('Seleccioná un talle para continuar')
+      return
+    }
+    addItem({ ...PRODUCT }, quantity, String(selectedSize))
     setAdded(true)
     setTimeout(() => setAdded(false), 1800)
   }
 
   function handleBuyNow() {
-    addItem(
-      { ...PRODUCT },
-      quantity,
-      selectedSize ? String(selectedSize) : undefined
-    )
+    if (!selectedSize) {
+      toast.error('Seleccioná un talle para continuar')
+      return
+    }
+    addItem({ ...PRODUCT }, quantity, String(selectedSize))
     router.push('/checkout')
   }
 
