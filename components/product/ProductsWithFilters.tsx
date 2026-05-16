@@ -10,7 +10,7 @@ import { type DbProduct } from '@/lib/queries/products'
 import { formatPrice } from '@/lib/utils'
 import useCartStore from '@/store/cart'
 import ProductColorSelector from './ProductColorSelector'
-import BrandCollectionBanner from './BrandCollectionBanner'
+import BrandHeroVideo from './BrandHeroVideo'
 
 const PRODUCT_CATEGORIES = [
   'Todo',
@@ -252,129 +252,8 @@ export default function ProductsWithFilters({
         </div>
       )}
 
-      {/* Search + sort (dark only) / Search alone (light) */}
-      {dark ? (
-        <div className="mt-24 flex items-center gap-3">
-          <div className="relative flex-1">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar productos..."
-              className="w-full bg-[#1a1a1a] border border-white/10 pl-9 pr-3 py-2.5 text-[11px] uppercase tracking-[0.15em] text-white placeholder:text-white/30 outline-none focus:border-white/30 rounded-md"
-            />
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="h-8 w-px bg-white/10" aria-hidden />
-            <div className="flex flex-col items-start leading-none gap-0.5">
-              <span className="text-[9px] uppercase tracking-[0.2em] text-white/40">
-                Ordenar
-              </span>
-              <div className="flex items-center gap-1">
-                <select
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value as SortKey)}
-                  className="bg-transparent text-[11px] font-semibold uppercase tracking-[0.15em] text-white outline-none cursor-pointer appearance-none pr-0"
-                  style={{ colorScheme: 'dark' }}
-                >
-                  {SORT_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value} className="bg-[#1a1a1a] text-white">
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-white"
-                  aria-hidden
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : isLightEditorial ? (
-        <div className="mt-24 flex items-center gap-3">
-          <div className="relative flex-1">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/30"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar productos..."
-              className="w-full border border-border bg-white pl-9 pr-3 py-2.5 text-[11px] uppercase tracking-[0.15em] text-foreground placeholder:text-muted outline-none focus:border-foreground rounded-md"
-            />
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="h-8 w-px bg-border" aria-hidden />
-            <div className="flex flex-col items-start leading-none gap-0.5">
-              <span className="text-[9px] uppercase tracking-[0.2em] text-muted">
-                Ordenar
-              </span>
-              <div className="flex items-center gap-1">
-                <select
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value as SortKey)}
-                  className="bg-transparent text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground outline-none cursor-pointer appearance-none pr-0"
-                >
-                  {SORT_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-foreground"
-                  aria-hidden
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
+      {/* Search (non-editorial only) */}
+      {!usesGroupedNav && (
         <div className="mt-4">
           <input
             type="text"
@@ -386,8 +265,40 @@ export default function ProductsWithFilters({
         </div>
       )}
 
-      {/* Banner colección (solo Jordan dark) */}
-      {dark && brand === 'JORDAN' && <BrandCollectionBanner brand="JORDAN" />}
+      {/* Hero video (solo Jordan dark) */}
+      {dark && brand === 'JORDAN' && (
+        <BrandHeroVideo src="/videos/jordan-hero.mp4" />
+      )}
+
+      {/* Sort (editorial brand pages) */}
+      {usesGroupedNav && (
+        <div className="mt-4 flex items-center gap-2">
+          <span className={`text-[9px] uppercase tracking-[0.2em] ${dark ? 'text-white/40' : 'text-muted'}`}>
+            Ordenar
+          </span>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            className={`bg-transparent text-[11px] font-semibold uppercase tracking-[0.15em] outline-none cursor-pointer appearance-none ${dark ? 'text-white' : 'text-foreground'}`}
+            style={dark ? { colorScheme: 'dark' } : undefined}
+          >
+            {SORT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value} className={dark ? 'bg-[#1a1a1a] text-white' : ''}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+          <svg
+            width="10" height="10" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" strokeWidth="2"
+            strokeLinecap="round" strokeLinejoin="round"
+            className={dark ? 'text-white' : 'text-foreground'}
+            aria-hidden
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </div>
+      )}
 
       {/* Result count */}
       <p
