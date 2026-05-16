@@ -43,7 +43,8 @@ export default function HeroSection() {
             alt=""
             fill
             sizes="85vw"
-            className={`object-contain object-right-bottom transition-opacity duration-[800ms] ${i === current ? 'opacity-100' : 'opacity-0'}`}
+            className={`object-contain transition-opacity duration-[800ms] ${i === current ? 'opacity-100' : 'opacity-0'}`}
+            style={{ objectPosition: i === 0 ? 'calc(100% - 20px) bottom' : 'right bottom' }}
             priority={i === 0}
           />
         ))}
