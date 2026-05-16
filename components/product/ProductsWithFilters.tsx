@@ -42,11 +42,13 @@ export default function ProductsWithFilters({
   initialCategory = 'Todo',
   dark = false,
   brand,
+  editorialTheme,
 }: {
   products: DbProduct[]
   initialCategory?: string
   dark?: boolean
   brand?: string
+  editorialTheme?: 'dark' | 'light'
 }) {
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory)
   const [sort, setSort] = useState<SortKey>('relevancia')
@@ -62,9 +64,13 @@ export default function ProductsWithFilters({
   const [selectedColors, setSelectedColors] = useState<Record<string, string>>({})
   const [addedProductId, setAddedProductId] = useState<string | null>(null)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
+  const isEditorialBrand = brand === 'JORDAN' || brand === 'NIKE' || brand === 'ADIDAS'
+  const usesGroupedNav = isEditorialBrand && editorialTheme !== undefined
+  const isLightEditorial = usesGroupedNav && editorialTheme === 'light'
+  const stickyVarName = brand ? `--${brand.toLowerCase()}-logo-height` : '--brand-logo-height'
 
   useEffect(() => {
-    if (!dark) return
+    if (!usesGroupedNav) return
 
     const mediaQuery = window.matchMedia('(min-width: 1024px)')
     const observer = typeof IntersectionObserver !== 'undefined'
@@ -92,7 +98,7 @@ export default function ProductsWithFilters({
       mediaQuery.removeEventListener('change', handleViewportChange)
       observer?.disconnect()
     }
-  }, [dark])
+  }, [usesGroupedNav])
 
   const filtered = useMemo(() => {
     let list = activeCategory === 'Todo'
@@ -113,8 +119,8 @@ export default function ProductsWithFilters({
   return (
     <div>
       {/* Header row: tabs + sort + count */}
-      {dark ? (
-        // === DARK (Jordan) layout ===
+      {usesGroupedNav ? (
+        // === EDITORIAL BRAND layout ===
         <>
           <div ref={mobileNavSentinelRef} className="h-px w-full lg:hidden" aria-hidden />
 
@@ -125,10 +131,10 @@ export default function ProductsWithFilters({
 
           {/* Grouped nav — hasta lg */}
           <div
-            data-jordan-mobile-nav
+            data-brand-mobile-nav={brand}
             className="sticky z-40 pb-1 lg:hidden"
             style={{
-              top: 'calc(var(--jordan-logo-height, 77px) - 1px)',
+              top: `calc(var(${stickyVarName}, 77px) - 1px)`,
               marginLeft: 'calc(50% - 50vw)',
               marginRight: 'calc(50% - 50vw)',
               paddingLeft: 'calc(50vw - 50%)',
@@ -136,10 +142,13 @@ export default function ProductsWithFilters({
             }}
           >
             <div
-              className={`absolute inset-0 bg-[#0a0a0a] transition-opacity duration-200 ${
+              className={`absolute inset-0 transition-opacity duration-200 ${
                 isMobileNavPinned ? 'opacity-100' : 'opacity-0'
               }`}
-              style={{ top: '-1px' }}
+              style={{
+                backgroundColor: editorialTheme === 'dark' ? '#0a0a0a' : '#ffffff',
+                top: '-1px',
+              }}
               aria-hidden
             />
             <div className="relative flex flex-wrap gap-2">
@@ -154,7 +163,9 @@ export default function ProductsWithFilters({
 
               const pillBase = 'shrink-0 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors cursor-pointer border-b-2'
               const pillActive = 'text-gold border-gold'
-              const pillInactive = 'text-white/70 hover:text-white border-transparent'
+              const pillInactive = editorialTheme === 'dark'
+                ? 'text-white/70 hover:text-white border-transparent'
+                : 'text-muted hover:text-foreground border-transparent'
 
               if (!group.sub) {
                 return (
@@ -186,15 +197,21 @@ export default function ProductsWithFilters({
                   </button>
 
                   {openMenu === group.label && (
-                    <div className="absolute left-0 top-full bg-[#1a1a1a] p-1 min-w-[130px]">
+                    <div className={`absolute left-0 top-full p-1 min-w-[130px] ${
+                      editorialTheme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-white border border-border shadow-sm'
+                    }`}>
                       {group.sub.map((subCat) => (
                         <button
                           key={subCat}
                           onClick={() => { setActiveCategory(subCat); setOpenMenu(null) }}
                           className={`block w-full text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md transition-colors cursor-pointer ${
                             activeCategory === subCat
-                              ? 'text-white bg-white/10'
-                              : 'text-white/60 hover:text-white hover:bg-white/5'
+                              ? editorialTheme === 'dark'
+                                ? 'text-white bg-white/10'
+                                : 'text-foreground bg-foreground/5'
+                              : editorialTheme === 'dark'
+                                ? 'text-white/60 hover:text-white hover:bg-white/5'
+                                : 'text-muted hover:text-foreground hover:bg-foreground/3'
                           }`}
                         >
                           {subCat}
@@ -215,7 +232,13 @@ export default function ProductsWithFilters({
                 key={cat}
                 onClick={() => { setActiveCategory(cat); setOpenMenu(null) }}
                 className={`shrink-0 rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors cursor-pointer ${
-                  activeCategory === cat ? 'bg-white text-black' : 'text-white/70 hover:text-white'
+                  activeCategory === cat
+                    ? editorialTheme === 'dark'
+                      ? 'bg-white text-black'
+                      : 'bg-foreground text-background'
+                    : editorialTheme === 'dark'
+                      ? 'text-white/70 hover:text-white'
+                      : 'text-muted hover:text-foreground'
                 }`}
               >
                 {cat}
@@ -317,6 +340,66 @@ export default function ProductsWithFilters({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   className="text-white"
+                  aria-hidden
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : isLightEditorial ? (
+        <div className="mt-24 flex items-center gap-3">
+          <div className="relative flex-1">
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/30"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar productos..."
+              className="w-full border border-border bg-white pl-9 pr-3 py-2.5 text-[11px] uppercase tracking-[0.15em] text-foreground placeholder:text-muted outline-none focus:border-foreground rounded-md"
+            />
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="h-8 w-px bg-border" aria-hidden />
+            <div className="flex flex-col items-start leading-none gap-0.5">
+              <span className="text-[9px] uppercase tracking-[0.2em] text-muted">
+                Ordenar
+              </span>
+              <div className="flex items-center gap-1">
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as SortKey)}
+                  className="bg-transparent text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground outline-none cursor-pointer appearance-none pr-0"
+                >
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+                <svg
+                  width="10"
+                  height="10"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-foreground"
                   aria-hidden
                 >
                   <polyline points="6 9 12 15 18 9" />
