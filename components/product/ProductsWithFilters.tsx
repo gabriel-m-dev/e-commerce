@@ -10,58 +10,7 @@ import { type DbProduct } from '@/lib/queries/products'
 import { formatPrice } from '@/lib/utils'
 import useCartStore from '@/store/cart'
 import ProductColorSelector from './ProductColorSelector'
-import BrandHeroVideo from './BrandHeroVideo'
-
-const JORDAN_FEATURED_PRODUCTS = [
-  {
-    id: 'jordan-feat-1',
-    name: 'Air Jordan 1 Retro High OG',
-    slug: 'air-jordan-1-retro-high-og',
-    price: 185000,
-    comparePrice: 220000,
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
-    category: 'Zapatillas',
-    categorySlug: 'zapatillas',
-    colors: ['#C41E3A', '#000000'] as string[],
-    stock: 8,
-  },
-  {
-    id: 'jordan-feat-2',
-    name: 'Jordan Essentials Hoodie',
-    slug: 'jordan-essentials-hoodie',
-    price: 95000,
-    comparePrice: null as number | null,
-    image: 'https://images.unsplash.com/photo-1556906781-9a412961a28c?w=600&q=80',
-    category: 'Hoodies',
-    categorySlug: 'hoodies',
-    colors: [] as string[],
-    stock: 15,
-  },
-  {
-    id: 'jordan-feat-3',
-    name: 'Air Jordan 11 Retro Low',
-    slug: 'air-jordan-11-retro-low',
-    price: 210000,
-    comparePrice: null as number | null,
-    image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=600&q=80',
-    category: 'Zapatillas',
-    categorySlug: 'zapatillas',
-    colors: ['#FFFFFF', '#000000'] as string[],
-    stock: 5,
-  },
-  {
-    id: 'jordan-feat-4',
-    name: 'Jordan Sport Dri-FIT Tee',
-    slug: 'jordan-sport-dri-fit-tee',
-    price: 68000,
-    comparePrice: 82000 as number | null,
-    image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80',
-    category: 'Remeras',
-    categorySlug: 'remeras',
-    colors: [] as string[],
-    stock: 20,
-  },
-]
+import BrandCollectionBanner from './BrandCollectionBanner'
 
 const PRODUCT_CATEGORIES = [
   'Todo',
@@ -152,8 +101,6 @@ export default function ProductsWithFilters({
 
     return list
   }, [products, activeCategory, sort, search])
-
-  const isDarkJordanEmpty = dark && brand === 'JORDAN' && filtered.length === 0
 
   return (
     <div>
@@ -305,8 +252,129 @@ export default function ProductsWithFilters({
         </div>
       )}
 
-      {/* Search (non-editorial only) */}
-      {!usesGroupedNav && (
+      {/* Search + sort (dark only) / Search alone (light) */}
+      {dark ? (
+        <div className="mt-24 flex items-center gap-3">
+          <div className="relative flex-1">
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar productos..."
+              className="w-full bg-[#1a1a1a] border border-white/10 pl-9 pr-3 py-2.5 text-[11px] uppercase tracking-[0.15em] text-white placeholder:text-white/30 outline-none focus:border-white/30 rounded-md"
+            />
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="h-8 w-px bg-white/10" aria-hidden />
+            <div className="flex flex-col items-start leading-none gap-0.5">
+              <span className="text-[9px] uppercase tracking-[0.2em] text-white/40">
+                Ordenar
+              </span>
+              <div className="flex items-center gap-1">
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as SortKey)}
+                  className="bg-transparent text-[11px] font-semibold uppercase tracking-[0.15em] text-white outline-none cursor-pointer appearance-none pr-0"
+                  style={{ colorScheme: 'dark' }}
+                >
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value} className="bg-[#1a1a1a] text-white">
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+                <svg
+                  width="10"
+                  height="10"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-white"
+                  aria-hidden
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : isLightEditorial ? (
+        <div className="mt-24 flex items-center gap-3">
+          <div className="relative flex-1">
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/30"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar productos..."
+              className="w-full border border-border bg-white pl-9 pr-3 py-2.5 text-[11px] uppercase tracking-[0.15em] text-foreground placeholder:text-muted outline-none focus:border-foreground rounded-md"
+            />
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="h-8 w-px bg-border" aria-hidden />
+            <div className="flex flex-col items-start leading-none gap-0.5">
+              <span className="text-[9px] uppercase tracking-[0.2em] text-muted">
+                Ordenar
+              </span>
+              <div className="flex items-center gap-1">
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as SortKey)}
+                  className="bg-transparent text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground outline-none cursor-pointer appearance-none pr-0"
+                >
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+                <svg
+                  width="10"
+                  height="10"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-foreground"
+                  aria-hidden
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
         <div className="mt-4">
           <input
             type="text"
@@ -318,180 +386,17 @@ export default function ProductsWithFilters({
         </div>
       )}
 
-      {/* Jordan featured — 4 hardcoded cards antes del hero */}
-      {dark && brand === 'JORDAN' && (
-        <div className="mt-8 grid grid-cols-2 gap-3 max-[320px]:grid-cols-1">
-          {JORDAN_FEATURED_PRODUCTS.map((product) => {
-            const sizes = SIZES_BY_CATEGORY[product.categorySlug] ?? []
-            const selectedSize = selectedSizes[product.id]
-            const isAdded = addedProductId === product.id
-            const needsSize = sizes.length > 0 && !selectedSize
-            const isOpen = openProductId === product.id
-
-            function handleAdd() {
-              if (needsSize) { toast.error('Seleccioná un talle para continuar'); return }
-              addItem(
-                { id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category, stock: product.stock },
-                1, selectedSize, selectedColors[product.id],
-              )
-              toast.success('Agregado al carrito')
-              setAddedProductId(product.id)
-              setTimeout(() => { setAddedProductId(null); setOpenProductId(null) }, 1500)
-            }
-
-            function handleBuy() {
-              if (needsSize) { toast.error('Seleccioná un talle para continuar'); return }
-              addItem(
-                { id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category, stock: product.stock },
-                1, selectedSize, selectedColors[product.id],
-              )
-              router.push('/checkout')
-            }
-
-            return (
-              <div key={product.id} className="group bg-[#1a1a1a] rounded-lg p-3 flex flex-col">
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => router.push(`/product/${product.slug}`)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/product/${product.slug}`) } }}
-                  className="relative block aspect-square w-full overflow-hidden rounded-md cursor-pointer"
-                  aria-label={`Ver ${product.name}`}
-                >
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    sizes="(max-width: 320px) 100vw, 50vw"
-                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                  />
-                  {product.comparePrice && product.comparePrice > product.price && (
-                    <span className="absolute bottom-2 left-2 bg-destructive px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-white">
-                      {Math.round((1 - product.price / product.comparePrice) * 100)}% OFF
-                    </span>
-                  )}
-                  <button
-                    type="button"
-                    onClick={(e) => { e.stopPropagation(); setOpenProductId(isOpen ? null : product.id) }}
-                    aria-label={`Agregar ${product.name} al carrito`}
-                    className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-md bg-white/10 backdrop-blur-sm text-white border border-white/15 hover:bg-white/20 transition cursor-pointer"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-                      <line x1="3" x2="21" y1="6" y2="6" />
-                      <path d="M16 10a4 4 0 0 1-8 0" />
-                    </svg>
-                  </button>
-                </div>
-
-                <div className="mt-3 flex flex-col gap-1">
-                  <Link
-                    href={`/product/${product.slug}`}
-                    className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white hover:opacity-80 transition-opacity line-clamp-2"
-                  >
-                    {product.name}
-                  </Link>
-                  <div className="flex items-end justify-between gap-2">
-                    <p className="text-[13px] font-semibold text-white">{formatPrice(product.price)}</p>
-                    {product.colors.length > 0 && (
-                      <ProductColorSelector
-                        colors={product.colors}
-                        selected={selectedColors[product.id]}
-                        onChange={(c) => setSelectedColors((prev) => ({ ...prev, [product.id]: c }))}
-                        dark
-                      />
-                    )}
-                  </div>
-                </div>
-
-                <div className={`grid transition-[grid-template-rows] duration-300 ease-out ${isOpen ? 'grid-rows-[1fr] mt-3' : 'grid-rows-[0fr]'}`}>
-                  <div className="overflow-hidden">
-                    <div className="border-t border-white/10 pt-3 flex flex-col gap-2">
-                      {sizes.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5">
-                          {sizes.map((s) => (
-                            <button
-                              key={s}
-                              onClick={() => setSelectedSizes((prev) => ({ ...prev, [product.id]: s }))}
-                              className={`h-7 min-w-[2rem] px-2 text-[9px] font-semibold uppercase tracking-[0.15em] border transition-colors cursor-pointer rounded-sm ${
-                                selectedSize === s ? 'border-white bg-white text-black' : 'border-white/20 text-white/60 hover:border-white/60'
-                              }`}
-                            >
-                              {s}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                      <button
-                        onClick={handleAdd}
-                        className="flex h-9 w-full items-center justify-center gap-2 bg-white text-[10px] font-semibold uppercase tracking-[0.18em] text-black transition-opacity hover:opacity-80 cursor-pointer rounded-sm"
-                      >
-                        {isAdded ? (
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        ) : 'Agregar al carrito'}
-                      </button>
-                      <button
-                        onClick={handleBuy}
-                        className="flex h-9 w-full items-center justify-center border border-gold text-[10px] font-semibold uppercase tracking-[0.18em] text-gold transition-opacity hover:opacity-70 cursor-pointer rounded-sm"
-                      >
-                        Comprar ahora
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
-      {/* Hero video (solo Jordan dark) */}
-      {dark && brand === 'JORDAN' && (
-        <BrandHeroVideo src="/videos/jordan-hero.mp4" />
-      )}
-
-      {/* Sort (editorial brand pages) */}
-      {usesGroupedNav && !isDarkJordanEmpty && (
-        <div className="mt-4 flex items-center gap-2">
-          <span className={`text-[9px] uppercase tracking-[0.2em] ${dark ? 'text-white/40' : 'text-muted'}`}>
-            Ordenar
-          </span>
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as SortKey)}
-            className={`bg-transparent text-[11px] font-semibold uppercase tracking-[0.15em] outline-none cursor-pointer appearance-none ${dark ? 'text-white' : 'text-foreground'}`}
-            style={dark ? { colorScheme: 'dark' } : undefined}
-          >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value} className={dark ? 'bg-[#1a1a1a] text-white' : ''}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-          <svg
-            width="10" height="10" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" strokeWidth="2"
-            strokeLinecap="round" strokeLinejoin="round"
-            className={dark ? 'text-white' : 'text-foreground'}
-            aria-hidden
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </div>
-      )}
+      {/* Banner colección (solo Jordan dark) */}
+      {dark && brand === 'JORDAN' && <BrandCollectionBanner brand="JORDAN" />}
 
       {/* Result count */}
-      {!isDarkJordanEmpty && (
-        <p
-          className={`mt-4 text-[10px] uppercase tracking-[0.18em] ${
-            dark ? 'text-white/40' : 'text-muted'
-          }`}
-        >
-          {filtered.length} {filtered.length === 1 ? 'producto' : 'productos'}
-        </p>
-      )}
+      <p
+        className={`mt-4 text-[10px] uppercase tracking-[0.18em] ${
+          dark ? 'text-white/40' : 'text-muted'
+        }`}
+      >
+        {filtered.length} {filtered.length === 1 ? 'producto' : 'productos'}
+      </p>
 
       {/* Product grid */}
       {filtered.length > 0 ? (
@@ -830,7 +735,7 @@ export default function ProductsWithFilters({
             )
           })}
         </div>
-      ) : !isDarkJordanEmpty ? (
+      ) : (
         <div className="mt-20 flex flex-col items-center gap-3 text-center">
           <p
             className={`text-[11px] font-semibold uppercase tracking-[0.22em] ${
@@ -845,7 +750,7 @@ export default function ProductsWithFilters({
               : 'No hay productos en esta categoría.'}
           </p>
         </div>
-      ) : null}
+      )}
     </div>
   )
 }
