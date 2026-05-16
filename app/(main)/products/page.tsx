@@ -93,13 +93,28 @@ export default async function ProductsPage({
         }}
       />
       <main>
-      <section className="relative overflow-hidden" style={{ backgroundColor: brandFilter ? '#F7F6F3' : 'var(--background)' }}>
+      <section className="relative bg-background">
 
-        {/* Jordan editorial watermark — behind sneaker image */}
+        {/* Overflow-hidden wrapper: clips BrandBgImage slide-in animation only */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
+          {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
+            <BrandBgImage
+              key={brandFilter}
+              brand={brandFilter}
+              objectPosition={brandFilter === 'NIKE' ? 'center top' : 'right top'}
+            />
+          )}
+        </div>
+
+        {/* Jordan editorial watermark — gradient mask on wrapper so fade completes before clip */}
         {brandFilter === 'JORDAN' && (
           <div
-            className="pointer-events-none select-none absolute right-0 top-0 bottom-0 flex items-start justify-end"
+            className="pointer-events-none select-none absolute right-0 top-0 bottom-0 overflow-hidden flex items-start justify-end"
             aria-hidden
+            style={{
+              WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 55%, transparent 92%)',
+              maskImage: 'linear-gradient(to bottom, black 0%, black 55%, transparent 92%)',
+            }}
           >
             <span
               style={{
@@ -112,22 +127,11 @@ export default async function ProductsPage({
                 lineHeight: 1,
                 letterSpacing: '-0.02em',
                 filter: 'blur(0.3px)',
-                WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
-                maskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
               }}
             >
               JORDAN
             </span>
           </div>
-        )}
-
-        {/* Brand bg — flush right edge */}
-        {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
-          <BrandBgImage
-            key={brandFilter}
-            brand={brandFilter}
-            objectPosition={brandFilter === 'NIKE' ? 'center top' : 'right top'}
-          />
         )}
 
         <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
