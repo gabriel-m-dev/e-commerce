@@ -112,7 +112,7 @@ export default async function ProductsPage({
                 lineHeight: 1,
                 letterSpacing: '0.12em',
                 filter: 'blur(0.3px)',
-                transform: 'rotate(90deg)',
+                transform: 'rotate(-90deg)',
                 display: 'block',
               }}
             >
