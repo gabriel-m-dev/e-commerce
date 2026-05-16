@@ -95,7 +95,13 @@ export default async function ProductsPage({
         }}
       />
       <main>
-      <section className={`relative overflow-hidden ${isJordan ? 'bg-[#0a0a0a] text-white' : 'bg-background'}`}>
+      <section
+        className={`relative ${
+          isJordan
+            ? 'overflow-x-clip overflow-y-visible bg-[#0a0a0a] text-white'
+            : 'overflow-hidden bg-background'
+        }`}
+      >
 
         {/* Jordan editorial watermark — first in DOM = behind bg image */}
         {/* Rotamos un wrapper completo: [nike_logo] [JORDAN] → después de -90deg, logo queda justo debajo de la J */}

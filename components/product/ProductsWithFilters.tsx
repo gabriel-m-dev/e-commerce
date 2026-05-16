@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -51,6 +51,8 @@ export default function ProductsWithFilters({
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory)
   const [sort, setSort] = useState<SortKey>('relevancia')
   const [search, setSearch] = useState('')
+  const mobileNavSentinelRef = useRef<HTMLDivElement>(null)
+  const [isMobileNavPinned, setIsMobileNavPinned] = useState(false)
 
   const addItem = useCartStore((s) => s.addItem)
   const router = useRouter()
@@ -60,6 +62,37 @@ export default function ProductsWithFilters({
   const [selectedColors, setSelectedColors] = useState<Record<string, string>>({})
   const [addedProductId, setAddedProductId] = useState<string | null>(null)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!dark) return
+
+    const mediaQuery = window.matchMedia('(min-width: 1024px)')
+    const observer = typeof IntersectionObserver !== 'undefined'
+      ? new IntersectionObserver(
+          ([entry]) => {
+            setIsMobileNavPinned(!entry.isIntersecting && !mediaQuery.matches)
+          },
+          { threshold: 0 },
+        )
+      : null
+
+    const handleViewportChange = () => {
+      if (mediaQuery.matches) {
+        setIsMobileNavPinned(false)
+      }
+    }
+
+    if (mobileNavSentinelRef.current && observer) {
+      observer.observe(mobileNavSentinelRef.current)
+    }
+
+    mediaQuery.addEventListener('change', handleViewportChange)
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleViewportChange)
+      observer?.disconnect()
+    }
+  }, [dark])
 
   const filtered = useMemo(() => {
     let list = activeCategory === 'Todo'
@@ -83,13 +116,31 @@ export default function ProductsWithFilters({
       {dark ? (
         // === DARK (Jordan) layout ===
         <>
+          <div ref={mobileNavSentinelRef} className="h-px w-full lg:hidden" aria-hidden />
+
           {/* Overlay para cerrar submenú al tocar afuera */}
           {openMenu && (
             <div className="fixed inset-0 z-10" onClick={() => setOpenMenu(null)} aria-hidden />
           )}
 
           {/* Grouped nav — hasta lg */}
-          <div className="relative z-30 flex flex-wrap gap-2 pb-1 lg:hidden">
+          <div
+            className="sticky z-40 pb-1 lg:hidden"
+            style={{
+              top: 'var(--jordan-logo-height, 77px)',
+              marginLeft: 'calc(50% - 50vw)',
+              marginRight: 'calc(50% - 50vw)',
+              paddingLeft: 'calc(50vw - 50%)',
+              paddingRight: 'calc(50vw - 50%)',
+            }}
+          >
+            <div
+              className={`absolute inset-0 bg-[#0a0a0a] transition-opacity duration-200 ${
+                isMobileNavPinned ? 'opacity-100' : 'opacity-0'
+              }`}
+              aria-hidden
+            />
+            <div className="relative flex flex-wrap gap-2">
             {NAV_GROUPS.map((group) => {
               const isActive = group.sub
                 ? group.sub.includes(activeCategory)
@@ -152,6 +203,7 @@ export default function ProductsWithFilters({
                 </div>
               )
             })}
+            </div>
           </div>
 
           {/* Flat nav — lg+ */}
