@@ -145,16 +145,10 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
           style={{ bottom: '-1px' }}
           aria-hidden
         />
-        <div
-          className={`relative flex items-center transition-[justify-content] duration-180 ${
-            isLogoCollapsed ? 'justify-center' : 'justify-start'
-          }`}
-        >
+        <div className="relative flex items-center">
           <div
-            className={`relative shrink-0 transition-all duration-180 ${
-              isLogoCollapsed
-                ? 'h-[100.7px] w-[100.7px] max-[374px]:h-[76px] max-[374px]:w-[76px] sm:h-[121.6px] sm:w-[121.6px] md:h-[144.4px] md:w-[144.4px]'
-                : 'h-[53px] w-[53px] max-[374px]:h-[40px] max-[374px]:w-[40px] sm:h-[64px] sm:w-[64px] md:h-[76px] md:w-[76px] lg:h-[88px] lg:w-[88px]'
+            className={`relative h-[53px] w-[53px] shrink-0 transition-opacity duration-150 max-[374px]:h-[40px] max-[374px]:w-[40px] sm:h-[64px] sm:w-[64px] md:h-[76px] md:w-[76px] lg:h-[88px] lg:w-[88px] ${
+              isLogoCollapsed ? 'opacity-0' : 'opacity-100'
             }`}
           >
             <Image
@@ -170,7 +164,7 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
             />
           </div>
           <p
-            className={`ml-3 text-[12px] font-semibold uppercase tracking-[0.28em] text-gold transition-all duration-300 max-[374px]:ml-2 max-[374px]:text-[10px] sm:ml-4 sm:text-[14px] md:text-[16px] lg:text-[19px] ${
+            className={`ml-3 text-[12px] font-semibold uppercase tracking-[0.28em] text-gold transition-all duration-150 max-[374px]:ml-2 max-[374px]:text-[10px] sm:ml-4 sm:text-[14px] md:text-[16px] lg:text-[19px] ${
               isLogoCollapsed
                 ? 'pointer-events-none max-w-0 translate-x-2 opacity-0'
                 : 'max-w-[240px] translate-x-0 opacity-100'
@@ -178,6 +172,26 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
           >
             JORDAN
           </p>
+          <div
+            className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-180 ${
+              isLogoCollapsed ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
+            }`}
+            aria-hidden
+          >
+            <div className="relative h-[100.7px] w-[100.7px] max-[374px]:h-[76px] max-[374px]:w-[76px] sm:h-[121.6px] sm:w-[121.6px] md:h-[144.4px] md:w-[144.4px]">
+              <Image
+                src="/jordan_logo.png"
+                alt=""
+                fill
+                sizes="(max-width: 374px) 76px, (max-width: 640px) 100px, (max-width: 768px) 122px, 144px"
+                className="object-contain"
+                style={{
+                  filter:
+                    'brightness(0) saturate(100%) invert(76%) sepia(28%) saturate(700%) hue-rotate(358deg)',
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
