@@ -122,7 +122,7 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
         }
 
         nextIndex += 1
-      }, 100)
+      }, 125)
     }, 600)
 
     return () => {
