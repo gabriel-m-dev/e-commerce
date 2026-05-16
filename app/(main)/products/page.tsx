@@ -96,14 +96,15 @@ export default async function ProductsPage({
       <section className="relative bg-background overflow-hidden">
 
         {/* Jordan editorial watermark — first in DOM = behind bg image */}
+        {/* wrapper width = font-size → visual right edge lands flush at right-0 */}
         {brandFilter === 'JORDAN' && (
           <div
-            className="pointer-events-none select-none absolute right-0 top-0 bottom-0 w-[120px] flex items-center justify-center"
+            className="pointer-events-none select-none absolute right-0 top-0 bottom-0 w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center"
             aria-hidden
           >
             <span
+              className="text-[80px] lg:text-[110px]"
               style={{
-                fontSize: '80px',
                 fontWeight: 900,
                 color: 'transparent',
                 WebkitTextStroke: '1.5px rgba(0,0,0,0.15)',
@@ -111,7 +112,7 @@ export default async function ProductsPage({
                 lineHeight: 1,
                 letterSpacing: '0.12em',
                 filter: 'blur(0.3px)',
-                transform: 'rotate(-90deg)',
+                transform: 'rotate(90deg)',
                 display: 'block',
               }}
             >
