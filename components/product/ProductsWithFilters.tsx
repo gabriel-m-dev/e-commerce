@@ -137,6 +137,12 @@ export default function ProductsWithFilters({
               }}
               aria-hidden
             />
+            <div
+              data-brand-nav-collapsed-bg
+              className="pointer-events-none absolute inset-0"
+              style={{ top: '-1px', backgroundColor: '#000000', opacity: 0, transition: 'opacity 200ms' }}
+              aria-hidden
+            />
             <div data-brand-nav-inner className="relative flex flex-wrap gap-2">
             {NAV_GROUPS.map((group) => {
               const isActive = group.sub

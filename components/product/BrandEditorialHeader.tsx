@@ -118,11 +118,14 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
       const collapsed = navRect.top <= logoRect.bottom + 1
       setIsLogoCollapsed(collapsed)
 
-      if (window.matchMedia('(min-width: 1024px)').matches) {
-        const navInner = mobileNav.querySelector('[data-brand-nav-inner]')
-        if (navInner instanceof HTMLElement) {
-          navInner.style.justifyContent = collapsed ? 'center' : ''
-        }
+      const navInner = mobileNav.querySelector('[data-brand-nav-inner]')
+      if (navInner instanceof HTMLElement) {
+        navInner.style.justifyContent = collapsed ? 'center' : ''
+      }
+
+      const navCollapsedBg = mobileNav.querySelector('[data-brand-nav-collapsed-bg]')
+      if (navCollapsedBg instanceof HTMLElement) {
+        navCollapsedBg.style.opacity = collapsed ? '1' : '0'
       }
     }
 
@@ -179,6 +182,10 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
       const navInner = mobileNav?.querySelector('[data-brand-nav-inner]')
       if (navInner instanceof HTMLElement) {
         navInner.style.justifyContent = ''
+      }
+      const navCollapsedBg = mobileNav?.querySelector('[data-brand-nav-collapsed-bg]')
+      if (navCollapsedBg instanceof HTMLElement) {
+        navCollapsedBg.style.opacity = '0'
       }
     }
   }, [brand])
