@@ -12,6 +12,57 @@ import useCartStore from '@/store/cart'
 import ProductColorSelector from './ProductColorSelector'
 import BrandHeroVideo from './BrandHeroVideo'
 
+const JORDAN_FEATURED_PRODUCTS = [
+  {
+    id: 'jordan-feat-1',
+    name: 'Air Jordan 1 Retro High OG',
+    slug: 'air-jordan-1-retro-high-og',
+    price: 185000,
+    comparePrice: 220000,
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
+    category: 'Zapatillas',
+    categorySlug: 'zapatillas',
+    colors: ['#C41E3A', '#000000'] as string[],
+    stock: 8,
+  },
+  {
+    id: 'jordan-feat-2',
+    name: 'Jordan Essentials Hoodie',
+    slug: 'jordan-essentials-hoodie',
+    price: 95000,
+    comparePrice: null as number | null,
+    image: 'https://images.unsplash.com/photo-1556906781-9a412961a28c?w=600&q=80',
+    category: 'Hoodies',
+    categorySlug: 'hoodies',
+    colors: [] as string[],
+    stock: 15,
+  },
+  {
+    id: 'jordan-feat-3',
+    name: 'Air Jordan 11 Retro Low',
+    slug: 'air-jordan-11-retro-low',
+    price: 210000,
+    comparePrice: null as number | null,
+    image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=600&q=80',
+    category: 'Zapatillas',
+    categorySlug: 'zapatillas',
+    colors: ['#FFFFFF', '#000000'] as string[],
+    stock: 5,
+  },
+  {
+    id: 'jordan-feat-4',
+    name: 'Jordan Sport Dri-FIT Tee',
+    slug: 'jordan-sport-dri-fit-tee',
+    price: 68000,
+    comparePrice: 82000 as number | null,
+    image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80',
+    category: 'Remeras',
+    categorySlug: 'remeras',
+    colors: [] as string[],
+    stock: 20,
+  },
+]
+
 const PRODUCT_CATEGORIES = [
   'Todo',
   'Gorras',
@@ -262,6 +313,135 @@ export default function ProductsWithFilters({
             placeholder="Buscar producto..."
             className="w-full border border-border bg-transparent px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-foreground placeholder:text-muted outline-none transition-colors focus:border-foreground sm:max-w-xs"
           />
+        </div>
+      )}
+
+      {/* Jordan featured — 4 hardcoded cards antes del hero */}
+      {dark && brand === 'JORDAN' && (
+        <div className="mt-8 grid grid-cols-2 gap-3 max-[320px]:grid-cols-1">
+          {JORDAN_FEATURED_PRODUCTS.map((product) => {
+            const sizes = SIZES_BY_CATEGORY[product.categorySlug] ?? []
+            const selectedSize = selectedSizes[product.id]
+            const isAdded = addedProductId === product.id
+            const needsSize = sizes.length > 0 && !selectedSize
+            const isOpen = openProductId === product.id
+
+            function handleAdd() {
+              if (needsSize) { toast.error('Seleccioná un talle para continuar'); return }
+              addItem(
+                { id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category, stock: product.stock },
+                1, selectedSize, selectedColors[product.id],
+              )
+              toast.success('Agregado al carrito')
+              setAddedProductId(product.id)
+              setTimeout(() => { setAddedProductId(null); setOpenProductId(null) }, 1500)
+            }
+
+            function handleBuy() {
+              if (needsSize) { toast.error('Seleccioná un talle para continuar'); return }
+              addItem(
+                { id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category, stock: product.stock },
+                1, selectedSize, selectedColors[product.id],
+              )
+              router.push('/checkout')
+            }
+
+            return (
+              <div key={product.id} className="group bg-[#1a1a1a] rounded-lg p-3 flex flex-col">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => router.push(`/product/${product.slug}`)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/product/${product.slug}`) } }}
+                  className="relative block aspect-square w-full overflow-hidden rounded-md cursor-pointer"
+                  aria-label={`Ver ${product.name}`}
+                >
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 320px) 100vw, 50vw"
+                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  />
+                  {product.comparePrice && product.comparePrice > product.price && (
+                    <span className="absolute bottom-2 left-2 bg-destructive px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-white">
+                      {Math.round((1 - product.price / product.comparePrice) * 100)}% OFF
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setOpenProductId(isOpen ? null : product.id) }}
+                    aria-label={`Agregar ${product.name} al carrito`}
+                    className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-md bg-white/10 backdrop-blur-sm text-white border border-white/15 hover:bg-white/20 transition cursor-pointer"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                      <line x1="3" x2="21" y1="6" y2="6" />
+                      <path d="M16 10a4 4 0 0 1-8 0" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="mt-3 flex flex-col gap-1">
+                  <Link
+                    href={`/product/${product.slug}`}
+                    className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white hover:opacity-80 transition-opacity line-clamp-2"
+                  >
+                    {product.name}
+                  </Link>
+                  <div className="flex items-end justify-between gap-2">
+                    <p className="text-[13px] font-semibold text-white">{formatPrice(product.price)}</p>
+                    {product.colors.length > 0 && (
+                      <ProductColorSelector
+                        colors={product.colors}
+                        selected={selectedColors[product.id]}
+                        onChange={(c) => setSelectedColors((prev) => ({ ...prev, [product.id]: c }))}
+                        dark
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <div className={`grid transition-[grid-template-rows] duration-300 ease-out ${isOpen ? 'grid-rows-[1fr] mt-3' : 'grid-rows-[0fr]'}`}>
+                  <div className="overflow-hidden">
+                    <div className="border-t border-white/10 pt-3 flex flex-col gap-2">
+                      {sizes.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5">
+                          {sizes.map((s) => (
+                            <button
+                              key={s}
+                              onClick={() => setSelectedSizes((prev) => ({ ...prev, [product.id]: s }))}
+                              className={`h-7 min-w-[2rem] px-2 text-[9px] font-semibold uppercase tracking-[0.15em] border transition-colors cursor-pointer rounded-sm ${
+                                selectedSize === s ? 'border-white bg-white text-black' : 'border-white/20 text-white/60 hover:border-white/60'
+                              }`}
+                            >
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      <button
+                        onClick={handleAdd}
+                        className="flex h-9 w-full items-center justify-center gap-2 bg-white text-[10px] font-semibold uppercase tracking-[0.18em] text-black transition-opacity hover:opacity-80 cursor-pointer rounded-sm"
+                      >
+                        {isAdded ? (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        ) : 'Agregar al carrito'}
+                      </button>
+                      <button
+                        onClick={handleBuy}
+                        className="flex h-9 w-full items-center justify-center border border-gold text-[10px] font-semibold uppercase tracking-[0.18em] text-gold transition-opacity hover:opacity-70 cursor-pointer rounded-sm"
+                      >
+                        Comprar ahora
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
 
