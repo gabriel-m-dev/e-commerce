@@ -99,7 +99,7 @@ export default async function ProductsPage({
         {/* wrapper width = font-size → visual right edge lands flush at right-0 */}
         {brandFilter === 'JORDAN' && (
           <div
-            className="pointer-events-none select-none absolute right-[-4px] top-0 bottom-0 w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center"
+            className="pointer-events-none select-none absolute right-[-20px] top-0 bottom-0 w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center"
             aria-hidden
           >
             <span
@@ -107,7 +107,7 @@ export default async function ProductsPage({
               style={{
                 fontWeight: 900,
                 color: 'transparent',
-                WebkitTextStroke: '1.5px rgba(0,0,0,0.15)',
+                WebkitTextStroke: '1px rgba(0,0,0,0.15)',
                 whiteSpace: 'nowrap',
                 lineHeight: 1,
                 letterSpacing: '0.12em',
