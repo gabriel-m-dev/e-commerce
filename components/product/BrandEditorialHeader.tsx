@@ -115,7 +115,15 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
 
       const logoRect = logoRowRef.current.getBoundingClientRect()
       const navRect = mobileNav.getBoundingClientRect()
-      setIsLogoCollapsed(navRect.top <= logoRect.bottom + 1)
+      const collapsed = navRect.top <= logoRect.bottom + 1
+      setIsLogoCollapsed(collapsed)
+
+      if (window.matchMedia('(min-width: 1024px)').matches) {
+        const navInner = mobileNav.querySelector('[data-brand-nav-inner]')
+        if (navInner instanceof HTMLElement) {
+          navInner.style.justifyContent = collapsed ? 'center' : ''
+        }
+      }
     }
 
     syncNavbarPosition()
@@ -165,6 +173,12 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
 
       if (navbar instanceof HTMLElement) {
         navbar.style.position = previousNavbarPosition
+      }
+
+      const mobileNav = document.querySelector(`[data-brand-mobile-nav="${brand}"]`)
+      const navInner = mobileNav?.querySelector('[data-brand-nav-inner]')
+      if (navInner instanceof HTMLElement) {
+        navInner.style.justifyContent = ''
       }
     }
   }, [brand])

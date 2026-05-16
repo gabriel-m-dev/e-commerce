@@ -137,7 +137,7 @@ export default function ProductsWithFilters({
               }}
               aria-hidden
             />
-            <div className={`relative flex flex-wrap gap-2 ${isNavPinned ? 'lg:justify-center' : ''}`}>
+            <div data-brand-nav-inner className="relative flex flex-wrap gap-2">
             {NAV_GROUPS.map((group) => {
               const isActive = group.sub
                 ? group.sub.includes(activeCategory)
