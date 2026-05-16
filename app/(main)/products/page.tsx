@@ -100,32 +100,6 @@ export default async function ProductsPage({
           <BrandBgImage key={brandFilter} brand={brandFilter} />
         )}
 
-        {/* Jordan only — bg bottom-left, contrasts top-right */}
-        {brandFilter === 'JORDAN' && (
-          <>
-            <style>{`
-              @keyframes jordan-bg-bottom-in {
-                from { transform: translateX(-110%); }
-                to   { transform: translateX(0); }
-              }
-            `}</style>
-            <div
-              className="pointer-events-none absolute bottom-0 left-0 top-0 w-[120px] md:w-[160px] lg:w-[200px] xl:w-[240px]"
-              aria-hidden
-              style={{ animation: 'jordan-bg-bottom-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both' }}
-            >
-              <Image
-                src="/jordan_bg_bottom.png"
-                alt=""
-                fill
-                sizes="(min-width: 1280px) 240px, (min-width: 1024px) 200px, (min-width: 768px) 160px, 120px"
-                className="object-contain object-left-bottom"
-                priority
-              />
-            </div>
-          </>
-        )}
-
         <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
 
           {/* Section label */}
