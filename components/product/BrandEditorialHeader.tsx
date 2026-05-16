@@ -328,8 +328,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
       </div>
 
       <div className="mb-8">
-        <div className={`brand-row2 mt-3 flex items-center gap-3 max-[374px]:mt-2 sm:mt-4 sm:gap-4 ${textColor}`}>
-          <div className="h-px w-8 max-[374px]:w-6 sm:w-10 md:w-12 bg-gold shrink-0" aria-hidden />
+        <div className={`brand-row2 mt-3 flex flex-col items-start max-[374px]:mt-2 sm:mt-4 ${textColor}`}>
           <p className="text-3xl max-[374px]:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold uppercase tracking-[0.07em] leading-tight">
             {brand === 'JORDAN' ? (
               <>
@@ -413,6 +412,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
               </>
             )}
           </p>
+          <div className="mt-3 h-px w-8 max-[374px]:w-6 sm:mt-4 sm:w-10 md:w-12 bg-gold" aria-hidden />
         </div>
       </div>
     </>
