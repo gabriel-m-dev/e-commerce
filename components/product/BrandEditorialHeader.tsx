@@ -373,6 +373,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
             ) : (
               <>
                 <span className="max-[470px]:block">{copy.line1}</span>
+                {' '}
                 <span className="max-[470px]:block">
                   {copy.line2}
                   <span className="relative ml-1 inline-flex h-[0.8em] w-[0.8em] align-middle">
