@@ -7,12 +7,14 @@ interface JordanBrandHeaderProps {
   brand?: 'JORDAN'
 }
 
+const JORDAN_SLOGAN_SWEEP = [',', 'D', 'O', ' ', 'I', 'T', '.'] as const
+
 export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeaderProps) {
   const logoRowRef = useRef<HTMLDivElement>(null)
   const stickySentinelRef = useRef<HTMLDivElement>(null)
   const [isLogoPinned, setIsLogoPinned] = useState(false)
   const [isLogoCollapsed, setIsLogoCollapsed] = useState(false)
-  const [isSloganAccentSwapped, setIsSloganAccentSwapped] = useState(false)
+  const [activeSloganSweepIndex, setActiveSloganSweepIndex] = useState(0)
 
   void brand
 
@@ -108,12 +110,26 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
   }, [])
 
   useEffect(() => {
+    let intervalId: number | undefined
+
     const timeoutId = window.setTimeout(() => {
-      setIsSloganAccentSwapped(true)
-    }, 800)
+      let nextIndex = 1
+      intervalId = window.setInterval(() => {
+        setActiveSloganSweepIndex(nextIndex)
+
+        if (nextIndex >= JORDAN_SLOGAN_SWEEP.length - 1) {
+          window.clearInterval(intervalId)
+        }
+
+        nextIndex += 1
+      }, 180)
+    }, 600)
 
     return () => {
       window.clearTimeout(timeoutId)
+      if (intervalId !== undefined) {
+        window.clearInterval(intervalId)
+      }
     }
   }, [])
 
@@ -214,26 +230,60 @@ export default function JordanBrandHeader({ brand = 'JORDAN' }: JordanBrandHeade
             <span className="max-[470px]:block">
               DREAM IT
               <span
-                className={`transition-colors duration-300 ${
-                  isSloganAccentSwapped ? 'text-white' : 'text-gold'
+                className={`transition-colors duration-150 ${
+                  activeSloganSweepIndex === 0 ? 'text-gold' : 'text-white'
                 }`}
               >
                 ,
               </span>
             </span>
             <span className="max-[470px]:block">
-              DO IT
+              <span
+                className={`transition-colors duration-150 ${
+                  activeSloganSweepIndex === 1 ? 'text-gold' : 'text-white'
+                }`}
+              >
+                D
+              </span>
+              <span
+                className={`transition-colors duration-150 ${
+                  activeSloganSweepIndex === 2 ? 'text-gold' : 'text-white'
+                }`}
+              >
+                O
+              </span>
+              <span
+                className={`transition-colors duration-150 ${
+                  activeSloganSweepIndex === 3 ? 'text-gold' : 'text-white'
+                }`}
+              >
+                {' '}
+              </span>
+              <span
+                className={`transition-colors duration-150 ${
+                  activeSloganSweepIndex === 4 ? 'text-gold' : 'text-white'
+                }`}
+              >
+                I
+              </span>
+              <span
+                className={`transition-colors duration-150 ${
+                  activeSloganSweepIndex === 5 ? 'text-gold' : 'text-white'
+                }`}
+              >
+                T
+              </span>
               <span className="relative ml-1 inline-flex h-[0.8em] w-[0.8em] align-middle">
                 <span
-                  className={`absolute inset-0 flex items-center justify-center text-white transition-opacity duration-300 ${
-                    isSloganAccentSwapped ? 'opacity-0' : 'opacity-100'
+                  className={`absolute inset-0 flex items-center justify-center text-white transition-opacity duration-150 ${
+                    activeSloganSweepIndex === 6 ? 'opacity-0' : 'opacity-100'
                   }`}
                 >
                   .
                 </span>
                 <span
-                  className={`absolute left-1/2 top-[76%] h-[0.22em] w-[0.22em] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold transition-all duration-300 ${
-                    isSloganAccentSwapped ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
+                  className={`absolute left-1/2 top-[76%] h-[0.22em] w-[0.22em] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold transition-all duration-150 ${
+                    activeSloganSweepIndex === 6 ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
                   }`}
                   aria-hidden
                 />
