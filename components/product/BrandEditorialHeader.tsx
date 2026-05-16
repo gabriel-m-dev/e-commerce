@@ -73,6 +73,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
   const [isLogoPinned, setIsLogoPinned] = useState(false)
   const [isLogoCollapsed, setIsLogoCollapsed] = useState(false)
   const [activeSloganSweepIndex, setActiveSloganSweepIndex] = useState(0)
+  const [adidasPhase, setAdidasPhase] = useState<'question' | 'answer'>('question')
 
   const copy = BRAND_COPY[brand]
   const isDark = theme === 'dark'
@@ -200,6 +201,13 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
     }
   }, [brand])
 
+  useEffect(() => {
+    if (brand !== 'ADIDAS') return
+    setAdidasPhase('question')
+    const t = window.setTimeout(() => setAdidasPhase('answer'), 800)
+    return () => window.clearTimeout(t)
+  }, [brand])
+
   return (
     <>
       <style>{`
@@ -314,6 +322,32 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
                           ? 'scale-100 bg-gold opacity-100'
                           : 'scale-100 bg-white opacity-100'
                       }`}
+                      aria-hidden
+                    />
+                  </span>
+                </span>
+              </>
+            ) : brand === 'ADIDAS' ? (
+              <>
+                <span className="max-[470px]:block">
+                  {copy.line1}
+                  <span
+                    className={`ml-2 text-gold transition-opacity duration-300 ${
+                      adidasPhase === 'answer' ? 'opacity-0' : 'opacity-100'
+                    }`}
+                  >
+                    ?
+                  </span>
+                </span>
+                <span
+                  className={`max-[470px]:block transition-opacity duration-500 ${
+                    adidasPhase === 'answer' ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  {copy.line2}
+                  <span className="relative ml-1 inline-flex h-[0.8em] w-[0.8em] align-middle">
+                    <span
+                      className="absolute left-1/2 top-[76%] h-[0.22em] w-[0.22em] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold"
                       aria-hidden
                     />
                   </span>
