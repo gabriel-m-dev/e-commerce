@@ -22,7 +22,7 @@ export default function BrandBgImage({ brand }: BrandBgImageProps) {
         }
       `}</style>
       <div
-        className="pointer-events-none absolute bottom-0 right-0 top-0 w-[120px] md:w-[160px] lg:w-[200px] xl:w-[240px]"
+        className="pointer-events-none absolute bottom-0 right-0 top-0 w-[168px] md:w-[160px] lg:w-[200px] xl:w-[240px]"
         aria-hidden
         style={{ animation: 'brand-bg-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both' }}
       >

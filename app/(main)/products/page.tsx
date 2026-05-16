@@ -103,22 +103,36 @@ export default async function ProductsPage({
         <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
 
           {/* Section label */}
-          <div className="mb-10 flex items-center gap-4">
-            <div className="h-px w-8 bg-gold" aria-hidden />
-            {brandLogo && (
-              <Image
-                src={brandLogo.src}
-                alt={sectionLabel}
-                width={brandLogo.width}
-                height={brandLogo.height}
-                className="object-contain"
-              />
-            )}
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
-              {sectionLabel}
-            </p>
+          <div className="mb-10">
+            {/* Row 1: logo + name. Desktop adds gold line before. */}
+            <div className="flex items-center gap-4">
+              <div className={brandLogo ? 'hidden md:block h-px w-8 bg-gold' : 'h-px w-8 bg-gold'} aria-hidden />
+              {brandLogo && (
+                <Image
+                  src={brandLogo.src}
+                  alt={sectionLabel}
+                  width={brandLogo.width}
+                  height={brandLogo.height}
+                  className="object-contain"
+                />
+              )}
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
+                {sectionLabel}
+              </p>
+              {/* Tagline inline — desktop only */}
+              {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
+                <span className="hidden md:flex">
+                  <BrandTagline key={brandFilter} brand={brandFilter} />
+                </span>
+              )}
+            </div>
+
+            {/* Row 2: gold line + large tagline — mobile only */}
             {(brandFilter === 'NIKE' || brandFilter === 'JORDAN' || brandFilter === 'ADIDAS') && (
-              <BrandTagline key={brandFilter} brand={brandFilter} />
+              <div className="flex items-center gap-3 mt-3 md:hidden">
+                <div className="h-px w-8 bg-gold shrink-0" aria-hidden />
+                <BrandTagline key={`${brandFilter}-lg`} brand={brandFilter} large />
+              </div>
             )}
           </div>
 
