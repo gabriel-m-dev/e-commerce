@@ -34,20 +34,29 @@ export default function HeroSection() {
         <span className="text-[11px] font-medium text-background/25">{totalLabel}</span>
       </div>
 
-      {/* Mobile — shoe floating at bottom-right as depth element */}
-      <div className="absolute bottom-10 right-[-30px] h-[65%] w-[100%] lg:hidden" aria-hidden>
-        {SLIDES.map((slide, i) => (
-          <Image
-            key={i}
-            src={slide.mobile}
-            alt=""
-            fill
-            sizes="85vw"
-            className={`object-contain transition-opacity duration-[800ms] ${i === current ? 'opacity-100' : 'opacity-0'}`}
-            style={{ objectPosition: i === 0 ? 'calc(100% - 20px) bottom' : 'right bottom' }}
-            priority={i === 0}
-          />
-        ))}
+      {/* Mobile — shoe slider with peek effect (65vw per slide, ~17vw visible on each side) */}
+      <div className="absolute bottom-10 left-0 h-[65%] w-full overflow-hidden lg:hidden" aria-hidden>
+        <div
+          className="flex h-full"
+          style={{
+            transform: `translateX(calc(17.5vw - ${current} * 65vw))`,
+            transition: 'transform 800ms ease-out',
+          }}
+        >
+          {SLIDES.map((slide, i) => (
+            <div key={i} className="relative h-full shrink-0" style={{ width: '65vw' }}>
+              <Image
+                src={slide.mobile}
+                alt=""
+                fill
+                sizes="65vw"
+                className="object-contain"
+                style={{ objectPosition: 'center bottom' }}
+                priority={i === 0}
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="mx-auto max-w-screen-xl px-6 lg:px-10">
