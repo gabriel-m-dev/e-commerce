@@ -32,13 +32,15 @@ const BRANDS = [
 ] as const
 
 const GAP = 12
-
 const WHITE_FILTER = 'brightness(0) invert(1)'
 
 export default function BrandCarousel() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const activeRef   = useRef(1)
-  const [active, setActive]           = useState(1)
+  const containerRef   = useRef<HTMLDivElement>(null)
+  const activeRef      = useRef(1)
+  const exitTimerRef   = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  const [active, setActive]               = useState(1)
+  const [exiting, setExiting]             = useState<number | null>(null)
   const [containerWidth, setContainerWidth] = useState(0)
 
   useEffect(() => {
@@ -48,6 +50,10 @@ export default function BrandCarousel() {
     update()
     window.addEventListener('resize', update)
     return () => window.removeEventListener('resize', update)
+  }, [])
+
+  useEffect(() => {
+    return () => clearTimeout(exitTimerRef.current)
   }, [])
 
   const slideWidth = useMemo(() => {
@@ -68,16 +74,23 @@ export default function BrandCarousel() {
   }, [active, slideWidth, containerWidth])
 
   const goTo = useCallback((idx: number) => {
+    clearTimeout(exitTimerRef.current)
+    setExiting(activeRef.current)
     activeRef.current = idx
     setActive(idx)
+    exitTimerRef.current = setTimeout(() => setExiting(null), 420)
   }, [])
 
   return (
     <section className="bg-background overflow-hidden py-14 lg:py-20">
       <style>{`
-        @keyframes brand-cta-in {
-          from { opacity: 0; transform: translateY(6px); }
+        @keyframes brand-content-in {
+          from { opacity: 0; transform: translateY(14px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes brand-content-out {
+          from { opacity: 1; transform: translateY(0); }
+          to   { opacity: 0; transform: translateY(14px); }
         }
       `}</style>
 
@@ -103,7 +116,10 @@ export default function BrandCarousel() {
             }}
           >
             {BRANDS.map((brand, i) => {
-              const isActive = i === active
+              const isActive  = i === active
+              const isExiting = i === exiting
+              const showText  = isActive || isExiting
+
               return (
                 <div
                   key={brand.id}
@@ -130,7 +146,7 @@ export default function BrandCarousel() {
                   <div className="absolute inset-0 bg-black/50" />
 
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-5">
-                    {/* Logo */}
+                    {/* Logo — always visible */}
                     <div className="relative h-10 w-20 md:h-14 md:w-28 lg:h-16 lg:w-36">
                       <Image
                         src={brand.logo}
@@ -141,21 +157,41 @@ export default function BrandCarousel() {
                       />
                     </div>
 
-                    {/* Brand name */}
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-white/60">
-                      {brand.name}
-                    </p>
-
-                    {/* CTA — only on active, delayed fade-in */}
-                    {isActive && (
-                      <Link
-                        href={brand.href}
-                        className="border border-white px-6 py-2.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition-colors hover:bg-white hover:text-foreground"
-                        style={{ animation: 'brand-cta-in 350ms ease 500ms both' }}
-                        onClick={e => e.stopPropagation()}
+                    {/* Brand name — animated */}
+                    {showText && (
+                      <p
+                        key={`name-${isActive ? 'in' : 'out'}`}
+                        className="text-[10px] font-semibold uppercase tracking-[0.35em] text-white/70"
+                        style={{
+                          animation: isActive
+                            ? 'brand-content-in 360ms ease-out 200ms both'
+                            : 'brand-content-out 300ms ease-in forwards',
+                          pointerEvents: 'none',
+                        }}
                       >
-                        {brand.cta}
-                      </Link>
+                        {brand.name}
+                      </p>
+                    )}
+
+                    {/* CTA — animated, staggered after name */}
+                    {showText && (
+                      <div
+                        key={`cta-${isActive ? 'in' : 'out'}`}
+                        style={{
+                          animation: isActive
+                            ? 'brand-content-in 360ms ease-out 360ms both'
+                            : 'brand-content-out 280ms ease-in 40ms forwards',
+                          pointerEvents: isExiting ? 'none' : 'auto',
+                        }}
+                      >
+                        <Link
+                          href={brand.href}
+                          className="block border border-white px-6 py-2.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition-colors hover:bg-white hover:text-foreground"
+                          onClick={e => e.stopPropagation()}
+                        >
+                          {brand.cta}
+                        </Link>
+                      </div>
                     )}
                   </div>
                 </div>
