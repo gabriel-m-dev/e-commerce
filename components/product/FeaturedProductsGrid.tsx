@@ -27,7 +27,7 @@ export default function FeaturedProductsGrid({ products }: FeaturedProductsGridP
   return (
     <div className="mt-8 md:flex md:flex-row md:gap-4 lg:gap-6">
       {/* Hero card */}
-      <div className="relative rounded-xl overflow-hidden shadow-sm md:w-3/5 lg:w-1/2 md:shrink-0">
+      <div className="relative overflow-hidden shadow-sm md:w-3/5 lg:w-1/2 md:shrink-0">
         <div className="relative aspect-[4/5] w-full md:aspect-auto md:h-full">
           <Image
             src={heroProduct.image}
@@ -76,7 +76,7 @@ export default function FeaturedProductsGrid({ products }: FeaturedProductsGridP
           const badge = SECONDARY_BADGES[index]
 
           return (
-            <div key={product.id} className="flex gap-0 rounded-xl overflow-hidden bg-surface shadow-sm md:flex-col lg:flex-1">
+            <div key={product.id} className="flex gap-0 overflow-hidden bg-surface shadow-sm md:flex-col lg:flex-1">
               {/* Image */}
               <div className="relative w-36 shrink-0 md:w-full md:aspect-[5/4] md:shrink-0 lg:aspect-square">
                 <Image
