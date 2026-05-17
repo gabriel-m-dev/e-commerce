@@ -140,41 +140,41 @@ export default async function HomePage() {
       <ProductFeature />
 
       {/* ─── Features Strip ─── */}
-      <section className="bg-surface">
-        <div className="mx-auto max-w-screen-xl px-6 py-14 lg:px-10">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+      <section className="bg-background">
+        <div className="mx-auto max-w-screen-xl">
+          <div className="grid grid-cols-1 divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
 
-            <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:text-left">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-foreground" aria-hidden>
+            <div className="flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center lg:py-20 lg:pb-28">
+              <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
                 <rect x="2" y="7" width="28" height="18" rx="2" />
                 <path d="M2 13h28M7 19h5M7 22h3" />
               </svg>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground">Pagá como quieras</p>
-                <p className="mt-1.5 text-[11px] leading-relaxed text-muted">Tarjetas, transferencia o efectivo. Con Mercado Pago.</p>
+                <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Pagá como quieras</p>
+                <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Tarjetas, transferencia o efectivo. Con Mercado Pago.</p>
               </div>
             </div>
 
-            <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:text-left">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-foreground" aria-hidden>
+            <div className="flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center lg:py-20 lg:pb-28">
+              <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
                 <rect x="1" y="11" width="18" height="13" rx="1" />
                 <path d="M19 15h5l5 5v5h-10V15z" />
                 <circle cx="7" cy="26" r="2" />
                 <circle cx="24" cy="26" r="2" />
               </svg>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground">Envíos a todo el país</p>
-                <p className="mt-1.5 text-[11px] leading-relaxed text-muted">Recibí tu pedido en la puerta de tu casa.</p>
+                <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Envíos a todo el país</p>
+                <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Recibí tu pedido en la puerta de tu casa.</p>
               </div>
             </div>
 
-            <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:text-left">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-foreground" aria-hidden>
+            <div className="flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center lg:py-20 lg:pb-28">
+              <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
                 <path d="M16 2 4 7v10c0 7.2 5.4 12 12 13 6.6-1 12-5.8 12-13V7L16 2z" />
               </svg>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground">Compra segura</p>
-                <p className="mt-1.5 text-[11px] leading-relaxed text-muted">Tus datos están protegidos en todo momento.</p>
+                <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Compra segura</p>
+                <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Tus datos están protegidos en todo momento.</p>
               </div>
             </div>
 
