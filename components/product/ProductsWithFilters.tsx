@@ -514,7 +514,7 @@ export default function ProductsWithFilters({
             marginRight: 'calc(50% - 50vw)',
           }}
         >
-          <div className="pl-0 pr-[68px] md:pl-20 md:pr-20">
+          <div className="pl-0 pr-0 md:pl-20 md:pr-20">
             <NikeHeroSlider />
           </div>
         </div>
