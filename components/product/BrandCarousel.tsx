@@ -72,14 +72,6 @@ export default function BrandCarousel() {
     setActive(idx)
   }, [])
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const next = (activeRef.current + 1) % BRANDS.length
-      goTo(next)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [goTo])
-
   return (
     <section className="bg-background overflow-hidden py-14 lg:py-20">
       <style>{`
