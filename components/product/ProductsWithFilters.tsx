@@ -154,8 +154,9 @@ function NikeHeroSlider() {
           <Image
             src="/nike_logo.webp"
             alt=""
-            width={62}
-            height={31}
+            width={2400}
+            height={2399}
+            sizes="(min-width: 1024px) 420px, 32vw"
             style={{
               display: 'block',
               width: 'clamp(220px, 32vw, 420px)',
