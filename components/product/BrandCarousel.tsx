@@ -199,6 +199,7 @@ export default function BrandCarousel() {
                         src={brand.logo}
                         alt={brand.name}
                         fill
+                        sizes="(min-width: 1024px) 144px, (min-width: 768px) 112px, 80px"
                         className="object-contain"
                         style={{ filter: WHITE_FILTER }}
                       />

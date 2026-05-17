@@ -110,10 +110,12 @@ export default async function ProductsPage({
               <Image
                 src="/nike_logo.webp"
                 alt=""
-                width={52}
-                height={26}
+                width={2400}
+                height={2399}
                 className="object-contain shrink-0"
                 style={{
+                  width: '52px',
+                  height: 'auto',
                   filter: 'brightness(0) saturate(100%) invert(76%) sepia(28%) saturate(700%) hue-rotate(358deg)',
                 }}
               />
