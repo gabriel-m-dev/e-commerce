@@ -63,27 +63,29 @@ function JordanHeroSlider() {
         @keyframes jordan-slide-in  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
       `}</style>
 
-      {prev !== null && (
-        <div className="absolute inset-0" style={{ zIndex: 1, animation: 'jordan-slide-out 700ms ease-in-out forwards' }}>
-          <Image src={JORDAN_SLIDES[prev].image} alt="" fill className="object-cover" />
-        </div>
-      )}
+      {/* All slides always in DOM so images are preloaded before any transition */}
+      {JORDAN_SLIDES.map((slide, i) => {
+        const isCurrent = i === current
+        const isPrev    = i === prev
 
-      <div
-        className="absolute inset-0"
-        style={prev !== null
-          ? { zIndex: 2, animation: 'jordan-slide-in 700ms ease-in-out forwards' }
-          : { zIndex: 1 }
-        }
-      >
-        <Image
-          src={JORDAN_SLIDES[current].image}
-          alt="Jordan Collection"
-          fill
-          className="object-cover"
-          priority={current === 0}
-        />
-      </div>
+        let style: React.CSSProperties
+        if (isPrev)              style = { zIndex: 1, animation: 'jordan-slide-out 700ms ease-in-out forwards' }
+        else if (isCurrent && prev !== null) style = { zIndex: 2, animation: 'jordan-slide-in 700ms ease-in-out forwards' }
+        else if (isCurrent)     style = { zIndex: 1 }
+        else                    style = { zIndex: 0, opacity: 0 }
+
+        return (
+          <div key={i} className="absolute inset-0" style={style}>
+            <Image
+              src={slide.image}
+              alt={isCurrent ? 'Jordan Collection' : ''}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        )
+      })}
 
       <div className="absolute inset-0 bg-black/45" style={{ zIndex: 3 }} aria-hidden />
 
