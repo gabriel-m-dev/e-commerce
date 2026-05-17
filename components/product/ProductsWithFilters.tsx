@@ -337,18 +337,18 @@ export default function ProductsWithFilters({
           style={{
             marginLeft: 'calc(50% - 50vw)',
             marginRight: 'calc(50% - 50vw)',
-            paddingLeft: '80px',
-            paddingRight: '80px',
           }}
         >
-          <div className="relative w-full aspect-[16/7] overflow-hidden">
-            <Image
-              src="/jordan_page_hero.jpg"
-              alt="Jordan Collection"
-              fill
-              className="object-cover"
-              priority
-            />
+          <div className="pl-0 pr-[72px] md:pl-20 md:pr-20">
+            <div className="-ml-[5px] relative w-full aspect-[3/2] md:aspect-[16/7] overflow-hidden">
+              <Image
+                src="/jordan_page_hero.jpg"
+                alt="Jordan Collection"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
           </div>
         </div>
       )}
