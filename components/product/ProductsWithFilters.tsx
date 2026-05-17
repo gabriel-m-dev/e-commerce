@@ -105,6 +105,71 @@ function JordanHeroSlider() {
   )
 }
 
+function NikeHeroSlider() {
+  const [logoVisible, setLogoVisible] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLogoVisible(true), 20000)
+    return () => clearTimeout(timer)
+  }, [])
+
+  return (
+    <div className="-ml-[5px] relative w-full aspect-[3/4] md:aspect-[16/7] overflow-hidden">
+      <style>{`
+        @keyframes nike-logo-in {
+          from { transform: translateX(-220px); opacity: 0; }
+          to   { transform: translateX(0);      opacity: 1; }
+        }
+      `}</style>
+
+      <video
+        src="/nike_hero_video.mp4"
+        autoPlay
+        muted
+        playsInline
+        loop={false}
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      {/* Overlay — aparece con fade junto al logo */}
+      <div
+        className="absolute inset-0 transition-opacity duration-700"
+        style={{ zIndex: 1, backgroundColor: 'rgba(0,0,0,0.45)', opacity: logoVisible ? 1 : 0 }}
+        aria-hidden
+      />
+
+      {/* Logo Nike — centrado, entra desde la izquierda en el segundo 20 */}
+      {logoVisible && (
+        <div
+          className="absolute"
+          style={{
+            top: '50%',
+            left: '50%',
+            zIndex: 2,
+            pointerEvents: 'none',
+            animation: 'nike-logo-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          }}
+          aria-hidden
+        >
+          <Image
+            src="/nike_logo.png"
+            alt=""
+            width={62}
+            height={31}
+            style={{
+              display: 'block',
+              width: 'clamp(220px, 32vw, 420px)',
+              height: 'auto',
+              transform: 'translate(-50%, -50%)',
+              filter: 'brightness(0) invert(1)',
+            }}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
 const PRODUCT_CATEGORIES = [
   'Todo',
   'Gorras',
@@ -351,8 +416,8 @@ export default function ProductsWithFilters({
         </div>
       )}
 
-      {/* Search + sort — light editorial and default only */}
-      {!dark && (isLightEditorial ? (
+      {/* Search + sort — light editorial and default only (not Nike) */}
+      {!dark && brand !== 'NIKE' && (isLightEditorial ? (
         <div className="mt-24 flex items-center gap-3">
           <div className="relative flex-1">
             <svg
@@ -435,6 +500,21 @@ export default function ProductsWithFilters({
         >
           <div className="pl-0 pr-[68px] md:pl-20 md:pr-20">
             <JordanHeroSlider />
+          </div>
+        </div>
+      )}
+
+      {/* Nike hero */}
+      {!dark && brand === 'NIKE' && (
+        <div
+          className="mt-8"
+          style={{
+            marginLeft: 'calc(50% - 50vw)',
+            marginRight: 'calc(50% - 50vw)',
+          }}
+        >
+          <div className="pl-0 pr-[68px] md:pl-20 md:pr-20">
+            <NikeHeroSlider />
           </div>
         </div>
       )}
