@@ -66,3 +66,17 @@ body {
 .animate-page-in {
   animation: page-in 0.35s ease-out both;
 }
+
+/* Homepage hero nav — black bg, white text */
+header.nav-hero a,
+header.nav-hero button {
+  color: white;
+  transition: color 0.3s;
+}
+/* Keep dropdown panel links readable */
+header.nav-hero .nav-dropdown a {
+  color: var(--color-muted);
+}
+header.nav-hero .nav-dropdown a:hover {
+  color: var(--color-foreground);
+}

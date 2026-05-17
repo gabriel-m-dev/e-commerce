@@ -20,7 +20,7 @@ export default function NavLinks() {
               href={link.href}
               className={`relative text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors duration-150 hover:text-foreground
                 after:absolute after:bottom-[-3px] after:left-0 after:h-px after:bg-gold after:transition-all after:duration-300
-                ${isActive ? 'text-foreground after:w-full' : 'text-muted after:w-0 hover:after:w-full'}`}
+                ${isActive ? 'text-foreground after:w-full' : 'text-foreground after:w-0 hover:after:w-full'}`}
             >
               {link.label}
             </Link>
@@ -34,7 +34,7 @@ export default function NavLinks() {
               href={link.href}
               className={`relative flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors duration-150 hover:text-foreground
                 after:absolute after:bottom-[-3px] after:left-0 after:h-px after:bg-gold after:transition-all after:duration-300
-                ${isActive ? 'text-foreground after:w-full' : 'text-muted after:w-0 hover:after:w-full'}`}
+                ${isActive ? 'text-foreground after:w-full' : 'text-foreground after:w-0 hover:after:w-full'}`}
             >
               {link.label}
               <svg
@@ -50,7 +50,7 @@ export default function NavLinks() {
             </Link>
 
             {/* Dropdown panel — pt-2 creates transparent bridge so hover doesn't break */}
-            <div className="pointer-events-none absolute left-1/2 top-full z-50 w-52 -translate-x-1/2 pt-4 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100">
+            <div className="nav-dropdown pointer-events-none absolute left-1/2 top-full z-50 w-52 -translate-x-1/2 pt-4 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100">
               <div className="border border-border bg-background">
                 <div className="h-0.5 w-full bg-gold" />
                 {link.children.map((child) => (

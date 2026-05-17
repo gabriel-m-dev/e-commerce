@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { SITE_NAME } from '@/lib/constants'
 import NavLinks from './NavLinks'
 import NavbarActions from './NavbarActions'
+import NavbarShell from './NavbarShell'
 import { createClient } from '@/lib/supabase/server'
 import { getProducts } from '@/lib/queries/products'
 
@@ -11,7 +12,7 @@ export default async function Navbar() {
   const allProducts = await getProducts()
   const searchProducts = allProducts.map(({ id, name, slug, category }) => ({ id, name, slug, category }))
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
+    <NavbarShell>
       <div className="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-6 lg:px-10">
 
         {/* Logo */}
@@ -34,6 +35,6 @@ export default async function Navbar() {
         <NavbarActions isLoggedIn={user !== null} products={searchProducts} />
 
       </div>
-    </header>
+    </NavbarShell>
   )
 }

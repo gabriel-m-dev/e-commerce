@@ -10,7 +10,6 @@ import { type DbProduct } from '@/lib/queries/products'
 import { formatPrice } from '@/lib/utils'
 import useCartStore from '@/store/cart'
 import ProductColorSelector from './ProductColorSelector'
-import BrandCollectionBanner from './BrandCollectionBanner'
 
 const PRODUCT_CATEGORIES = [
   'Todo',
@@ -258,69 +257,8 @@ export default function ProductsWithFilters({
         </div>
       )}
 
-      {/* Search + sort (dark only) / Search alone (light) */}
-      {dark ? (
-        <div className="mt-24 flex items-center gap-3">
-          <div className="relative flex-1">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar productos..."
-              className="w-full bg-[#1a1a1a] border border-white/10 pl-9 pr-3 py-2.5 text-[11px] uppercase tracking-[0.15em] text-white placeholder:text-white/30 outline-none focus:border-white/30 rounded-md"
-            />
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="h-8 w-px bg-white/10" aria-hidden />
-            <div className="flex flex-col items-start leading-none gap-0.5">
-              <span className="text-[9px] uppercase tracking-[0.2em] text-white/40">
-                Ordenar
-              </span>
-              <div className="flex items-center gap-1">
-                <select
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value as SortKey)}
-                  className="bg-transparent text-[11px] font-semibold uppercase tracking-[0.15em] text-white outline-none cursor-pointer appearance-none pr-0"
-                  style={{ colorScheme: 'dark' }}
-                >
-                  {SORT_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value} className="bg-[#1a1a1a] text-white">
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-white"
-                  aria-hidden
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : isLightEditorial ? (
+      {/* Search + sort — light editorial and default only */}
+      {!dark && (isLightEditorial ? (
         <div className="mt-24 flex items-center gap-3">
           <div className="relative flex-1">
             <svg
@@ -390,14 +328,34 @@ export default function ProductsWithFilters({
             className="w-full border border-border bg-transparent px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-foreground placeholder:text-muted outline-none transition-colors focus:border-foreground sm:max-w-xs"
           />
         </div>
-      )}
+      ))}
 
-      {/* Banner colección (solo Jordan dark) */}
-      {dark && brand === 'JORDAN' && <BrandCollectionBanner brand="JORDAN" />}
+      {/* Jordan hero image */}
+      {dark && brand === 'JORDAN' && (
+        <div
+          className="mt-8"
+          style={{
+            marginLeft: 'calc(50% - 50vw)',
+            marginRight: 'calc(50% - 50vw)',
+            paddingLeft: '80px',
+            paddingRight: '80px',
+          }}
+        >
+          <div className="relative w-full aspect-[16/7] overflow-hidden">
+            <Image
+              src="/jordan_page_hero.jpg"
+              alt="Jordan Collection"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+      )}
 
       {/* Result count */}
       <p
-        className={`mt-4 text-[10px] uppercase tracking-[0.18em] ${
+        className={`${dark ? 'mt-8' : 'mt-4'} text-[10px] uppercase tracking-[0.18em] ${
           dark ? 'text-white/40' : 'text-muted'
         }`}
       >
