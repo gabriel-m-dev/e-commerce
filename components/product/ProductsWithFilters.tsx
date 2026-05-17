@@ -114,7 +114,7 @@ function NikeHeroSlider() {
   }, [])
 
   return (
-    <div className="-ml-[5px] relative w-full aspect-[3/4] md:aspect-[16/7] overflow-hidden">
+    <div className="relative w-full aspect-[4/3] md:aspect-[16/7] overflow-hidden">
       <style>{`
         @keyframes nike-logo-in {
           from { transform: translateX(-220px); opacity: 0; }
