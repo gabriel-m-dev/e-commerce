@@ -111,10 +111,13 @@ export default function BrandCarousel() {
       `}</style>
 
       {/* Header */}
-      <div className="mx-auto mb-10 max-w-screen-xl px-6 lg:px-10">
-        <div className="flex items-center gap-3">
+      <div className="mb-10">
+        <div
+          className="inline-flex items-center gap-3 bg-foreground py-4 pr-10"
+          style={{ marginLeft: '-5px', paddingLeft: '29px' }}
+        >
           <div className="h-px w-6 bg-gold" aria-hidden />
-          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white">
             Tu marca favorita
           </p>
         </div>
