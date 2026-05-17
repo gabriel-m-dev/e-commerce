@@ -11,6 +11,90 @@ import { formatPrice } from '@/lib/utils'
 import useCartStore from '@/store/cart'
 import ProductColorSelector from './ProductColorSelector'
 
+const JORDAN_SLIDES = [
+  { image: '/jordan_page_hero.jpg',   text: 'Listo para volar' },
+  { image: '/jordan_page_hero-2.jpg', text: 'Elevá tu juego' },
+] as const
+
+function JordanHeroSlider() {
+  const [current, setCurrent] = useState(0)
+  const [prev, setPrev] = useState<number | null>(null)
+  const [textVisible, setTextVisible] = useState(true)
+  const currentRef = useRef(0)
+
+  useEffect(() => {
+    let textTimer: ReturnType<typeof setTimeout>
+    let prevTimer: ReturnType<typeof setTimeout>
+
+    const interval = setInterval(() => {
+      const oldIdx = currentRef.current
+      const nextIdx = (oldIdx + 1) % JORDAN_SLIDES.length
+      currentRef.current = nextIdx
+
+      setPrev(oldIdx)
+      setCurrent(nextIdx)
+      setTextVisible(false)
+
+      clearTimeout(textTimer)
+      clearTimeout(prevTimer)
+      textTimer = setTimeout(() => setTextVisible(true), 600)
+      prevTimer  = setTimeout(() => setPrev(null), 700)
+    }, 5000)
+
+    return () => {
+      clearInterval(interval)
+      clearTimeout(textTimer)
+      clearTimeout(prevTimer)
+    }
+  }, [])
+
+  return (
+    <div className="-ml-[5px] relative w-full aspect-[3/4] md:aspect-[16/7] overflow-hidden">
+      <style>{`
+        @keyframes jordan-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+        @keyframes jordan-slide-in  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+      `}</style>
+
+      {prev !== null && (
+        <div className="absolute inset-0" style={{ zIndex: 1, animation: 'jordan-slide-out 700ms ease-in-out forwards' }}>
+          <Image src={JORDAN_SLIDES[prev].image} alt="" fill className="object-cover" />
+        </div>
+      )}
+
+      <div
+        className="absolute inset-0"
+        style={prev !== null
+          ? { zIndex: 2, animation: 'jordan-slide-in 700ms ease-in-out forwards' }
+          : { zIndex: 1 }
+        }
+      >
+        <Image
+          src={JORDAN_SLIDES[current].image}
+          alt="Jordan Collection"
+          fill
+          className="object-cover"
+          priority={current === 0}
+        />
+      </div>
+
+      <div className="absolute inset-0 bg-black/45" style={{ zIndex: 3 }} aria-hidden />
+
+      <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-8" style={{ zIndex: 4 }}>
+        <p
+          className="text-white uppercase tracking-[0.32em] text-lg font-medium md:text-2xl leading-tight"
+          style={{
+            opacity: textVisible ? 1 : 0,
+            transform: textVisible ? 'translateY(0)' : 'translateY(8px)',
+            transition: 'opacity 350ms ease, transform 350ms ease',
+          }}
+        >
+          {JORDAN_SLIDES[current].text}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 const PRODUCT_CATEGORIES = [
   'Todo',
   'Gorras',
@@ -340,21 +424,7 @@ export default function ProductsWithFilters({
           }}
         >
           <div className="pl-0 pr-[68px] md:pl-20 md:pr-20">
-            <div className="-ml-[5px] relative w-full aspect-[3/4] md:aspect-[16/7] overflow-hidden">
-              <Image
-                src="/jordan_page_hero.jpg"
-                alt="Jordan Collection"
-                fill
-                className="object-cover"
-                priority
-              />
-              <div className="absolute inset-0 bg-black/45" aria-hidden />
-              <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-8">
-                <p className="text-white uppercase tracking-[0.32em] text-lg font-medium md:text-2xl leading-tight">
-                  Listo para volar
-                </p>
-              </div>
-            </div>
+            <JordanHeroSlider />
           </div>
         </div>
       )}
