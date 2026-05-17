@@ -17,14 +17,16 @@ const JORDAN_SLIDES = [
 ] as const
 
 function JordanHeroSlider() {
-  const [current, setCurrent] = useState(0)
-  const [prev, setPrev] = useState<number | null>(null)
+  const [current, setCurrent]     = useState(0)
+  const [prev, setPrev]           = useState<number | null>(null)
   const [textVisible, setTextVisible] = useState(true)
+  const [textIndex, setTextIndex] = useState(0)
   const currentRef = useRef(0)
 
   useEffect(() => {
-    let textTimer: ReturnType<typeof setTimeout>
-    let prevTimer: ReturnType<typeof setTimeout>
+    let textSwapTimer: ReturnType<typeof setTimeout>
+    let textShowTimer: ReturnType<typeof setTimeout>
+    let prevTimer:     ReturnType<typeof setTimeout>
 
     const interval = setInterval(() => {
       const oldIdx = currentRef.current
@@ -35,15 +37,21 @@ function JordanHeroSlider() {
       setCurrent(nextIdx)
       setTextVisible(false)
 
-      clearTimeout(textTimer)
+      clearTimeout(textSwapTimer)
+      clearTimeout(textShowTimer)
       clearTimeout(prevTimer)
-      textTimer = setTimeout(() => setTextVisible(true), 600)
-      prevTimer  = setTimeout(() => setPrev(null), 700)
+
+      // swap text content once it's fully invisible (after 350ms fade-out)
+      textSwapTimer = setTimeout(() => setTextIndex(nextIdx), 400)
+      // then fade new text in
+      textShowTimer = setTimeout(() => setTextVisible(true), 600)
+      prevTimer     = setTimeout(() => setPrev(null), 700)
     }, 5000)
 
     return () => {
       clearInterval(interval)
-      clearTimeout(textTimer)
+      clearTimeout(textSwapTimer)
+      clearTimeout(textShowTimer)
       clearTimeout(prevTimer)
     }
   }, [])
@@ -88,7 +96,7 @@ function JordanHeroSlider() {
             transition: 'opacity 350ms ease, transform 350ms ease',
           }}
         >
-          {JORDAN_SLIDES[current].text}
+          {JORDAN_SLIDES[textIndex].text}
         </p>
       </div>
     </div>
