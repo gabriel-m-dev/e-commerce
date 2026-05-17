@@ -340,7 +340,7 @@ export default function ProductsWithFilters({
           }}
         >
           <div className="pl-0 pr-[68px] md:pl-20 md:pr-20">
-            <div className="-ml-[5px] relative w-full aspect-[6/5] md:aspect-[16/7] overflow-hidden">
+            <div className="-ml-[5px] relative w-full aspect-[3/4] md:aspect-[16/7] overflow-hidden">
               <Image
                 src="/jordan_page_hero.jpg"
                 alt="Jordan Collection"
@@ -348,6 +348,12 @@ export default function ProductsWithFilters({
                 className="object-cover"
                 priority
               />
+              <div className="absolute inset-0 bg-black/45" aria-hidden />
+              <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-8">
+                <p className="text-white uppercase tracking-[0.32em] text-lg font-black md:text-2xl leading-tight">
+                  Listo para volar
+                </p>
+              </div>
             </div>
           </div>
         </div>
