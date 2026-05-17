@@ -38,6 +38,7 @@ export default function BrandCarousel() {
   const containerRef   = useRef<HTMLDivElement>(null)
   const activeRef      = useRef(1)
   const exitTimerRef   = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const touchStartX    = useRef<number | null>(null)
 
   const [active, setActive]               = useState(1)
   const [exiting, setExiting]             = useState<number | null>(null)
@@ -81,6 +82,21 @@ export default function BrandCarousel() {
     exitTimerRef.current = setTimeout(() => setExiting(null), 420)
   }, [])
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }, [])
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null) return
+    const delta = touchStartX.current - e.changedTouches[0].clientX
+    touchStartX.current = null
+    if (Math.abs(delta) < 50) return
+    const next = delta > 0
+      ? Math.min(BRANDS.length - 1, activeRef.current + 1)
+      : Math.max(0, activeRef.current - 1)
+    if (next !== activeRef.current) goTo(next)
+  }, [goTo])
+
   return (
     <section className="bg-background overflow-hidden py-14 lg:py-20">
       <style>{`
@@ -105,7 +121,12 @@ export default function BrandCarousel() {
       </div>
 
       {/* Carousel */}
-      <div ref={containerRef} className="overflow-hidden">
+      <div
+        ref={containerRef}
+        className="overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         {containerWidth > 0 && (
           <div
             className="flex"
