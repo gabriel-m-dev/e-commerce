@@ -98,7 +98,7 @@ export default function BrandCarousel() {
   }, [goTo])
 
   return (
-    <section className="bg-background overflow-hidden py-14 lg:py-20">
+    <section className="bg-[#f5f5f7] overflow-hidden py-14 lg:py-20">
       <style>{`
         @keyframes brand-content-in {
           from { opacity: 0; transform: translateY(14px); }

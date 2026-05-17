@@ -291,7 +291,7 @@ export default function ProductsWithFilters({
                 isNavPinned ? 'opacity-100' : 'opacity-0'
               }`}
               style={{
-                backgroundColor: editorialTheme === 'dark' ? '#0a0a0a' : '#ffffff',
+                backgroundColor: editorialTheme === 'dark' ? '#0a0a0a' : editorialTheme === 'light' ? '#f5f5f7' : '#ffffff',
                 top: '-1px',
               }}
               aria-hidden
@@ -299,7 +299,7 @@ export default function ProductsWithFilters({
             <div
               data-brand-nav-collapsed-bg
               className="pointer-events-none absolute inset-0"
-              style={{ top: '-1px', backgroundColor: editorialTheme === 'dark' ? '#0a0a0a' : '#ffffff', opacity: 0, transition: 'opacity 180ms' }}
+              style={{ top: '-1px', backgroundColor: editorialTheme === 'dark' ? '#0a0a0a' : editorialTheme === 'light' ? '#f5f5f7' : '#ffffff', opacity: 0, transition: 'opacity 180ms' }}
               aria-hidden
             />
             <div data-brand-nav-inner className="relative flex flex-wrap gap-2">
@@ -316,7 +316,7 @@ export default function ProductsWithFilters({
               const pillActive = 'text-gold border-gold'
               const pillInactive = editorialTheme === 'dark'
                 ? 'text-white/70 hover:text-white border-transparent'
-                : 'text-muted hover:text-foreground border-transparent'
+                : 'text-foreground border-transparent hover:border-gold'
 
               if (!group.sub) {
                 return (
@@ -362,7 +362,7 @@ export default function ProductsWithFilters({
                                 : 'text-foreground bg-foreground/5'
                               : editorialTheme === 'dark'
                                 ? 'text-white/60 hover:text-white hover:bg-white/5'
-                                : 'text-muted hover:text-foreground hover:bg-foreground/3'
+                                : 'text-foreground'
                           }`}
                         >
                           {subCat}

@@ -8,7 +8,7 @@ export default function NewArrivalsSection({ products }: { products: DbProduct[]
   if (!products.length) return null
 
   return (
-    <section className="bg-background border-t border-border">
+    <section className="bg-[#f5f5f7]">
       <div className="mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
 
         {/* Header */}

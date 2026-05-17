@@ -51,7 +51,7 @@ export default function ProductFeature() {
   }
 
   return (
-    <section className="bg-background">
+    <section className="bg-[#f5f5f7]">
       <div className="mx-auto max-w-screen-xl px-6 py-20 lg:px-10">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
 

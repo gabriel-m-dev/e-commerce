@@ -44,7 +44,7 @@ export default async function HomePage() {
       <HeroSection />
 
       {/* ─── Featured Products ─── */}
-      <section className="bg-background">
+      <section className="bg-[#f5f5f7]">
         <div className="mx-auto max-w-screen-xl px-6 py-20 lg:px-10">
 
           {/* Section header */}
@@ -139,8 +139,10 @@ export default async function HomePage() {
       {/* ─── Product Feature ─── */}
       <ProductFeature />
 
+      <div className="h-2 bg-white" aria-hidden />
+
       {/* ─── Features Strip ─── */}
-      <section className="bg-background">
+      <section className="bg-[#f5f5f7]">
         <div className="mx-auto max-w-screen-xl">
           <div className="grid grid-cols-1 divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
 
@@ -182,14 +184,20 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <div className="h-2 bg-white" aria-hidden />
+
       {/* ─── Brand Carousel ─── */}
       <BrandCarousel />
+
+      <div className="h-2 bg-white" aria-hidden />
 
       {/* ─── Nuevos Ingresos ─── */}
       <NewArrivalsSection products={newProducts} />
 
+      <div className="h-2 bg-white" aria-hidden />
+
       {/* ─── Todos los Productos ─── */}
-      <section className="bg-background">
+      <section className="bg-[#f5f5f7]">
         <div className="mx-auto max-w-screen-xl px-6 py-20 lg:px-10">
 
           {/* Section header */}
