@@ -59,7 +59,7 @@ export default function FeaturedProductsGrid({ products }: FeaturedProductsGridP
           <div className="h-px bg-gold w-10 mt-3 mb-4" />
           <button
             onClick={() => router.push(`/product/${heroProduct.slug}`)}
-            className="w-full bg-foreground border border-gold/60 py-3.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-background flex items-center justify-center gap-2 lg:w-fit lg:px-10 cursor-pointer"
+            className="w-full bg-white/10 backdrop-blur-sm py-3.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white flex items-center justify-center gap-2 lg:w-fit lg:px-10 cursor-pointer"
           >
             COMPRAR AHORA →
           </button>
