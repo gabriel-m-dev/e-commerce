@@ -339,8 +339,8 @@ export default function ProductsWithFilters({
             marginRight: 'calc(50% - 50vw)',
           }}
         >
-          <div className="pl-0 pr-[72px] md:pl-20 md:pr-20">
-            <div className="-ml-[5px] relative w-full aspect-[3/2] md:aspect-[16/7] overflow-hidden">
+          <div className="pl-0 pr-[68px] md:pl-20 md:pr-20">
+            <div className="-ml-[5px] relative w-full aspect-[6/5] md:aspect-[16/7] overflow-hidden">
               <Image
                 src="/jordan_page_hero.jpg"
                 alt="Jordan Collection"
