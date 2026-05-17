@@ -97,9 +97,11 @@ export default function BrandCarousel() {
           <div
             className="flex"
             style={{
-              transform:  `translateX(${trackOffset}px)`,
-              transition: 'transform 700ms ease-in-out',
-              gap:        `${GAP}px`,
+              transform:       `translate3d(${trackOffset}px, 0, 0)`,
+              transition:      'transform 480ms cubic-bezier(0.4, 0, 0.2, 1)',
+              gap:             `${GAP}px`,
+              willChange:      'transform',
+              backfaceVisibility: 'hidden',
             }}
           >
             {BRANDS.map((brand, i) => {
@@ -112,8 +114,7 @@ export default function BrandCarousel() {
                     width:      `${slideWidth}px`,
                     height:     `${slideHeight}px`,
                     opacity:    isActive ? 1 : 0.5,
-                    transform:  isActive ? 'scale(1)' : 'scale(0.96)',
-                    transition: 'opacity 700ms ease, transform 700ms ease',
+                    transition: 'opacity 480ms cubic-bezier(0.4, 0, 0.2, 1)',
                     cursor:     isActive ? 'default' : 'pointer',
                   }}
                   onClick={() => { if (!isActive) goTo(i) }}
