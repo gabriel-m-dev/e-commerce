@@ -7,6 +7,7 @@ import FeaturedProductsGrid from '@/components/product/FeaturedProductsGrid'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
 import ProductFeature from '@/components/product/ProductFeature'
 import NewArrivalsSection from '@/components/product/NewArrivalsSection'
+import BrandCarousel from '@/components/product/BrandCarousel'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 import HeroSection from '@/components/layout/HeroSection'
 
@@ -180,6 +181,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ─── Brand Carousel ─── */}
+      <BrandCarousel />
 
       {/* ─── Nuevos Ingresos ─── */}
       <NewArrivalsSection products={newProducts} />
