@@ -350,7 +350,7 @@ export default function ProductsWithFilters({
               />
               <div className="absolute inset-0 bg-black/45" aria-hidden />
               <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-8">
-                <p className="text-white uppercase tracking-[0.32em] text-lg font-black md:text-2xl leading-tight">
+                <p className="text-white uppercase tracking-[0.32em] text-lg font-medium md:text-2xl leading-tight">
                   Listo para volar
                 </p>
               </div>
