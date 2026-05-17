@@ -108,7 +108,7 @@ export default async function ProductsPage({
             >
               {/* Nike logo — dorado semitransparente, justo antes de la J */}
               <Image
-                src="/nike_logo.png"
+                src="/nike_logo.webp"
                 alt=""
                 width={52}
                 height={26}
@@ -186,7 +186,7 @@ export default async function ProductsPage({
             aria-hidden
           >
             <Image
-              src="/jordan_bg.png"
+              src="/jordan_bg.webp"
               alt=""
               fill
               sizes="160px"

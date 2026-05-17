@@ -12,8 +12,8 @@ import useCartStore from '@/store/cart'
 import ProductColorSelector from './ProductColorSelector'
 
 const JORDAN_SLIDES = [
-  { image: '/jordan_page_hero.jpg',   text: 'Listo para volar' },
-  { image: '/jordan_page_hero-2.jpg', text: 'Elevá tu juego' },
+  { image: '/jordan_page_hero.webp',   text: 'Listo para volar' },
+  { image: '/jordan_page_hero-2.webp', text: 'Elevá tu juego' },
 ] as const
 
 function JordanHeroSlider() {
@@ -152,7 +152,7 @@ function NikeHeroSlider() {
           aria-hidden
         >
           <Image
-            src="/nike_logo.png"
+            src="/nike_logo.webp"
             alt=""
             width={62}
             height={31}

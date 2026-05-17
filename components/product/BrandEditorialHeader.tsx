@@ -31,7 +31,7 @@ const BRAND_COPY: Record<
   }
 > = {
   NIKE: {
-    logoSrc: '/nike_logo.png',
+    logoSrc: '/nike_logo.webp',
     logoAlt: 'Nike',
     line1: 'JUST',
     line2: 'DO IT',
@@ -39,18 +39,18 @@ const BRAND_COPY: Record<
     watermarkText: 'NIKE',
   },
   JORDAN: {
-    logoSrc: '/jordan_logo.png',
+    logoSrc: '/jordan_logo.webp',
     logoAlt: 'Jordan',
     line1: 'DREAM IT',
     line2: 'DO IT',
     punctuation: 'comma',
     watermarkText: 'JORDAN',
-    watermarkLogoSrc: '/nike_logo.png',
+    watermarkLogoSrc: '/nike_logo.webp',
     watermarkLogoWidth: 52,
     watermarkLogoHeight: 26,
   },
   ADIDAS: {
-    logoSrc: '/adidas_logo.png',
+    logoSrc: '/adidas_logo.webp',
     logoAlt: 'Adidas',
     line1: 'IMPOSSIBLE',
     line2: 'IS NOTHING',
