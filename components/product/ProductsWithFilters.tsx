@@ -630,7 +630,7 @@ export default function ProductsWithFilters({
                         router.push(`/product/${product.slug}`)
                       }
                     }}
-                    className="relative block aspect-square w-full overflow-hidden rounded-md cursor-pointer"
+                    className="relative block aspect-square w-full overflow-hidden rounded-md cursor-pointer bg-[#2a2a2a]"
                     aria-label={`Ver ${product.name}`}
                   >
                     <Image

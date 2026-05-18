@@ -78,7 +78,7 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
   const copy = BRAND_COPY[brand]
   const isDark = theme === 'dark'
   const textColor = isDark ? 'text-white' : 'text-foreground'
-  const overlayColor = isDark ? '#0a0a0a' : '#f5f5f7'
+  const overlayColor = isDark ? '#0a0a0a' : '#ffffff'
   const pinnedTextColor = isDark ? 'text-gold' : 'text-foreground'
   const line2Chars = splitSweepCharacters(copy.line2)
   const line2StartIndex = getLine2StartIndex(brand)
