@@ -5,10 +5,10 @@ import Link from 'next/link'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 
 const SLIDES = [
-  { mobile: '/hero-1.webp', desktop: '/hero-1.webp' },
-  { mobile: '/hero-2.webp', desktop: '/hero-2.webp' },
-  { mobile: '/hero-3.webp', desktop: '/hero-3.webp' },
-  { mobile: '/hero-4.webp', desktop: '/hero-4.webp' },
+  { mobile: '/hero/1.webp', desktop: '/hero/1.webp' },
+  { mobile: '/hero/2.webp', desktop: '/hero/2.webp' },
+  { mobile: '/hero/3.webp', desktop: '/hero/3.webp' },
+  { mobile: '/hero/4.webp', desktop: '/hero/4.webp' },
 ]
 
 export default function HeroSection() {

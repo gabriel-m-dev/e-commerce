@@ -3,9 +3,9 @@
 import Image from 'next/image'
 
 const BRAND_IMAGES = {
-  NIKE:   '/nike_bg.webp',
-  JORDAN: '/jordan_bg.webp',
-  ADIDAS: '/adidas_bg.webp',
+  NIKE:   '/brands/nike/bg.webp',
+  JORDAN: '/brands/jordan/bg.webp',
+  ADIDAS: '/brands/adidas/bg.webp',
 } as const
 
 interface BrandBgImageProps {

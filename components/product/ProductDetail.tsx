@@ -190,9 +190,12 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         </h1>
 
         {/* Price */}
-        <p className="mt-4 text-2xl font-semibold text-foreground">
-          {formatPrice(product.price)}
-        </p>
+        <div className="mt-4 flex items-baseline gap-2">
+          <span className="text-2xl font-semibold text-foreground">{formatPrice(product.price)}</span>
+          {product.comparePrice != null && product.comparePrice > product.price && (
+            <span className="text-base font-normal text-muted line-through">{formatPrice(product.comparePrice)}</span>
+          )}
+        </div>
 
         {/* Divider */}
         <div className="my-6 h-px bg-border" />

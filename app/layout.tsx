@@ -1,10 +1,17 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Toaster } from 'sonner'
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from '@/lib/constants'
 import './globals.css'
+
+const drexs = localFont({
+  src: './fonts/Drexs.otf',
+  variable: '--font-drexs',
+  display: 'swap',
+})
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -59,7 +66,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${drexs.variable}`}
     >
       <body className="flex min-h-screen flex-col overflow-x-hidden bg-background font-sans text-foreground antialiased">
         <script

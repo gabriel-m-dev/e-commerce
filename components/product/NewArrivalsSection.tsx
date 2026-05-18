@@ -65,9 +65,12 @@ export default function NewArrivalsSection({ products }: { products: DbProduct[]
                 >
                   {product.name}
                 </Link>
-                <p className="text-[16px] font-semibold text-foreground md:text-[15px]">
-                  {formatPrice(product.price)}
-                </p>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-[16px] font-semibold text-foreground md:text-[15px]">{formatPrice(product.price)}</span>
+                  {product.comparePrice != null && product.comparePrice > product.price && (
+                    <span className="text-[13px] font-normal text-muted line-through md:text-[12px]">{formatPrice(product.comparePrice)}</span>
+                  )}
+                </div>
                 <Link
                   href={`/product/${product.slug}`}
                   className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted hover:text-foreground transition-colors mt-1"

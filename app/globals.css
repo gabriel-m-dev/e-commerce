@@ -4,6 +4,7 @@
   /* Typography */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-drexs);
 
   /* Color palette */
   --color-background: #ffffff;
@@ -39,6 +40,10 @@ html {
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-drexs);
 }
 
 :focus-visible {

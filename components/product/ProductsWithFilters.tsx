@@ -12,8 +12,8 @@ import useCartStore from '@/store/cart'
 import ProductColorSelector from './ProductColorSelector'
 
 const JORDAN_SLIDES = [
-  { image: '/jordan_page_hero.webp',   text: 'Listo para volar' },
-  { image: '/jordan_page_hero-2.webp', text: 'Elevá tu juego' },
+  { image: '/brands/jordan/hero-1.webp', text: 'Listo para volar' },
+  { image: '/brands/jordan/hero-2.webp', text: 'Elevá tu juego' },
 ] as const
 
 function JordanHeroSlider() {
@@ -147,7 +147,7 @@ function NikeHeroSlider() {
       )}
 
       <video
-        src="/nike_hero_video.mp4"
+        src="/brands/nike/hero-video.mp4"
         autoPlay
         muted
         playsInline
@@ -178,7 +178,7 @@ function NikeHeroSlider() {
           aria-hidden
         >
           <Image
-            src="/nike_logo.webp"
+            src="/brands/nike/logo.webp"
             alt=""
             width={2400}
             height={2399}
@@ -684,9 +684,12 @@ export default function ProductsWithFilters({
                       {product.name}
                     </Link>
                     <div className={`mt-auto flex items-end gap-2${usesGroupedNav ? ' justify-center lg:justify-between' : ' justify-between'}`}>
-                      <p className="text-[13px] font-semibold text-white">
-                        {formatPrice(product.price)}
-                      </p>
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-[13px] font-semibold text-white">{formatPrice(product.price)}</span>
+                        {product.comparePrice != null && product.comparePrice > product.price && (
+                          <span className="text-[11px] font-normal text-white/50 line-through">{formatPrice(product.comparePrice)}</span>
+                        )}
+                      </div>
                       {product.colors.length > 0 && (
                         <span className={usesGroupedNav ? 'hidden lg:block' : ''}>
                           <ProductColorSelector
@@ -793,9 +796,12 @@ export default function ProductsWithFilters({
                     >
                       {product.name}
                     </Link>
-                    <p className={`mt-auto pt-1 text-sm font-semibold text-foreground${usesGroupedNav ? ' text-center lg:text-left' : ''}`}>
-                      {formatPrice(product.price)}
-                    </p>
+                    <div className={`mt-auto pt-1 flex items-baseline gap-1.5${usesGroupedNav ? ' justify-center lg:justify-start' : ''}`}>
+                      <span className="text-sm font-semibold text-foreground">{formatPrice(product.price)}</span>
+                      {product.comparePrice != null && product.comparePrice > product.price && (
+                        <span className="text-xs font-normal text-muted line-through">{formatPrice(product.comparePrice)}</span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Botón + — solo desktop en brand pages */}

@@ -175,9 +175,12 @@ export default async function ProductPage({
                       <h3 className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-foreground">
                         {rel.name}
                       </h3>
-                      <p className="mt-1 text-sm font-semibold text-foreground">
-                        {formatPrice(rel.price)}
-                      </p>
+                      <div className="mt-1 flex items-baseline gap-1.5">
+                        <span className="text-sm font-semibold text-foreground">{formatPrice(rel.price)}</span>
+                        {rel.comparePrice != null && rel.comparePrice > rel.price && (
+                          <span className="text-xs font-normal text-muted line-through">{formatPrice(rel.comparePrice)}</span>
+                        )}
+                      </div>
                     </div>
                     <AddToCartButton
                       product={{
