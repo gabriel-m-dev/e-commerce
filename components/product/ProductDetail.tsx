@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { formatPrice } from '@/lib/utils'
@@ -15,6 +15,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
   const addItem = useCartStore((s) => s.addItem)
 
   const [activeThumb, setActiveThumb] = useState(0)
+  const touchStartX = useRef(0)
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
@@ -76,11 +77,60 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
   return (
     <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_460px] lg:gap-20">
 
-      {/* ── Gallery ── */}
-      <div className="flex flex-col gap-3 lg:flex-row">
+      {/* ── Gallery — mobile (full-screen swipeable) ── */}
+      <div
+        className="lg:hidden -mx-6 relative overflow-hidden"
+        style={{ height: '100svh' }}
+        onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX }}
+        onTouchEnd={(e) => {
+          const delta = e.changedTouches[0].clientX - touchStartX.current
+          if (delta > 40) setActiveThumb((i) => Math.max(0, i - 1))
+          else if (delta < -40) setActiveThumb((i) => Math.min(product.images.length - 1, i + 1))
+        }}
+      >
+        {product.images.map((src, i) => (
+          <div
+            key={i}
+            className="absolute inset-0 transition-all duration-500"
+            style={{
+              opacity: i === activeThumb ? 1 : 0,
+              transform: i === activeThumb ? 'scale(1)' : 'scale(1.04)',
+              pointerEvents: i === activeThumb ? 'auto' : 'none',
+            }}
+          >
+            <Image
+              src={src}
+              alt={`${product.name} — vista ${i + 1}`}
+              fill
+              sizes="100vw"
+              className="object-cover object-center"
+              priority={i === 0}
+            />
+          </div>
+        ))}
+        {product.images.length > 1 && (
+          <div className="absolute bottom-6 left-0 right-0 flex justify-center">
+            <div className="flex items-center gap-2 rounded-full px-3 py-2 backdrop-blur-md bg-black/25">
+              {product.images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveThumb(i)}
+                  aria-label={`Vista ${i + 1}`}
+                  className={`rounded-full transition-all duration-300 ${
+                    i === activeThumb ? 'h-1.5 w-4 bg-white' : 'h-1.5 w-1.5 bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
-        {/* Vertical thumbnails — desktop only */}
-        <div className="hidden lg:flex lg:flex-col lg:gap-2.5">
+      {/* ── Gallery — desktop (thumbnails + main) ── */}
+      <div className="hidden lg:flex lg:flex-row lg:gap-3">
+
+        {/* Vertical thumbnails */}
+        <div className="flex flex-col gap-2.5">
           {product.images.map((src, i) => (
             <button
               key={i}
@@ -109,40 +159,16 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
             src={mainImage}
             alt={product.name}
             fill
-            sizes="(max-width: 1024px) 100vw, 55vw"
+            sizes="55vw"
             className="object-cover object-center transition-opacity duration-300"
             priority
           />
         </div>
 
-        {/* Horizontal thumbnails — mobile only */}
-        <div className="flex gap-2 lg:hidden">
-          {product.images.map((src, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveThumb(i)}
-              aria-label={`Vista ${i + 1}`}
-              className={`relative h-16 w-16 shrink-0 overflow-hidden bg-surface transition-opacity ${
-                i === activeThumb
-                  ? 'ring-1 ring-foreground'
-                  : 'opacity-50 hover:opacity-100'
-              }`}
-            >
-              <Image
-                src={src}
-                alt={`${product.name} — vista ${i + 1}`}
-                fill
-                sizes="64px"
-                className="object-cover object-center"
-              />
-            </button>
-          ))}
-        </div>
-
       </div>
 
       {/* ── Product info ── */}
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center text-center">
 
         {/* Category */}
         <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">
@@ -150,7 +176,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         </p>
 
         {/* Name */}
-        <h1 className="mt-2 text-4xl font-black uppercase leading-none tracking-tight text-foreground lg:text-5xl">
+        <h1 className="mt-2 text-3xl font-black uppercase leading-none tracking-tight text-foreground lg:text-4xl">
           {product.name}
         </h1>
 
@@ -169,16 +195,11 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
 
         {/* Size selector */}
         {sizes.length > 0 && (
-          <div className="mt-8">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground">
-                Talle
-              </p>
-              <button className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted underline underline-offset-2 hover:text-foreground transition-colors">
-                Guía de talles
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
+          <div className="mt-8 w-full">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground">
+              Talle
+            </p>
+            <div className="flex flex-wrap justify-center gap-2">
               {sizes.map((size) => (
                 <button
                   key={size}
@@ -201,9 +222,6 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
 
         {/* Quantity */}
         <div className="mt-6">
-          <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground">
-            Cantidad
-          </p>
           <div className="inline-flex items-center border border-border">
             <button
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -230,7 +248,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         </div>
 
         {/* CTA buttons */}
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-8 flex w-full flex-col gap-3 sm:flex-row">
           <button
             onClick={handleAddToCart}
             className="flex flex-1 items-center justify-center gap-3 bg-foreground py-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80"
@@ -246,7 +264,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         </div>
 
         {/* Trust badges */}
-        <div className="mt-8 flex flex-col gap-3 border-t border-border pt-6">
+        <div className="mt-8 flex w-full flex-col gap-3 border-t border-border pt-6">
           <div className="flex items-center gap-3">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-muted" aria-hidden>
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />

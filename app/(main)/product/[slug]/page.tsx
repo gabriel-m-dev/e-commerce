@@ -130,7 +130,7 @@ export default async function ProductPage({
 
       {/* ── Product detail ── */}
       <section className="bg-background">
-        <div className="mx-auto max-w-screen-xl px-6 py-12 lg:px-10 lg:py-16">
+        <div className="mx-auto max-w-screen-xl px-6 pt-0 pb-12 lg:px-10 lg:py-16">
           <ProductDetail product={product} />
         </div>
       </section>
