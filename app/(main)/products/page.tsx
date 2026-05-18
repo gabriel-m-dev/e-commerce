@@ -93,7 +93,7 @@ export default async function ProductsPage({
         {/* Editorial watermark for brand pages */}
         {brandFilter === 'JORDAN' && (
           <div
-            className="pointer-events-none select-none absolute right-[-16px] top-0 bottom-0 w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center"
+            className="pointer-events-none select-none absolute right-[-16px] top-0 h-screen w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center"
             aria-hidden
           >
             <div
@@ -138,7 +138,7 @@ export default async function ProductsPage({
         )}
         {brandFilter === 'NIKE' && (
           <div
-            className="pointer-events-none select-none absolute right-[-16px] top-0 bottom-0 w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center"
+            className="pointer-events-none select-none absolute right-[-16px] top-0 h-screen w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center"
             aria-hidden
           >
             <span
@@ -160,7 +160,7 @@ export default async function ProductsPage({
         )}
         {brandFilter === 'ADIDAS' && (
           <div
-            className="pointer-events-none select-none absolute right-[-18px] top-0 bottom-0 w-[90px] lg:w-[120px] overflow-hidden flex items-center justify-center"
+            className="pointer-events-none select-none absolute right-[-18px] top-0 h-screen w-[90px] lg:w-[120px] overflow-hidden flex items-center justify-center"
             aria-hidden
           >
             <span
