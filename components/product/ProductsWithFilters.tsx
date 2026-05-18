@@ -438,8 +438,8 @@ export default function ProductsWithFilters({
         </div>
       )}
 
-      {/* Search + sort — light editorial and default only (not Nike) */}
-      {!dark && brand !== 'NIKE' && (isLightEditorial ? (
+      {/* Search + sort — solo en páginas no editoriales */}
+      {!usesGroupedNav && (isLightEditorial ? (
         <div className="mt-24 flex items-center gap-3">
           <div className="relative flex-1">
             <svg
