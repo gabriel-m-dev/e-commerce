@@ -2,12 +2,14 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SITE_DESCRIPTION } from '@/lib/constants'
-import { getProducts, getFeaturedProducts, getNewProducts } from '@/lib/queries/products'
+import { getProducts, getFeaturedProducts, getNewProducts, getProductById } from '@/lib/queries/products'
+import { getSiteConfig } from '@/lib/queries/site-config'
 import FeaturedProductsGrid from '@/components/product/FeaturedProductsGrid'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
 import ProductFeature from '@/components/product/ProductFeature'
 import NewArrivalsSection from '@/components/product/NewArrivalsSection'
 import BrandCarousel from '@/components/product/BrandCarousel'
+import CategoryShowcase from '@/components/product/CategoryShowcase'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 import HeroSection from '@/components/layout/HeroSection'
 
@@ -32,16 +34,23 @@ export const metadata: Metadata = {
 
 
 export default async function HomePage() {
-  const [featuredProducts, allProducts, newProducts] = await Promise.all([
+  const [featuredProducts, allProducts, newProducts, heroConfig, productFeatureConfig, categoryCardsConfig] = await Promise.all([
     getFeaturedProducts(10),
     getProducts(),
     getNewProducts(4),
+    getSiteConfig('hero'),
+    getSiteConfig('productFeature'),
+    getSiteConfig('categoryCards'),
   ])
+
+  const featureProduct = productFeatureConfig?.productId
+    ? await getProductById(productFeatureConfig.productId)
+    : null
 
   return (
     <>
       {/* ─── Hero ─── */}
-      <HeroSection />
+      <HeroSection slides={heroConfig?.slides} />
 
       {/* ─── Featured Products ─── */}
       <section className="bg-[#f5f5f7]">
@@ -137,7 +146,7 @@ export default async function HomePage() {
       </section>
 
       {/* ─── Product Feature ─── */}
-      <ProductFeature />
+      <ProductFeature product={featureProduct} />
 
       <div className="h-2 bg-white" aria-hidden />
 
@@ -266,83 +275,7 @@ export default async function HomePage() {
       </section>
 
       {/* ─── Categorías ─── */}
-      <section className="flex flex-col lg:flex-row" style={{ minHeight: '92vh' }} aria-label="Explorar por categoría">
-
-        {/* Zapatillas */}
-        <Link href="/products?category=Zapatillas" className="group relative flex-1 overflow-hidden" style={{ minHeight: '260px' }}>
-          <Image
-            src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85"
-            alt="Zapatillas"
-            fill
-            sizes="(max-width: 1024px) 100vw, 33vw"
-            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-foreground/45 transition-colors duration-500 group-hover:bg-foreground/60" />
-          <div className="absolute right-0 top-0 hidden h-full w-px bg-background/15 lg:block" />
-          <div className="absolute bottom-0 left-8 lg:left-10 h-0 w-px bg-gold transition-all duration-700 ease-out group-hover:h-24" />
-          <span className="absolute left-8 top-8 lg:left-10 lg:top-10 text-[10px] font-medium tabular-nums text-background/40">01</span>
-          <div className="absolute bottom-8 left-8 right-8 lg:bottom-10 lg:left-10 lg:right-10">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">Nueva colección</p>
-            <h2 className="mt-2 font-black uppercase leading-none tracking-tight text-background transition-transform duration-500 group-hover:-translate-y-1" style={{ fontSize: 'clamp(2rem, 3.2vw, 3rem)' }}>
-              Zapatillas
-            </h2>
-            <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.18em] text-background/50 group-hover:text-background/70 transition-colors duration-300">5 modelos</p>
-            <p className="mt-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-background/0 group-hover:text-background/90 -translate-x-1 group-hover:translate-x-0 transition-all duration-300">
-              Ver colección <ArrowIcon className="shrink-0 text-gold transition-transform duration-300 group-hover:translate-x-1" />
-            </p>
-          </div>
-        </Link>
-
-        {/* Ropa */}
-        <Link href="/products?category=Hoodies" className="group relative flex-1 overflow-hidden" style={{ minHeight: '260px' }}>
-          <Image
-            src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=900&auto=format&fit=crop&q=85"
-            alt="Ropa"
-            fill
-            sizes="(max-width: 1024px) 100vw, 33vw"
-            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-foreground/45 transition-colors duration-500 group-hover:bg-foreground/60" />
-          <div className="absolute right-0 top-0 hidden h-full w-px bg-background/15 lg:block" />
-          <div className="absolute bottom-0 left-8 lg:left-10 h-0 w-px bg-gold transition-all duration-700 ease-out group-hover:h-24" />
-          <span className="absolute left-8 top-8 lg:left-10 lg:top-10 text-[10px] font-medium tabular-nums text-background/40">02</span>
-          <div className="absolute bottom-8 left-8 right-8 lg:bottom-10 lg:left-10 lg:right-10">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">Temporada actual</p>
-            <h2 className="mt-2 font-black uppercase leading-none tracking-tight text-background transition-transform duration-500 group-hover:-translate-y-1" style={{ fontSize: 'clamp(2rem, 3.2vw, 3rem)' }}>
-              Ropa
-            </h2>
-            <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.18em] text-background/50 group-hover:text-background/70 transition-colors duration-300">Hoodies · Remeras · Pantalones</p>
-            <p className="mt-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-background/0 group-hover:text-background/90 -translate-x-1 group-hover:translate-x-0 transition-all duration-300">
-              Ver colección <ArrowIcon className="shrink-0 text-gold transition-transform duration-300 group-hover:translate-x-1" />
-            </p>
-          </div>
-        </Link>
-
-        {/* Accesorios */}
-        <Link href="/products?category=Gorras" className="group relative flex-1 overflow-hidden" style={{ minHeight: '260px' }}>
-          <Image
-            src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=900&auto=format&fit=crop&q=85"
-            alt="Accesorios"
-            fill
-            sizes="(max-width: 1024px) 100vw, 33vw"
-            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-foreground/45 transition-colors duration-500 group-hover:bg-foreground/60" />
-          <div className="absolute bottom-0 left-8 lg:left-10 h-0 w-px bg-gold transition-all duration-700 ease-out group-hover:h-24" />
-          <span className="absolute left-8 top-8 lg:left-10 lg:top-10 text-[10px] font-medium tabular-nums text-background/40">03</span>
-          <div className="absolute bottom-8 left-8 right-8 lg:bottom-10 lg:left-10 lg:right-10">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">Esenciales</p>
-            <h2 className="mt-2 font-black uppercase leading-none tracking-tight text-background transition-transform duration-500 group-hover:-translate-y-1" style={{ fontSize: 'clamp(2rem, 3.2vw, 3rem)' }}>
-              Accesorios
-            </h2>
-            <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.18em] text-background/50 group-hover:text-background/70 transition-colors duration-300">Gorras · Mochilas</p>
-            <p className="mt-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-background/0 group-hover:text-background/90 -translate-x-1 group-hover:translate-x-0 transition-all duration-300">
-              Ver colección <ArrowIcon className="shrink-0 text-gold transition-transform duration-300 group-hover:translate-x-1" />
-            </p>
-          </div>
-        </Link>
-
-      </section>
+      <CategoryShowcase cards={categoryCardsConfig?.cards} />
     </>
   )
 }

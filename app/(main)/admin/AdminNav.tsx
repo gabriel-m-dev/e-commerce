@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 const NAV_LINKS = [
   { label: 'Dashboard', href: '/admin' },
   { label: 'Productos', href: '/admin/products' },
-  { label: 'Destacados', href: '/admin/destacados' },
+  { label: 'Personalizar web', href: '/admin/personalizar' },
   { label: 'Órdenes', href: '/admin/orders' },
 ]
 
@@ -16,7 +16,7 @@ export default function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav className="flex flex-col gap-1">
       {NAV_LINKS.map(({ label, href }) => {
-        const isActive = pathname === href
+        const isActive = pathname === href || (href !== '/admin' && pathname.startsWith(href))
         return (
           <Link
             key={href}

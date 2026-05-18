@@ -302,6 +302,52 @@ async function main() {
     console.log(`  Product: ${upserted.name} — $${upserted.price} (${upserted.id})`)
   }
 
+  // ─── SiteConfig defaults ──────────────────────────────────────────────────
+
+  console.log('Seeding site config...')
+
+  const luxeAir = await prisma.product.findUnique({ where: { slug: 'luxe-air' } })
+
+  const heroDefault = {
+    slides: [
+      { image: '/hero/1.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
+      { image: '/hero/2.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
+      { image: '/hero/3.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
+      { image: '/hero/4.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
+    ],
+  }
+
+  const categoryCardsDefault = {
+    cards: [
+      { image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85', label: 'Nueva colección', title: 'Zapatillas', subtitle: '5 modelos', link: '/products?category=Zapatillas' },
+      { image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=900&auto=format&fit=crop&q=85', label: 'Temporada actual', title: 'Ropa', subtitle: 'Hoodies · Remeras · Pantalones', link: '/products?category=Hoodies' },
+      { image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=900&auto=format&fit=crop&q=85', label: 'Esenciales', title: 'Accesorios', subtitle: 'Gorras · Mochilas', link: '/products?category=Gorras' },
+    ],
+  }
+
+  await prisma.siteConfig.upsert({
+    where: { key: 'hero' },
+    update: { value: heroDefault },
+    create: { key: 'hero', value: heroDefault },
+  })
+  console.log('  SiteConfig: hero')
+
+  if (luxeAir) {
+    await prisma.siteConfig.upsert({
+      where: { key: 'productFeature' },
+      update: { value: { productId: luxeAir.id } },
+      create: { key: 'productFeature', value: { productId: luxeAir.id } },
+    })
+    console.log(`  SiteConfig: productFeature (${luxeAir.id})`)
+  }
+
+  await prisma.siteConfig.upsert({
+    where: { key: 'categoryCards' },
+    update: { value: categoryCardsDefault },
+    create: { key: 'categoryCards', value: categoryCardsDefault },
+  })
+  console.log('  SiteConfig: categoryCards')
+
   console.log('Seed complete.')
 }
 

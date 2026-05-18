@@ -174,6 +174,20 @@ export async function getNewProducts(limit = 20): Promise<DbProduct[]> {
   }
 }
 
+export async function getProductById(id: string): Promise<DbProduct | null> {
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id, active: true },
+      include: { category: true },
+    })
+    if (!product) return null
+    return toDbProduct(product)
+  } catch (e) {
+    console.error('[getProductById] DB unavailable:', e)
+    return null
+  }
+}
+
 export async function getCategories(): Promise<{ id: string; name: string; slug: string }[]> {
   try {
     return await prisma.category.findMany({

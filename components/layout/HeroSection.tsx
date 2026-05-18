@@ -3,26 +3,22 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import ArrowIcon from '@/components/ui/ArrowIcon'
+import { type HeroSlide, DEFAULT_HERO_SLIDES } from '@/lib/data/site-config-defaults'
 
-const SLIDES = [
-  { mobile: '/hero/1.webp', desktop: '/hero/1.webp' },
-  { mobile: '/hero/2.webp', desktop: '/hero/2.webp' },
-  { mobile: '/hero/3.webp', desktop: '/hero/3.webp' },
-  { mobile: '/hero/4.webp', desktop: '/hero/4.webp' },
-]
-
-export default function HeroSection() {
+export default function HeroSection({ slides: slidesProp }: { slides?: HeroSlide[] }) {
+  const slides = (slidesProp && slidesProp.length > 0) ? slidesProp : DEFAULT_HERO_SLIDES
   const [current, setCurrent] = useState(0)
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % SLIDES.length)
+      setCurrent((prev) => (prev + 1) % slides.length)
     }, 5000)
     return () => clearInterval(interval)
-  }, [])
+  }, [slides.length])
 
+  const slide = slides[current]
   const currentLabel = String(current + 1).padStart(2, '0')
-  const totalLabel = String(SLIDES.length).padStart(2, '0')
+  const totalLabel = String(slides.length).padStart(2, '0')
 
   return (
     <section className="relative overflow-hidden bg-black">
@@ -36,10 +32,10 @@ export default function HeroSection() {
 
       {/* Mobile — shoe floating at bottom-right as depth element */}
       <div className="absolute bottom-10 right-[-30px] h-[65%] w-[100%] lg:hidden" aria-hidden>
-        {SLIDES.map((slide, i) => (
+        {slides.map((s, i) => (
           <Image
             key={i}
-            src={slide.mobile}
+            src={s.image}
             alt=""
             fill
             sizes="85vw"
@@ -56,23 +52,23 @@ export default function HeroSection() {
           {/* Left — copy */}
           <div className="relative z-10 pt-5 pb-10 sm:pt-10 md:pt-20 lg:py-0 lg:pr-16">
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-gold">
-              Nueva Colección
+              {slide.label}
             </p>
             <h1
               className="mt-4 font-black uppercase leading-[0.88] tracking-tighter text-background lg:mt-5"
               style={{ fontSize: 'clamp(2.6rem, 7.5vw, 5.8rem)' }}
             >
-              Diseño que<br />se siente.
+              {slide.title}
             </h1>
             <p className="mt-4 text-sm font-semibold uppercase tracking-widest text-background/55 lg:mt-5 lg:text-base">
-              Calidad que se nota.
+              {slide.subtitle}
             </p>
             <div className="mt-5 lg:mt-10">
               <Link
-                href="/products"
+                href={slide.ctaLink}
                 className="inline-flex items-center gap-2 border border-background/60 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-background transition-colors duration-200 hover:border-background hover:bg-background hover:text-foreground lg:gap-3 lg:px-7 lg:py-3.5 lg:text-[11px]"
               >
-                Comprar ahora <ArrowIcon className="shrink-0 text-gold" size={14} />
+                {slide.ctaText} <ArrowIcon className="shrink-0 text-gold" size={14} />
               </Link>
             </div>
             {/* Slide indicator — desktop only (inline flow) */}
@@ -85,11 +81,11 @@ export default function HeroSection() {
 
           {/* Right — hero image (desktop only) */}
           <div className="relative hidden h-[88svh] lg:block overflow-hidden">
-            {SLIDES.map((slide, i) => (
+            {slides.map((s, i) => (
               <Image
                 key={i}
-                src={slide.desktop}
-                alt={i === 0 ? 'Hero — nueva colección' : ''}
+                src={s.image}
+                alt={i === 0 ? `Hero — ${s.title}` : ''}
                 fill
                 sizes="(max-width: 1280px) 460px, 540px"
                 className={`object-contain object-center transition-opacity duration-[800ms] ${i === current ? 'opacity-100' : 'opacity-0'}`}
