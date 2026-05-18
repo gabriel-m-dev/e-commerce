@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { formatPrice } from '@/lib/utils'
@@ -16,6 +16,19 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
 
   const [activeThumb, setActiveThumb] = useState(0)
   const touchStartX = useRef(0)
+  const galleryRef = useRef<HTMLDivElement>(null)
+  const [galleryHeight, setGalleryHeight] = useState('100svh')
+
+  useEffect(() => {
+    function measure() {
+      if (!galleryRef.current) return
+      const top = galleryRef.current.getBoundingClientRect().top
+      setGalleryHeight(`${window.innerHeight - top}px`)
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [])
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
@@ -79,8 +92,9 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
 
       {/* ── Gallery — mobile (full-screen swipeable) ── */}
       <div
+        ref={galleryRef}
         className="lg:hidden -mx-6 relative overflow-hidden"
-        style={{ height: '100svh' }}
+        style={{ height: galleryHeight }}
         onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX }}
         onTouchEnd={(e) => {
           const delta = e.changedTouches[0].clientX - touchStartX.current
