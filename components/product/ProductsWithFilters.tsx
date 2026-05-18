@@ -128,6 +128,7 @@ function NikeHeroSlider() {
         muted
         playsInline
         loop={false}
+        preload="auto"
         className="absolute inset-0 w-full h-full object-cover"
       />
 
