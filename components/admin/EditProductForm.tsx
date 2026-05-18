@@ -20,7 +20,7 @@ export default function EditProductForm({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(true)
-  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null)
+  const [uploadingIndices, setUploadingIndices] = useState<Set<number>>(new Set())
 
   const [form, setForm] = useState({
     name: product.name,
@@ -97,27 +97,62 @@ export default function EditProductForm({
     }))
   }
 
+  async function uploadFile(file: File, index: number) {
+    const { createClient } = await import('@/lib/supabase/client')
+    const supabase = createClient()
+    const ext = file.name.split('.').pop() ?? 'jpg'
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const { data, error } = await supabase.storage
+      .from('products')
+      .upload(path, file, { cacheControl: '3600', upsert: false })
+    if (error) throw new Error(error.message)
+    const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(data.path)
+    setForm((prev) => {
+      const imgs = [...prev.images]
+      imgs[index] = publicUrl
+      return { ...prev, images: imgs }
+    })
+  }
+
   async function handleFileUpload(index: number, file: File) {
-    setUploadingIndex(index)
+    setUploadingIndices((prev) => new Set([...prev, index]))
     try {
-      const { createClient } = await import('@/lib/supabase/client')
-      const supabase = createClient()
-      const ext = file.name.split('.').pop() ?? 'jpg'
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-      const { data, error: uploadError } = await supabase.storage
-        .from('products')
-        .upload(path, file, { cacheControl: '3600', upsert: false })
-      if (uploadError) {
-        setError(`Error al subir imagen: ${uploadError.message}`)
-        return
-      }
-      const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(data.path)
-      updateImage(index, publicUrl)
+      await uploadFile(file, index)
     } catch {
       setError('Error al subir la imagen. Verificá que el bucket "products" exista en Supabase.')
     } finally {
-      setUploadingIndex(null)
+      setUploadingIndices((prev) => { const s = new Set(prev); s.delete(index); return s })
     }
+  }
+
+  async function handleMultiFileUpload(files: FileList) {
+    const fileArray = Array.from(files)
+    if (fileArray.length === 0) return
+
+    const baseIndex = form.images.findIndex((img) => !img.trim())
+    const startIdx = baseIndex >= 0 ? baseIndex : form.images.length
+
+    setForm((prev) => {
+      const imgs = [...prev.images]
+      for (let i = 0; i < fileArray.length; i++) {
+        if (startIdx + i >= imgs.length) imgs.push('')
+      }
+      return { ...prev, images: imgs }
+    })
+    setUploadingIndices(new Set(fileArray.map((_, i) => startIdx + i)))
+
+    await Promise.all(
+      fileArray.map(async (file, i) => {
+        const index = startIdx + i
+        try {
+          await uploadFile(file, index)
+        } catch {
+          setError(`Error al subir ${file.name}`)
+        } finally {
+          setUploadingIndices((prev) => { const s = new Set(prev); s.delete(index); return s })
+        }
+      })
+    )
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -264,15 +299,15 @@ export default function EditProductForm({
                   <div key={i} className="flex flex-col gap-1.5">
                     <div className="flex gap-2">
                       <input type="url" value={img} placeholder="https://..." onChange={(e) => updateImage(i, e.target.value)}
-                        disabled={uploadingIndex === i}
+                        disabled={uploadingIndices.has(i)}
                         className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors flex-1 disabled:opacity-40" />
-                      <label className={['flex h-[38px] cursor-pointer items-center border border-border px-3 text-[9px] font-semibold uppercase tracking-[0.15em] text-muted transition-colors hover:border-foreground hover:text-foreground shrink-0', uploadingIndex === i ? 'opacity-40 pointer-events-none' : ''].join(' ')}>
-                        {uploadingIndex === i ? '...' : 'Subir'}
+                      <label className={['flex h-[38px] cursor-pointer items-center border border-border px-3 text-[9px] font-semibold uppercase tracking-[0.15em] text-muted transition-colors hover:border-foreground hover:text-foreground shrink-0', uploadingIndices.has(i) ? 'opacity-40 pointer-events-none' : ''].join(' ')}>
+                        {uploadingIndices.has(i) ? '...' : 'Subir'}
                         <input type="file" accept="image/*" className="sr-only"
                           onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFileUpload(i, file); e.target.value = '' }} />
                       </label>
                       {form.images.length > 1 && (
-                        <button type="button" onClick={() => removeImage(i)} disabled={uploadingIndex === i}
+                        <button type="button" onClick={() => removeImage(i)} disabled={uploadingIndices.has(i)}
                           className="flex h-[38px] w-[38px] items-center justify-center border border-border text-muted transition-colors hover:border-destructive hover:text-destructive disabled:opacity-40 shrink-0"
                           aria-label="Eliminar imagen">
                           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden><path d="M1 1l8 8M9 1L1 9" /></svg>
@@ -286,10 +321,17 @@ export default function EditProductForm({
                     )}
                   </div>
                 ))}
-                <button type="button" onClick={addImage}
-                  className="self-start text-[10px] font-semibold uppercase tracking-[0.15em] text-muted hover:text-foreground transition-colors underline underline-offset-2">
-                  + Agregar imagen
-                </button>
+                <div className="flex items-center gap-5">
+                  <button type="button" onClick={addImage}
+                    className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted hover:text-foreground transition-colors underline underline-offset-2">
+                    + Agregar imagen
+                  </button>
+                  <label className="cursor-pointer text-[10px] font-semibold uppercase tracking-[0.15em] text-muted hover:text-foreground transition-colors underline underline-offset-2">
+                    + Subir varias
+                    <input type="file" accept="image/*" multiple className="sr-only"
+                      onChange={(e) => { if (e.target.files?.length) handleMultiFileUpload(e.target.files); e.target.value = '' }} />
+                  </label>
+                </div>
               </div>
             </div>
 

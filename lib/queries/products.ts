@@ -14,6 +14,7 @@ function mockToDb(p: MockProduct): DbProduct {
     images: p.images,
     description: p.description,
     featured: p.featured ?? false,
+    featuredOrder: null,
     stock: 99,
     brand: 'OTROS',
     colors: [],
@@ -36,6 +37,7 @@ export type DbProduct = {
   images: string[]
   description: string
   featured: boolean
+  featuredOrder: number | null
   active: boolean
   stock: number
   brand: string
@@ -57,6 +59,7 @@ function toDbProduct(p: any): DbProduct {
     images: p.images as string[],
     description: p.description as string,
     featured: p.featured as boolean,
+    featuredOrder: p.featuredOrder != null ? Number(p.featuredOrder) : null,
     active: p.active as boolean,
     stock: Number(p.stock),
     brand: p.brand as string,
@@ -99,13 +102,13 @@ export async function getProducts(options?: {
   }
 }
 
-export async function getFeaturedProducts(limit = 4): Promise<DbProduct[]> {
+export async function getFeaturedProducts(limit = 10): Promise<DbProduct[]> {
   try {
     const results = await prisma.product.findMany({
       where: { featured: true, active: true },
       include: { category: true },
       take: limit,
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ featuredOrder: 'asc' }, { createdAt: 'desc' }],
     })
     return results.map(toDbProduct)
   } catch (e) {

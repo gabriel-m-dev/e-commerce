@@ -45,9 +45,10 @@ model Product {
   categoryId   String
   category     Category    @relation(fields: [categoryId], references: [id])
   stock        Int         @default(0)
-  featured     Boolean     @default(false)
-  active       Boolean     @default(true)
-  brand        Brand       @default(OTROS)
+  featured      Boolean     @default(false)
+  featuredOrder Int?
+  active        Boolean     @default(true)
+  brand         Brand       @default(OTROS)
   cartItems    CartItem[]
   orderItems   OrderItem[]
   createdAt    DateTime    @default(now())
