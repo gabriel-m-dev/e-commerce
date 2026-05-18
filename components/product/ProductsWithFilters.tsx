@@ -554,7 +554,11 @@ export default function ProductsWithFilters({
       {filtered.length > 0 ? (
         <div
           className={`mt-6 grid grid-cols-2 ${
-            dark ? 'gap-3 lg:grid-cols-4' : 'mt-8 gap-x-5 gap-y-10 lg:grid-cols-4'
+            usesGroupedNav
+              ? 'gap-0.5 -mx-6 lg:mx-0 lg:gap-x-5 lg:gap-y-10 lg:grid-cols-4'
+              : dark
+                ? 'gap-3 lg:grid-cols-4'
+                : 'mt-8 gap-x-5 gap-y-10 lg:grid-cols-4'
           }`}
         >
           {filtered.map((product, index) => {
@@ -563,6 +567,7 @@ export default function ProductsWithFilters({
             const isAdded = addedProductId === product.id
             const needsSize = sizes.length > 0 && !selectedSize
             const isOpen = openProductId === product.id
+            const isMobileBig = usesGroupedNav && index % 5 === 4
 
             function handleAddToCart() {
               if (needsSize) {
@@ -617,9 +622,9 @@ export default function ProductsWithFilters({
               return (
                 <div
                   key={product.id}
-                  className="group relative bg-[#1a1a1a] rounded-lg p-3 flex flex-col"
+                  className={`group relative flex flex-col${isMobileBig ? ' col-span-2 lg:col-span-1' : ''}${usesGroupedNav ? ' lg:bg-[#1a1a1a] lg:rounded-lg lg:p-3' : ' bg-[#1a1a1a] rounded-lg p-3'}`}
                 >
-                  {/* Imagen — wrapper clickable que navega al producto */}
+                  {/* Imagen */}
                   <div
                     role="button"
                     tabIndex={0}
@@ -630,7 +635,7 @@ export default function ProductsWithFilters({
                         router.push(`/product/${product.slug}`)
                       }
                     }}
-                    className="relative block aspect-square w-full overflow-hidden rounded-md cursor-pointer bg-[#2a2a2a]"
+                    className={`relative w-full overflow-hidden cursor-pointer${usesGroupedNav ? (isMobileBig ? ' aspect-[4/5] lg:aspect-square lg:rounded-md lg:bg-[#2a2a2a]' : ' aspect-[3/4] lg:aspect-square lg:rounded-md lg:bg-[#2a2a2a]') : ' aspect-square rounded-md bg-[#2a2a2a]'}`}
                     aria-label={`Ver ${product.name}`}
                   >
                     <Image
@@ -647,7 +652,7 @@ export default function ProductsWithFilters({
                       </span>
                     )}
 
-                    {/* Cart icon top-right */}
+                    {/* Cart icon — solo desktop en brand pages */}
                     <button
                       type="button"
                       onClick={(e) => {
@@ -655,19 +660,9 @@ export default function ProductsWithFilters({
                         setOpenProductId(isOpen ? null : product.id)
                       }}
                       aria-label={`Agregar ${product.name} al carrito`}
-                      className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-md bg-white/10 backdrop-blur-sm text-white border border-white/15 hover:bg-white/20 transition cursor-pointer"
+                      className={`absolute top-2 right-2 h-7 w-7 items-center justify-center rounded-md bg-white/10 backdrop-blur-sm text-white border border-white/15 hover:bg-white/20 transition cursor-pointer${usesGroupedNav ? ' hidden lg:flex' : ' flex'}`}
                     >
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden
-                      >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
                         <line x1="3" x2="21" y1="6" y2="6" />
                         <path d="M16 10a4 4 0 0 1-8 0" />
@@ -676,26 +671,28 @@ export default function ProductsWithFilters({
                   </div>
 
                   {/* Info: nombre + precio + colores */}
-                  <div className="mt-3 flex-1 flex flex-col gap-1">
+                  <div className={`flex-1 flex flex-col${usesGroupedNav ? ' mt-2 gap-0.5 items-center text-center lg:mt-3 lg:gap-1 lg:items-start lg:text-left' : ' mt-3 gap-1'}`}>
                     <Link
                       href={`/product/${product.slug}`}
                       className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white hover:opacity-80 transition-opacity line-clamp-2"
                     >
                       {product.name}
                     </Link>
-                    <div className="mt-auto flex items-end justify-between gap-2">
+                    <div className={`mt-auto flex items-end gap-2${usesGroupedNav ? ' justify-center lg:justify-between' : ' justify-between'}`}>
                       <p className="text-[13px] font-semibold text-white">
                         {formatPrice(product.price)}
                       </p>
                       {product.colors.length > 0 && (
-                        <ProductColorSelector
-                          colors={product.colors}
-                          selected={selectedColors[product.id]}
-                          onChange={(c) =>
-                            setSelectedColors((prev) => ({ ...prev, [product.id]: c }))
-                          }
-                          dark
-                        />
+                        <span className={usesGroupedNav ? 'hidden lg:block' : ''}>
+                          <ProductColorSelector
+                            colors={product.colors}
+                            selected={selectedColors[product.id]}
+                            onChange={(c) =>
+                              setSelectedColors((prev) => ({ ...prev, [product.id]: c }))
+                            }
+                            dark
+                          />
+                        </span>
                       )}
                     </div>
                   </div>
@@ -758,13 +755,13 @@ export default function ProductsWithFilters({
               )
             }
 
-            // === LIGHT (default) card — UNCHANGED ===
+            // === LIGHT card ===
             return (
-              <div key={product.id} className="group relative flex flex-col">
-                {/* Imagen — Link individual */}
+              <div key={product.id} className={`group relative flex flex-col${isMobileBig ? ' col-span-2 lg:col-span-1' : ''}`}>
+                {/* Imagen */}
                 <Link
                   href={`/product/${product.slug}`}
-                  className="relative block aspect-square w-full overflow-hidden bg-surface"
+                  className={`relative block w-full overflow-hidden${usesGroupedNav ? (isMobileBig ? ' aspect-[4/5] lg:aspect-square lg:bg-surface' : ' aspect-[3/4] lg:aspect-square lg:bg-surface') : ' aspect-square bg-surface'}`}
                 >
                   <Image
                     src={product.image}
@@ -783,24 +780,24 @@ export default function ProductsWithFilters({
                 </Link>
 
                 {/* Info row */}
-                <div className="mt-3.5 flex-1 flex justify-between gap-2">
-                  <div className="flex flex-col flex-1">
+                <div className={`flex-1 flex gap-2${usesGroupedNav ? ' mt-2 justify-center lg:mt-3.5 lg:justify-between' : ' mt-3.5 justify-between'}`}>
+                  <div className={`flex flex-col flex-1${usesGroupedNav ? ' items-center lg:items-start' : ''}`}>
                     <Link
                       href={`/product/${product.slug}`}
-                      className="block text-[11px] font-medium uppercase tracking-wide text-foreground hover:opacity-70 transition-opacity"
+                      className={`block text-[11px] font-medium uppercase tracking-wide text-foreground hover:opacity-70 transition-opacity${usesGroupedNav ? ' text-center lg:text-left' : ''}`}
                     >
                       {product.name}
                     </Link>
-                    <p className="mt-auto pt-1 text-sm font-semibold text-foreground">
+                    <p className={`mt-auto pt-1 text-sm font-semibold text-foreground${usesGroupedNav ? ' text-center lg:text-left' : ''}`}>
                       {formatPrice(product.price)}
                     </p>
                   </div>
 
-                  {/* Botón + */}
+                  {/* Botón + — solo desktop en brand pages */}
                   <button
                     onClick={() => setOpenProductId(isOpen ? null : product.id)}
                     aria-label={`Agregar ${product.name} al carrito`}
-                    className="flex h-7 w-7 shrink-0 self-end items-center justify-center border border-border text-foreground transition-colors hover:border-foreground cursor-pointer"
+                    className={`h-7 w-7 shrink-0 self-end items-center justify-center border border-border text-foreground transition-colors hover:border-foreground cursor-pointer${usesGroupedNav ? ' hidden lg:flex' : ' flex'}`}
                   >
                     <svg
                       width="16"
