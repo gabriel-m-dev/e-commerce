@@ -107,6 +107,7 @@ function JordanHeroSlider() {
 
 function NikeHeroSlider() {
   const [logoVisible, setLogoVisible] = useState(false)
+  const [videoReady, setVideoReady] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => setLogoVisible(true), 20000)
@@ -114,13 +115,31 @@ function NikeHeroSlider() {
   }, [])
 
   return (
-    <div className="relative w-full aspect-[4/3] md:aspect-[16/7] overflow-hidden">
+    <div className="relative w-full aspect-[4/3] md:aspect-[16/7] overflow-hidden bg-[#111]">
       <style>{`
         @keyframes nike-logo-in {
           from { transform: translateX(-220px); opacity: 0; }
           to   { transform: translateX(0);      opacity: 1; }
         }
+        @keyframes nike-shimmer {
+          0%   { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
       `}</style>
+
+      {/* Skeleton — visible mientras el video no está listo */}
+      {!videoReady && (
+        <div className="absolute inset-0 z-10 bg-[#111] overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%)',
+              animation: 'nike-shimmer 1.6s ease-in-out infinite',
+            }}
+            aria-hidden
+          />
+        </div>
+      )}
 
       <video
         src="/nike_hero_video.mp4"
@@ -129,8 +148,8 @@ function NikeHeroSlider() {
         playsInline
         loop={false}
         preload="auto"
-        poster="/nike_bg.webp"
-        className="absolute inset-0 w-full h-full object-cover"
+        onCanPlay={() => setVideoReady(true)}
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
       />
 
       {/* Overlay — aparece con fade junto al logo */}
