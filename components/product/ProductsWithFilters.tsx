@@ -676,14 +676,14 @@ export default function ProductsWithFilters({
                   </div>
 
                   {/* Info: nombre + precio + colores */}
-                  <div className="mt-3 flex flex-col gap-1">
+                  <div className="mt-3 flex-1 flex flex-col gap-1">
                     <Link
                       href={`/product/${product.slug}`}
                       className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white hover:opacity-80 transition-opacity line-clamp-2"
                     >
                       {product.name}
                     </Link>
-                    <div className="flex items-end justify-between gap-2">
+                    <div className="mt-auto flex items-end justify-between gap-2">
                       <p className="text-[13px] font-semibold text-white">
                         {formatPrice(product.price)}
                       </p>
@@ -766,7 +766,7 @@ export default function ProductsWithFilters({
 
             // === LIGHT (default) card — UNCHANGED ===
             return (
-              <div key={product.id} className="group">
+              <div key={product.id} className="group flex flex-col">
                 {/* Imagen — Link individual */}
                 <Link
                   href={`/product/${product.slug}`}
@@ -789,8 +789,8 @@ export default function ProductsWithFilters({
                 </Link>
 
                 {/* Info row */}
-                <div className="mt-3.5 flex items-end justify-between">
-                  <div>
+                <div className="mt-3.5 flex-1 flex items-end justify-between">
+                  <div className="flex flex-col">
                     <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted">
                       {product.category}
                     </p>
@@ -800,7 +800,7 @@ export default function ProductsWithFilters({
                     >
                       {product.name}
                     </Link>
-                    <p className="mt-1 text-sm font-semibold text-foreground">
+                    <p className="mt-auto pt-1 text-sm font-semibold text-foreground">
                       {formatPrice(product.price)}
                     </p>
                   </div>
@@ -809,7 +809,7 @@ export default function ProductsWithFilters({
                   <button
                     onClick={() => setOpenProductId(isOpen ? null : product.id)}
                     aria-label={`Agregar ${product.name} al carrito`}
-                    className="flex h-7 w-7 shrink-0 items-center justify-center border border-border text-foreground transition-colors hover:border-foreground cursor-pointer"
+                    className="flex h-7 w-7 shrink-0 self-end items-center justify-center border border-border text-foreground transition-colors hover:border-foreground cursor-pointer"
                   >
                     <svg
                       width="16"
