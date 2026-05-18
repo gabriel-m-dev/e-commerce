@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
-import { unstable_cache } from 'next/cache'
 import { getProducts } from '@/lib/queries/products'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
 import BrandBgImage from '@/components/product/BrandBgImage'
@@ -33,12 +32,7 @@ export default async function ProductsPage({
 }) {
   const { category, brand } = await searchParams
   const brandFilter = brand ? brand.toUpperCase() : undefined
-  const getCachedProducts = unstable_cache(
-    () => getProducts({ brand: brandFilter }),
-    ['products', brandFilter ?? 'all'],
-    { revalidate: 60, tags: ['products'] }
-  )
-  const products = await getCachedProducts()
+  const products = await getProducts({ brand: brandFilter })
   const isEditorialBrand = brandFilter === 'JORDAN' || brandFilter === 'NIKE' || brandFilter === 'ADIDAS'
   const isJordan = brandFilter === 'JORDAN'
 
