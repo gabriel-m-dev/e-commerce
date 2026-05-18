@@ -783,8 +783,8 @@ export default function ProductsWithFilters({
                 </Link>
 
                 {/* Info row */}
-                <div className="mt-3.5 flex-1 flex items-end justify-between">
-                  <div className="flex flex-col">
+                <div className="mt-3.5 flex-1 flex justify-between gap-2">
+                  <div className="flex flex-col flex-1">
                     <Link
                       href={`/product/${product.slug}`}
                       className="block text-[11px] font-medium uppercase tracking-wide text-foreground hover:opacity-70 transition-opacity"
