@@ -617,7 +617,7 @@ export default function ProductsWithFilters({
               return (
                 <div
                   key={product.id}
-                  className="group bg-[#1a1a1a] rounded-lg p-3 flex flex-col"
+                  className="group relative bg-[#1a1a1a] rounded-lg p-3 flex flex-col"
                 >
                   {/* Imagen — wrapper clickable que navega al producto */}
                   <div
@@ -700,73 +700,67 @@ export default function ProductsWithFilters({
                     </div>
                   </div>
 
-                  {/* Panel expandible — siempre renderizado, anima con grid-template-rows */}
-                  <div
-                    className={`grid transition-[grid-template-rows] duration-300 ease-out ${
-                      isOpen ? 'grid-rows-[1fr] mt-3' : 'grid-rows-[0fr]'
-                    }`}
-                  >
-                    <div className="overflow-hidden">
-                      <div className="border-t border-white/10 pt-3 flex flex-col gap-2">
-                        {sizes.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5">
-                            {sizes.map((s) => (
-                              <button
-                                key={s}
-                                onClick={() =>
-                                  setSelectedSizes((prev) => ({ ...prev, [product.id]: s }))
-                                }
-                                className={`h-7 min-w-[2rem] px-2 text-[9px] font-semibold uppercase tracking-[0.15em] border transition-colors cursor-pointer rounded-sm ${
-                                  selectedSize === s
-                                    ? 'border-white bg-white text-black'
-                                    : 'border-white/20 text-white/60 hover:border-white/60'
-                                }`}
-                              >
-                                {s}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-
-                        <button
-                          onClick={handleAddToCart}
-                          className="flex h-9 w-full items-center justify-center gap-2 bg-white text-[10px] font-semibold uppercase tracking-[0.18em] text-black transition-opacity hover:opacity-80 cursor-pointer rounded-sm"
-                        >
-                          {isAdded ? (
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              aria-hidden
+                  {/* Panel expandible — absolute para no afectar altura del grid row */}
+                  {isOpen && (
+                    <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-b-lg bg-[#1a1a1a] border border-white/10 p-3 flex flex-col gap-2">
+                      {sizes.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5">
+                          {sizes.map((s) => (
+                            <button
+                              key={s}
+                              onClick={() =>
+                                setSelectedSizes((prev) => ({ ...prev, [product.id]: s }))
+                              }
+                              className={`h-7 min-w-[2rem] px-2 text-[9px] font-semibold uppercase tracking-[0.15em] border transition-colors cursor-pointer rounded-sm ${
+                                selectedSize === s
+                                  ? 'border-white bg-white text-black'
+                                  : 'border-white/20 text-white/60 hover:border-white/60'
+                              }`}
                             >
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          ) : (
-                            'Agregar al carrito'
-                          )}
-                        </button>
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                      )}
 
-                        <button
-                          onClick={handleBuyNow}
-                          className="flex h-9 w-full items-center justify-center border border-gold text-[10px] font-semibold uppercase tracking-[0.18em] text-gold transition-opacity hover:opacity-70 cursor-pointer rounded-sm"
-                        >
-                          Comprar ahora
-                        </button>
-                      </div>
+                      <button
+                        onClick={handleAddToCart}
+                        className="flex h-9 w-full items-center justify-center gap-2 bg-white text-[10px] font-semibold uppercase tracking-[0.18em] text-black transition-opacity hover:opacity-80 cursor-pointer rounded-sm"
+                      >
+                        {isAdded ? (
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        ) : (
+                          'Agregar al carrito'
+                        )}
+                      </button>
+
+                      <button
+                        onClick={handleBuyNow}
+                        className="flex h-9 w-full items-center justify-center border border-gold text-[10px] font-semibold uppercase tracking-[0.18em] text-gold transition-opacity hover:opacity-70 cursor-pointer rounded-sm"
+                      >
+                        Comprar ahora
+                      </button>
                     </div>
-                  </div>
+                  )}
                 </div>
               )
             }
 
             // === LIGHT (default) card — UNCHANGED ===
             return (
-              <div key={product.id} className="group flex flex-col">
+              <div key={product.id} className="group relative flex flex-col">
                 {/* Imagen — Link individual */}
                 <Link
                   href={`/product/${product.slug}`}
@@ -829,9 +823,9 @@ export default function ProductsWithFilters({
                   </button>
                 </div>
 
-                {/* Panel expandible (light) */}
+                {/* Panel expandible (light) — absolute para no afectar altura del grid row */}
                 {isOpen && (
-                  <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
+                  <div className="absolute left-0 right-0 top-full z-50 mt-1 bg-white border border-border p-3 flex flex-col gap-2 shadow-sm">
                     {sizes.length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
                         {sizes.map((s) => (
