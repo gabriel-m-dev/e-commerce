@@ -108,11 +108,16 @@ function JordanHeroSlider() {
 function NikeHeroSlider() {
   const [logoVisible, setLogoVisible] = useState(false)
   const [videoReady, setVideoReady] = useState(false)
+  const logoTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLogoVisible(true), 20000)
-    return () => clearTimeout(timer)
-  }, [])
+  useEffect(() => () => { if (logoTimer.current) clearTimeout(logoTimer.current) }, [])
+
+  function handleCanPlay() {
+    setVideoReady(true)
+    if (!logoTimer.current) {
+      logoTimer.current = setTimeout(() => setLogoVisible(true), 20000)
+    }
+  }
 
   return (
     <div className="relative w-full aspect-[4/3] md:aspect-[16/7] overflow-hidden bg-[#111]">
@@ -148,7 +153,7 @@ function NikeHeroSlider() {
         playsInline
         loop={false}
         preload="auto"
-        onCanPlay={() => setVideoReady(true)}
+        onCanPlay={handleCanPlay}
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
       />
 
