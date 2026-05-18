@@ -76,10 +76,6 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
     setForm((prev) => ({ ...prev, slug: value }))
   }
 
-  function addImage() {
-    setForm((prev) => ({ ...prev, images: [...prev.images, ''] }))
-  }
-
   function updateImage(index: number, value: string) {
     setForm((prev) => {
       const imgs = [...prev.images]
@@ -441,28 +437,19 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
                       )}
                     </div>
                   ))}
-                  <div className="flex items-center gap-5">
-                    <button
-                      type="button"
-                      onClick={addImage}
-                      className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted hover:text-foreground transition-colors underline underline-offset-2"
-                    >
-                      + Agregar imagen
-                    </button>
-                    <label className="cursor-pointer text-[10px] font-semibold uppercase tracking-[0.15em] text-muted hover:text-foreground transition-colors underline underline-offset-2">
-                      + Subir varias
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        className="sr-only"
-                        onChange={(e) => {
-                          if (e.target.files?.length) handleMultiFileUpload(e.target.files)
-                          e.target.value = ''
-                        }}
-                      />
-                    </label>
-                  </div>
+                  <label className="cursor-pointer text-[10px] font-semibold uppercase tracking-[0.15em] text-muted hover:text-foreground transition-colors underline underline-offset-2">
+                    + Agregar imágenes
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="sr-only"
+                      onChange={(e) => {
+                        if (e.target.files?.length) handleMultiFileUpload(e.target.files)
+                        e.target.value = ''
+                      }}
+                    />
+                  </label>
                 </div>
               </div>
 
