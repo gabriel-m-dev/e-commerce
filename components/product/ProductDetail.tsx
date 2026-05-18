@@ -22,8 +22,8 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
   useEffect(() => {
     function measure() {
       if (!galleryRef.current) return
-      const top = galleryRef.current.getBoundingClientRect().top
-      setGalleryHeight(`${window.innerHeight - top}px`)
+      const absoluteTop = galleryRef.current.getBoundingClientRect().top + window.scrollY
+      setGalleryHeight(`${window.innerHeight - absoluteTop}px`)
     }
     measure()
     window.addEventListener('resize', measure)
@@ -105,7 +105,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         {product.images.map((src, i) => (
           <div
             key={i}
-            className="absolute inset-0 transition-all duration-500"
+            className="absolute inset-0 transition-[opacity,transform] duration-500"
             style={{
               opacity: i === activeThumb ? 1 : 0,
               transform: i === activeThumb ? 'scale(1)' : 'scale(1.04)',
