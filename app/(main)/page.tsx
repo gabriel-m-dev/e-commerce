@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SITE_DESCRIPTION } from '@/lib/constants'
+import { unstable_cache } from 'next/cache'
 import { getProducts, getFeaturedProducts, getNewProducts } from '@/lib/queries/products'
 import FeaturedProductsGrid from '@/components/product/FeaturedProductsGrid'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
@@ -12,6 +13,22 @@ import ArrowIcon from '@/components/ui/ArrowIcon'
 import HeroSection from '@/components/layout/HeroSection'
 
 export const dynamic = 'force-dynamic'
+
+const getCachedFeaturedProducts = unstable_cache(
+  () => getFeaturedProducts(4),
+  ['featured-products'],
+  { revalidate: 60, tags: ['products'] }
+)
+const getCachedAllProducts = unstable_cache(
+  () => getProducts(),
+  ['all-products'],
+  { revalidate: 60, tags: ['products'] }
+)
+const getCachedNewProducts = unstable_cache(
+  () => getNewProducts(4),
+  ['new-products'],
+  { revalidate: 60, tags: ['products'] }
+)
 
 export const metadata: Metadata = {
   title: { absolute: 'LUXE. — Moda Premium Argentina' },
@@ -33,9 +50,9 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const [featuredProducts, allProducts, newProducts] = await Promise.all([
-    getFeaturedProducts(4),
-    getProducts(),
-    getNewProducts(4),
+    getCachedFeaturedProducts(),
+    getCachedAllProducts(),
+    getCachedNewProducts(),
   ])
 
   return (

@@ -129,6 +129,7 @@ function NikeHeroSlider() {
         playsInline
         loop={false}
         preload="auto"
+        poster="/nike_bg.webp"
         className="absolute inset-0 w-full h-full object-cover"
       />
 
@@ -292,7 +293,7 @@ export default function ProductsWithFilters({
                 isNavPinned ? 'opacity-100' : 'opacity-0'
               }`}
               style={{
-                backgroundColor: editorialTheme === 'dark' ? '#0a0a0a' : editorialTheme === 'light' ? '#f5f5f7' : '#ffffff',
+                backgroundColor: editorialTheme === 'dark' ? '#0a0a0a' : '#ffffff',
                 top: '-1px',
               }}
               aria-hidden
@@ -300,7 +301,7 @@ export default function ProductsWithFilters({
             <div
               data-brand-nav-collapsed-bg
               className="pointer-events-none absolute inset-0"
-              style={{ top: '-1px', backgroundColor: editorialTheme === 'dark' ? '#0a0a0a' : editorialTheme === 'light' ? '#f5f5f7' : '#ffffff', opacity: 0, transition: 'opacity 180ms' }}
+              style={{ top: '-1px', backgroundColor: editorialTheme === 'dark' ? '#0a0a0a' : '#ffffff', opacity: 0, transition: 'opacity 180ms' }}
               aria-hidden
             />
             <div data-brand-nav-inner className="relative flex flex-wrap gap-2">
