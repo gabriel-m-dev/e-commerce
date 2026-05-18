@@ -20,14 +20,9 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
   const [galleryHeight, setGalleryHeight] = useState('100svh')
 
   useEffect(() => {
-    function measure() {
-      if (!galleryRef.current) return
-      const absoluteTop = galleryRef.current.getBoundingClientRect().top + window.scrollY
-      setGalleryHeight(`${window.innerHeight - absoluteTop}px`)
-    }
-    measure()
-    window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
+    if (!galleryRef.current) return
+    const absoluteTop = galleryRef.current.getBoundingClientRect().top + window.scrollY
+    setGalleryHeight(`${window.innerHeight - absoluteTop}px`)
   }, [])
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
