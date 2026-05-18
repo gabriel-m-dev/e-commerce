@@ -78,6 +78,7 @@ export default function FeaturedOrderManager({ products }: FeaturedOrderManagerP
   const isCustomMode = products.some((p) => p.featuredOrder != null)
 
   const [items, setItems] = useState<DbProduct[]>(products)
+  const [isDirty, setIsDirty] = useState(false)
   const [saving, setSaving] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [message, setMessage] = useState<{ type: 'ok' | 'error'; text: string } | null>(null)
@@ -95,27 +96,10 @@ export default function FeaturedOrderManager({ products }: FeaturedOrderManagerP
         const newIndex = prev.findIndex((p) => p.id === over.id)
         return arrayMove(prev, oldIndex, newIndex)
       })
+      setIsDirty(true)
+      setMessage(null)
     }
   }, [])
-
-  async function handleActivate() {
-    setSaving(true)
-    setMessage(null)
-    try {
-      const res = await fetch('/api/admin/featured-order', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: items.map((p) => p.id) }),
-      })
-      if (!res.ok) throw new Error()
-      setMessage({ type: 'ok', text: 'Orden personalizado activado.' })
-      router.refresh()
-    } catch {
-      setMessage({ type: 'error', text: 'Error al guardar. Intentá de nuevo.' })
-    } finally {
-      setSaving(false)
-    }
-  }
 
   async function handleSave() {
     setSaving(true)
@@ -127,6 +111,7 @@ export default function FeaturedOrderManager({ products }: FeaturedOrderManagerP
         body: JSON.stringify({ ids: items.map((p) => p.id) }),
       })
       if (!res.ok) throw new Error()
+      setIsDirty(false)
       setMessage({ type: 'ok', text: 'Orden guardado.' })
       router.refresh()
     } catch {
@@ -165,24 +150,24 @@ export default function FeaturedOrderManager({ products }: FeaturedOrderManagerP
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Mode indicator */}
+      {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className={[
             'text-[9px] font-black uppercase tracking-[0.2em] px-2 py-1',
-            isCustomMode ? 'bg-gold/20 text-gold' : 'bg-border text-muted',
+            isCustomMode || isDirty ? 'bg-gold/20 text-gold' : 'bg-border text-muted',
           ].join(' ')}>
-            {isCustomMode ? 'Orden personalizado' : 'Orden predeterminado'}
+            {isCustomMode || isDirty ? 'Orden personalizado' : 'Orden predeterminado'}
           </span>
-          {!isCustomMode && (
+          {!isCustomMode && !isDirty && (
             <span className="text-[10px] text-muted uppercase tracking-[0.12em]">
-              los productos aparecen por fecha de creación
+              arrastrá para reordenar
             </span>
           )}
         </div>
 
         <div className="flex items-center gap-3">
-          {isCustomMode && (
+          {(isCustomMode && !isDirty) && (
             <button
               onClick={handleReset}
               disabled={resetting}
@@ -191,15 +176,7 @@ export default function FeaturedOrderManager({ products }: FeaturedOrderManagerP
               {resetting ? 'Restableciendo...' : 'Restablecer predeterminado'}
             </button>
           )}
-          {!isCustomMode ? (
-            <button
-              onClick={handleActivate}
-              disabled={saving}
-              className="border border-foreground px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors hover:bg-foreground hover:text-background disabled:opacity-40"
-            >
-              {saving ? 'Guardando...' : 'Personalizar orden'}
-            </button>
-          ) : (
+          {isDirty && (
             <button
               onClick={handleSave}
               disabled={saving}
@@ -228,11 +205,6 @@ export default function FeaturedOrderManager({ products }: FeaturedOrderManagerP
         </SortableContext>
       </DndContext>
 
-      {isCustomMode && (
-        <p className="text-[10px] text-muted uppercase tracking-[0.12em]">
-          Arrastrá las filas para reordenar. Los cambios se guardan al hacer clic en "Guardar orden".
-        </p>
-      )}
     </div>
   )
 }
