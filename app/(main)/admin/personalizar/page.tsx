@@ -62,6 +62,19 @@ const SECTIONS = [
       </svg>
     ),
   },
+  {
+    href: '/admin/personalizar/nuestra-seleccion',
+    title: 'Nuestra Selección',
+    description: 'Elegí hasta 4 productos para destacar en la sección editorial de la homepage.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="9" height="11" rx="1" />
+        <rect x="13" y="2" width="9" height="11" rx="1" />
+        <rect x="2" y="15" width="9" height="7" rx="1" />
+        <rect x="13" y="15" width="9" height="7" rx="1" />
+      </svg>
+    ),
+  },
 ]
 
 export default function PersonalizarPage() {

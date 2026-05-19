@@ -2,16 +2,18 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SITE_DESCRIPTION } from '@/lib/constants'
-import { getProducts, getFeaturedProducts, getNewProducts, getProductById } from '@/lib/queries/products'
+import { getProducts, getFeaturedProducts, getNewProducts, getProductById, getProductsByIds } from '@/lib/queries/products'
 import { getSiteConfig } from '@/lib/queries/site-config'
 import FeaturedProductsGrid from '@/components/product/FeaturedProductsGrid'
 import ProductsWithFilters from '@/components/product/ProductsWithFilters'
 import ProductFeature from '@/components/product/ProductFeature'
 import NewArrivalsSection from '@/components/product/NewArrivalsSection'
+import NuestraSeleccionSection from '@/components/product/NuestraSeleccionSection'
 import BrandCarousel from '@/components/product/BrandCarousel'
 import CategoryShowcase from '@/components/product/CategoryShowcase'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 import HeroSection from '@/components/layout/HeroSection'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,18 +36,21 @@ export const metadata: Metadata = {
 
 
 export default async function HomePage() {
-  const [featuredProducts, allProducts, newProducts, heroConfig, productFeatureConfig, categoryCardsConfig] = await Promise.all([
+  const [featuredProducts, allProducts, newProducts, heroConfig, productFeatureConfig, categoryCardsConfig, nuestraSeleccionConfig] = await Promise.all([
     getFeaturedProducts(10),
     getProducts(),
     getNewProducts(4),
     getSiteConfig('hero'),
     getSiteConfig('productFeature'),
     getSiteConfig('categoryCards'),
+    getSiteConfig('nuestraSeleccion'),
   ])
 
   const featureProduct = productFeatureConfig?.productId
     ? await getProductById(productFeatureConfig.productId)
     : null
+
+  const nuestraSeleccionProducts = await getProductsByIds(nuestraSeleccionConfig?.productIds ?? [])
 
   return (
     <>
@@ -57,29 +62,33 @@ export default async function HomePage() {
         <div className="mx-auto max-w-screen-xl px-6 py-20 lg:px-10">
 
           {/* Section header */}
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="h-px w-6 bg-gold" aria-hidden />
-              <span className="text-[10px] uppercase tracking-[0.3em] text-gold font-semibold">
-                CURATED SELECTION
-              </span>
+          <ScrollReveal>
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="h-px w-6 bg-gold" aria-hidden />
+                <span className="text-[10px] uppercase tracking-[0.3em] text-gold font-semibold">
+                  CURATED SELECTION
+                </span>
+              </div>
+              <h2 className="text-2xl font-black uppercase tracking-tight text-foreground leading-tight mt-3">
+                PRODUCTOS DESTACADOS
+              </h2>
+              <p className="text-[11px] text-muted mt-1.5">
+                Elegidos para elevar tu estilo, todos los días.
+              </p>
+              <Link
+                href="/products"
+                className="hidden items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-muted transition-colors duration-150 hover:text-foreground md:flex mt-4"
+              >
+                Ver todos <ArrowIcon className="shrink-0 text-gold" />
+              </Link>
             </div>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-foreground leading-tight mt-3">
-              PRODUCTOS DESTACADOS
-            </h2>
-            <p className="text-[11px] text-muted mt-1.5">
-              Elegidos para elevar tu estilo, todos los días.
-            </p>
-            <Link
-              href="/products"
-              className="hidden items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-muted transition-colors duration-150 hover:text-foreground md:flex mt-4"
-            >
-              Ver todos <ArrowIcon className="shrink-0 text-gold" />
-            </Link>
-          </div>
+          </ScrollReveal>
 
           {/* Product grid */}
-          <FeaturedProductsGrid products={featuredProducts} />
+          <ScrollReveal delay={180}>
+            <FeaturedProductsGrid products={featuredProducts} />
+          </ScrollReveal>
 
           {/* Mobile — view all */}
           <div className="mt-10 md:hidden">
@@ -97,6 +106,7 @@ export default async function HomePage() {
       {/* ─── Brand Callout ─── */}
       <section className="bg-foreground">
         <div className="mx-auto max-w-screen-xl px-6 py-20 lg:px-10">
+          <ScrollReveal>
           <div className="flex flex-col gap-14 lg:flex-row lg:items-center lg:justify-between">
 
             {/* Left — copy */}
@@ -142,17 +152,21 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ─── Product Feature ─── */}
-      <ProductFeature product={featureProduct} />
+      <ScrollReveal>
+        <ProductFeature product={featureProduct} />
+      </ScrollReveal>
 
       <div className="h-2 bg-white" aria-hidden />
 
       {/* ─── Features Strip ─── */}
       <section className="bg-[#f5f5f7]">
         <div className="mx-auto max-w-screen-xl">
+          <ScrollReveal>
           <div className="grid grid-cols-1 divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
 
             <div className="flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center lg:py-20 lg:pb-28">
@@ -190,18 +204,30 @@ export default async function HomePage() {
             </div>
 
           </div>
+          </ScrollReveal>
         </div>
       </section>
 
       <div className="h-2 bg-white" aria-hidden />
 
       {/* ─── Brand Carousel ─── */}
-      <BrandCarousel />
+      <ScrollReveal>
+        <BrandCarousel />
+      </ScrollReveal>
 
       <div className="h-2 bg-white" aria-hidden />
 
       {/* ─── Nuevos Ingresos ─── */}
-      <NewArrivalsSection products={newProducts} />
+      <ScrollReveal>
+        <NewArrivalsSection products={newProducts} />
+      </ScrollReveal>
+
+      <div className="h-2 bg-white" aria-hidden />
+
+      {/* ─── Nuestra Selección ─── */}
+      <ScrollReveal>
+        <NuestraSeleccionSection products={nuestraSeleccionProducts} />
+      </ScrollReveal>
 
       <div className="h-2 bg-white" aria-hidden />
 
@@ -210,22 +236,26 @@ export default async function HomePage() {
         <div className="mx-auto max-w-screen-xl px-6 py-20 lg:px-10">
 
           {/* Section header */}
-          <div className="mb-8 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="h-px w-8 bg-gold" aria-hidden />
-              <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
-                Todos los Productos
-              </h2>
+          <ScrollReveal>
+            <div className="mb-8 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="h-px w-8 bg-gold" aria-hidden />
+                <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
+                  Todos los Productos
+                </h2>
+              </div>
+              <Link
+                href="/products"
+                className="hidden items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-muted transition-colors duration-150 hover:text-foreground md:flex"
+              >
+                Ver catálogo <ArrowIcon className="shrink-0 text-gold" />
+              </Link>
             </div>
-            <Link
-              href="/products"
-              className="hidden items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-muted transition-colors duration-150 hover:text-foreground md:flex"
-            >
-              Ver catálogo <ArrowIcon className="shrink-0 text-gold" />
-            </Link>
-          </div>
+          </ScrollReveal>
 
-          <ProductsWithFilters products={allProducts} />
+          <ScrollReveal delay={180}>
+            <ProductsWithFilters products={allProducts} />
+          </ScrollReveal>
 
           {/* Bottom CTA */}
           <div className="mt-14 flex justify-center">
@@ -241,6 +271,7 @@ export default async function HomePage() {
       </section>
 
       {/* ─── CTA ─── */}
+      <ScrollReveal>
       <section
         className="relative h-[90px] overflow-hidden lg:h-[115px]"
         style={{ background: '#e3d9e2' }}
@@ -273,9 +304,12 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* ─── Categorías ─── */}
-      <CategoryShowcase cards={categoryCardsConfig?.cards} />
+      <ScrollReveal>
+        <CategoryShowcase cards={categoryCardsConfig?.cards} />
+      </ScrollReveal>
     </>
   )
 }

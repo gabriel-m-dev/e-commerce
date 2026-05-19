@@ -40,6 +40,14 @@ export const DEFAULT_BRAND_CATEGORY_SPLIT: BrandCategorySplitConfig = {
   zapatillas: { image: '', overlay: false, text: '', textBorder: 'none', textPosition: 'center' },
 }
 
+export type NuestraSeleccionConfig = {
+  productIds: string[]
+}
+
+export const DEFAULT_NUESTRA_SELECCION: NuestraSeleccionConfig = {
+  productIds: [],
+}
+
 export const DEFAULT_CATEGORY_CARDS: CategoryCard[] = [
   {
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85',

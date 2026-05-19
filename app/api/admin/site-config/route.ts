@@ -33,7 +33,7 @@ export async function PATCH(request: NextRequest) {
 
   const { key, value } = body as { key: SiteConfigKey; value: SiteConfigValues[SiteConfigKey] }
 
-  const VALID_KEYS: SiteConfigKey[] = ['hero', 'productFeature', 'categoryCards', 'jordanCategorySplit', 'nikeCategorySplit', 'adidasCategorySplit']
+  const VALID_KEYS: SiteConfigKey[] = ['hero', 'productFeature', 'categoryCards', 'jordanCategorySplit', 'nikeCategorySplit', 'adidasCategorySplit', 'nuestraSeleccion']
   if (!key || !VALID_KEYS.includes(key) || value === undefined) {
     return NextResponse.json({ error: 'key o value inválido' }, { status: 400 })
   }

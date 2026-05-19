@@ -87,7 +87,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             </svg>
           </button>
 
-          <span className="hidden text-[11px] font-semibold uppercase tracking-[0.18em] text-muted md:block">
+          <span className="hidden text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-foreground md:block">
             Panel de administración
           </span>
 

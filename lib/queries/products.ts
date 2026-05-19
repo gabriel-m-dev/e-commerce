@@ -188,6 +188,21 @@ export async function getProductById(id: string): Promise<DbProduct | null> {
   }
 }
 
+export async function getProductsByIds(ids: string[]): Promise<DbProduct[]> {
+  if (!ids.length) return []
+  try {
+    const results = await prisma.product.findMany({
+      where: { id: { in: ids }, active: true },
+      include: { category: true },
+    })
+    const map = new Map(results.map((p) => [p.id, toDbProduct(p)]))
+    return ids.map((id) => map.get(id)).filter((p): p is DbProduct => p !== undefined)
+  } catch (e) {
+    console.error('[getProductsByIds] DB unavailable:', e)
+    return []
+  }
+}
+
 export async function getCategories(): Promise<{ id: string; name: string; slug: string }[]> {
   try {
     return await prisma.category.findMany({

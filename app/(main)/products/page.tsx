@@ -46,7 +46,7 @@ export default async function ProductsPage({
 
   const [products, newBrandProducts, categorySplitConfig] = await Promise.all([
     getProducts({ brand: brandFilter }),
-    isEditorialBrand ? getNewProducts(12, brandFilter) : Promise.resolve([]),
+    isEditorialBrand ? getNewProducts(10, brandFilter) : Promise.resolve([]),
     isEditorialBrand ? getSiteConfig(configKey) : Promise.resolve(null),
   ])
 
@@ -268,7 +268,7 @@ export default async function ProductsPage({
 
             {/* Hero de marca — full viewport width via margin escape */}
             {(categorySplitConfig?.ropa.image || categorySplitConfig?.zapatillas.image) && (
-              <div style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}>
+              <div className="mb-12" style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}>
                 <BrandCategorySplit
                   ropaPanel={categorySplitConfig?.ropa ?? { image: '' }}
                   zapatillasPanel={categorySplitConfig?.zapatillas ?? { image: '' }}

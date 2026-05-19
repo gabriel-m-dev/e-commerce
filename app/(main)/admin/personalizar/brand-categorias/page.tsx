@@ -26,10 +26,10 @@ export default async function BrandCategoriasConfigPage() {
         <Link href="/admin/personalizar" className="text-[10px] uppercase tracking-[0.18em] text-muted hover:text-foreground transition-colors">
           Personalizar web
         </Link>
-        <span className="text-muted/40">/</span>
+        <span className="text-accent-foreground">/</span>
         <h1 className="text-[13px] font-black uppercase tracking-[0.22em]">Hero de Marca</h1>
       </div>
-      <p className="text-[11px] text-muted -mt-4">
+      <p className="text-[16px] text-neutral-950 -mt-4">
         Doble panel hero que aparece en las páginas de cada brand. Dos imágenes editoriales side by side. Cuando están vacías, la sección no se muestra.
       </p>
 

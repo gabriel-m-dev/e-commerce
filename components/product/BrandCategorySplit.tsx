@@ -41,7 +41,7 @@ export default function BrandCategorySplit({ ropaPanel, zapatillasPanel }: Brand
             )}
 
             {panel.overlay && (
-              <div className="absolute inset-0 bg-black/40" aria-hidden />
+              <div className="absolute inset-0 bg-black/25" aria-hidden />
             )}
 
             {text && (

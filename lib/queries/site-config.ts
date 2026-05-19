@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
-import { type HeroSlide, type CategoryCard, type BrandCategorySplitConfig, DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT } from '@/lib/data/site-config-defaults'
+import { type HeroSlide, type CategoryCard, type BrandCategorySplitConfig, type NuestraSeleccionConfig, DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT } from '@/lib/data/site-config-defaults'
 
-export type { HeroSlide, CategoryCard, BrandCategorySplitConfig }
+export type { HeroSlide, CategoryCard, BrandCategorySplitConfig, NuestraSeleccionConfig }
 export { DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT }
 
 export type SiteConfigKey =
@@ -11,6 +11,7 @@ export type SiteConfigKey =
   | 'jordanCategorySplit'
   | 'nikeCategorySplit'
   | 'adidasCategorySplit'
+  | 'nuestraSeleccion'
 
 export type SiteConfigValues = {
   hero: { slides: HeroSlide[] }
@@ -19,6 +20,7 @@ export type SiteConfigValues = {
   jordanCategorySplit: BrandCategorySplitConfig
   nikeCategorySplit: BrandCategorySplitConfig
   adidasCategorySplit: BrandCategorySplitConfig
+  nuestraSeleccion: NuestraSeleccionConfig
 }
 
 export async function getSiteConfig<K extends SiteConfigKey>(key: K): Promise<SiteConfigValues[K] | null> {
