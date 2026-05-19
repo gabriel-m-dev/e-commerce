@@ -270,7 +270,6 @@ export default async function ProductsPage({
             {(categorySplitConfig?.ropa.image || categorySplitConfig?.zapatillas.image) && (
               <div style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}>
                 <BrandCategorySplit
-                  brand={brandFilter as 'NIKE' | 'JORDAN' | 'ADIDAS'}
                   ropaImage={categorySplitConfig?.ropa.image ?? ''}
                   zapatillasImage={categorySplitConfig?.zapatillas.image ?? ''}
                 />
