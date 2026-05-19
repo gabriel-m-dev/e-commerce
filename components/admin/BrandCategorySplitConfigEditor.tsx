@@ -12,8 +12,8 @@ interface BrandCategorySplitConfigEditorProps {
 }
 
 const SLOTS = [
-  { key: 'ropa' as const, label: 'Imagen ROPA', hint: 'Se muestra en el panel izquierdo. El CTA lleva a Remeras.' },
-  { key: 'zapatillas' as const, label: 'Imagen ZAPATILLAS', hint: 'Se muestra en el panel derecho. El CTA lleva a Zapatillas.' },
+  { key: 'ropa' as const, label: 'Imagen izquierda', hint: 'Panel hero izquierdo. Usá una imagen editorial de alta calidad.' },
+  { key: 'zapatillas' as const, label: 'Imagen derecha', hint: 'Panel hero derecho. Usá una imagen editorial de alta calidad.' },
 ]
 
 export default function BrandCategorySplitConfigEditor({ brand, initialConfig }: BrandCategorySplitConfigEditorProps) {

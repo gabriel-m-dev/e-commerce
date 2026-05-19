@@ -52,8 +52,8 @@ const SECTIONS = [
   },
   {
     href: '/admin/personalizar/brand-categorias',
-    title: 'Split de Categorías',
-    description: 'Imágenes del panel ROPA / ZAPATILLAS en las páginas de Jordan, Nike y Adidas.',
+    title: 'Hero de Marca',
+    description: 'Doble panel hero editorial en las páginas de Jordan, Nike y Adidas. Dos imágenes side by side.',
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="3" width="9" height="18" rx="1" />

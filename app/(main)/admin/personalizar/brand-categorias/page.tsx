@@ -27,10 +27,10 @@ export default async function BrandCategoriasConfigPage() {
           Personalizar web
         </Link>
         <span className="text-muted/40">/</span>
-        <h1 className="text-[13px] font-black uppercase tracking-[0.22em]">Split de Categorías</h1>
+        <h1 className="text-[13px] font-black uppercase tracking-[0.22em]">Hero de Marca</h1>
       </div>
       <p className="text-[11px] text-muted -mt-4">
-        Imágenes del panel ROPA / ZAPATILLAS que aparecen en las páginas de cada brand. Cuando están vacías, la sección no se muestra.
+        Doble panel hero que aparece en las páginas de cada brand. Dos imágenes editoriales side by side. Cuando están vacías, la sección no se muestra.
       </p>
 
       <div className="flex flex-col gap-10">
