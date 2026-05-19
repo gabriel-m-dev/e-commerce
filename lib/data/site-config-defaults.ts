@@ -22,14 +22,22 @@ export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
   { image: '/hero/4.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
 ]
 
+export type BrandHeroPanel = {
+  image: string
+  overlay?: boolean
+  text?: string
+  textBorder?: 'full' | 'bottom' | 'none'
+  textPosition?: 'center' | 'bottom-center' | 'bottom-left'
+}
+
 export type BrandCategorySplitConfig = {
-  ropa: { image: string }
-  zapatillas: { image: string }
+  ropa: BrandHeroPanel
+  zapatillas: BrandHeroPanel
 }
 
 export const DEFAULT_BRAND_CATEGORY_SPLIT: BrandCategorySplitConfig = {
-  ropa: { image: '' },
-  zapatillas: { image: '' },
+  ropa: { image: '', overlay: false, text: '', textBorder: 'none', textPosition: 'center' },
+  zapatillas: { image: '', overlay: false, text: '', textBorder: 'none', textPosition: 'center' },
 }
 
 export const DEFAULT_CATEGORY_CARDS: CategoryCard[] = [

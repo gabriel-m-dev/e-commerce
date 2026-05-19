@@ -266,12 +266,12 @@ export default async function ProductsPage({
               <BrandNewArrivalsSlider products={newBrandProducts} theme={isJordan ? 'dark' : 'light'} />
             )}
 
-            {/* Category split — full viewport width via margin escape */}
+            {/* Hero de marca — full viewport width via margin escape */}
             {(categorySplitConfig?.ropa.image || categorySplitConfig?.zapatillas.image) && (
               <div style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}>
                 <BrandCategorySplit
-                  ropaImage={categorySplitConfig?.ropa.image ?? ''}
-                  zapatillasImage={categorySplitConfig?.zapatillas.image ?? ''}
+                  ropaPanel={categorySplitConfig?.ropa ?? { image: '' }}
+                  zapatillasPanel={categorySplitConfig?.zapatillas ?? { image: '' }}
                 />
               </div>
             )}
