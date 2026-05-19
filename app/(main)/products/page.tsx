@@ -244,57 +244,47 @@ export default async function ProductsPage({
           </div>
         )}
 
-        {/* Editorial brand layout */}
+        {/* Editorial brand layout — one containing block so sticky logo persists through all content */}
         {isEditorialBrand && brandFilter && (
-          <>
-            {/* Header + slogan */}
-            <div className="relative z-10 mx-auto max-w-screen-xl px-6 pt-16 lg:px-10">
-              <BrandEditorialHeader key={brandFilter} brand={brandFilter as 'NIKE' | 'JORDAN' | 'ADIDAS'} theme={isJordan ? 'dark' : 'light'} />
-            </div>
+          <div className="relative z-10 mx-auto max-w-screen-xl px-6 pt-16 pb-16 lg:px-10">
+            <BrandEditorialHeader key={brandFilter} brand={brandFilter as 'NIKE' | 'JORDAN' | 'ADIDAS'} theme={isJordan ? 'dark' : 'light'} />
 
-            {/* Brand hero */}
+            {/* Brand hero — escape container padding, keep hero-specific side padding */}
             {isJordan && (
-              <div className="relative z-10">
-                <div className="pl-0 pr-[68px] md:pl-20 md:pr-20">
-                  <JordanHeroSlider />
-                </div>
+              <div className="-mx-6 lg:-mx-10 pl-0 pr-[68px] md:pl-20 md:pr-20">
+                <JordanHeroSlider />
               </div>
             )}
             {brandFilter === 'NIKE' && (
-              <div className="relative z-10">
-                <div className="md:px-20">
-                  <NikeHeroSlider />
-                </div>
+              <div className="-mx-6 lg:-mx-10 md:px-20">
+                <NikeHeroSlider />
               </div>
             )}
 
             {/* Lo nuevo */}
             {newBrandProducts.length > 0 && (
-              <div className="relative z-10 mx-auto max-w-screen-xl px-6 lg:px-10">
-                <BrandNewArrivalsSlider products={newBrandProducts} theme={isJordan ? 'dark' : 'light'} />
+              <BrandNewArrivalsSlider products={newBrandProducts} theme={isJordan ? 'dark' : 'light'} />
+            )}
+
+            {/* Category split — full viewport width via margin escape */}
+            {(categorySplitConfig?.ropa.image || categorySplitConfig?.zapatillas.image) && (
+              <div style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}>
+                <BrandCategorySplit
+                  brand={brandFilter as 'NIKE' | 'JORDAN' | 'ADIDAS'}
+                  ropaImage={categorySplitConfig?.ropa.image ?? ''}
+                  zapatillasImage={categorySplitConfig?.zapatillas.image ?? ''}
+                />
               </div>
             )}
 
-            {/* Category split — full width */}
-            {(categorySplitConfig?.ropa.image || categorySplitConfig?.zapatillas.image) && (
-              <BrandCategorySplit
-                brand={brandFilter as 'NIKE' | 'JORDAN' | 'ADIDAS'}
-                ropaImage={categorySplitConfig?.ropa.image ?? ''}
-                zapatillasImage={categorySplitConfig?.zapatillas.image ?? ''}
-              />
-            )}
-
-            {/* Product grid */}
-            <div className="relative z-10 mx-auto max-w-screen-xl px-6 pb-16 lg:px-10">
-              <ProductsWithFilters
-                products={products}
-                initialCategory={category ?? 'Todo'}
-                dark={isJordan}
-                brand={brandFilter}
-                editorialTheme={isJordan ? 'dark' : 'light'}
-              />
-            </div>
-          </>
+            <ProductsWithFilters
+              products={products}
+              initialCategory={category ?? 'Todo'}
+              dark={isJordan}
+              brand={brandFilter}
+              editorialTheme={isJordan ? 'dark' : 'light'}
+            />
+          </div>
         )}
 
       </section>
