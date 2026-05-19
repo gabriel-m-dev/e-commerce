@@ -147,20 +147,20 @@ export async function getSaleProducts(): Promise<DbProduct[]> {
   }
 }
 
-export async function getNewProducts(limit = 20): Promise<DbProduct[]> {
+export async function getNewProducts(limit = 20, brand?: string): Promise<DbProduct[]> {
   const since = new Date()
   since.setDate(since.getDate() - 30)
+  const brandFilter = brand ? { brand: brand as import('../generated/prisma/client').Brand } : {}
   try {
     const results = await prisma.product.findMany({
-      where: { active: true, createdAt: { gte: since } },
+      where: { active: true, createdAt: { gte: since }, ...brandFilter },
       include: { category: true },
       orderBy: { createdAt: 'desc' },
       take: limit,
     })
-    // Si no hay productos nuevos en los últimos 30 días, traer los últimos N
     if (results.length === 0) {
       const fallback = await prisma.product.findMany({
-        where: { active: true },
+        where: { active: true, ...brandFilter },
         include: { category: true },
         orderBy: { createdAt: 'desc' },
         take: limit,

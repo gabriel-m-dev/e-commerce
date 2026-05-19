@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
-import { getProducts } from '@/lib/queries/products'
-import ProductsWithFilters from '@/components/product/ProductsWithFilters'
+import { getProducts, getNewProducts } from '@/lib/queries/products'
+import { getSiteConfig } from '@/lib/queries/site-config'
+import ProductsWithFilters, { JordanHeroSlider, NikeHeroSlider } from '@/components/product/ProductsWithFilters'
 import BrandBgImage from '@/components/product/BrandBgImage'
 import BrandEditorialHeader from '@/components/product/BrandEditorialHeader'
+import BrandNewArrivalsSlider from '@/components/product/BrandNewArrivalsSlider'
+import BrandCategorySplit from '@/components/product/BrandCategorySplit'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,9 +35,20 @@ export default async function ProductsPage({
 }) {
   const { category, brand } = await searchParams
   const brandFilter = brand ? brand.toUpperCase() : undefined
-  const products = await getProducts({ brand: brandFilter })
   const isEditorialBrand = brandFilter === 'JORDAN' || brandFilter === 'NIKE' || brandFilter === 'ADIDAS'
   const isJordan = brandFilter === 'JORDAN'
+
+  const configKey = brandFilter === 'JORDAN'
+    ? 'jordanCategorySplit' as const
+    : brandFilter === 'NIKE'
+      ? 'nikeCategorySplit' as const
+      : 'adidasCategorySplit' as const
+
+  const [products, newBrandProducts, categorySplitConfig] = await Promise.all([
+    getProducts({ brand: brandFilter }),
+    isEditorialBrand ? getNewProducts(12, brandFilter) : Promise.resolve([]),
+    isEditorialBrand ? getSiteConfig(configKey) : Promise.resolve(null),
+  ])
 
   return (
     <>
@@ -106,7 +120,6 @@ export default async function ProductsPage({
                 whiteSpace: 'nowrap',
               }}
             >
-              {/* Nike logo — dorado semitransparente, justo antes de la J */}
               <Image
                 src="/brands/nike/logo.webp"
                 alt=""
@@ -181,7 +194,7 @@ export default async function ProductsPage({
           </div>
         )}
 
-        {/* Jordan sneaker image — top-right, flush to window edge, behind content */}
+        {/* Jordan sneaker image */}
         {isJordan && (
           <div
             className="pointer-events-none select-none absolute right-0 top-0 w-[160px] h-[220px] max-[374px]:w-[120px] max-[374px]:h-[170px] sm:w-[200px] sm:h-[275px] md:w-[250px] md:h-[340px] lg:w-[310px] lg:h-[420px] z-[2] jordan-bg-img"
@@ -211,30 +224,79 @@ export default async function ProductsPage({
           </div>
         )}
 
-        <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
-
-          {isEditorialBrand && brandFilter ? (
-            <BrandEditorialHeader key={brandFilter} brand={brandFilter as 'NIKE' | 'JORDAN' | 'ADIDAS'} theme={isJordan ? 'dark' : 'light'} />
-          ) : (
-            /* Section label — light / non-Jordan */
+        {/* Non-editorial: single container */}
+        {!isEditorialBrand && (
+          <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
             <div className="mb-10">
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
                 Todos los productos
               </p>
             </div>
-          )}
-
-          <div className={!isEditorialBrand && brandFilter ? 'lg:pr-[200px] xl:pr-[240px]' : ''}>
-            <ProductsWithFilters
-              products={products}
-              initialCategory={category ?? 'Todo'}
-              dark={isJordan}
-              brand={brandFilter}
-              editorialTheme={isEditorialBrand ? (isJordan ? 'dark' : 'light') : undefined}
-            />
+            <div className={brandFilter ? 'lg:pr-[200px] xl:pr-[240px]' : ''}>
+              <ProductsWithFilters
+                products={products}
+                initialCategory={category ?? 'Todo'}
+                dark={false}
+                brand={brandFilter}
+                editorialTheme={undefined}
+              />
+            </div>
           </div>
+        )}
 
-        </div>
+        {/* Editorial brand layout */}
+        {isEditorialBrand && brandFilter && (
+          <>
+            {/* Header + slogan */}
+            <div className="relative z-10 mx-auto max-w-screen-xl px-6 pt-16 lg:px-10">
+              <BrandEditorialHeader key={brandFilter} brand={brandFilter as 'NIKE' | 'JORDAN' | 'ADIDAS'} theme={isJordan ? 'dark' : 'light'} />
+            </div>
+
+            {/* Brand hero */}
+            {isJordan && (
+              <div className="relative z-10">
+                <div className="pl-0 pr-[68px] md:pl-20 md:pr-20">
+                  <JordanHeroSlider />
+                </div>
+              </div>
+            )}
+            {brandFilter === 'NIKE' && (
+              <div className="relative z-10">
+                <div className="md:px-20">
+                  <NikeHeroSlider />
+                </div>
+              </div>
+            )}
+
+            {/* Lo nuevo */}
+            {newBrandProducts.length > 0 && (
+              <div className="relative z-10 mx-auto max-w-screen-xl px-6 lg:px-10">
+                <BrandNewArrivalsSlider products={newBrandProducts} theme={isJordan ? 'dark' : 'light'} />
+              </div>
+            )}
+
+            {/* Category split — full width */}
+            {(categorySplitConfig?.ropa.image || categorySplitConfig?.zapatillas.image) && (
+              <BrandCategorySplit
+                brand={brandFilter as 'NIKE' | 'JORDAN' | 'ADIDAS'}
+                ropaImage={categorySplitConfig?.ropa.image ?? ''}
+                zapatillasImage={categorySplitConfig?.zapatillas.image ?? ''}
+              />
+            )}
+
+            {/* Product grid */}
+            <div className="relative z-10 mx-auto max-w-screen-xl px-6 pb-16 lg:px-10">
+              <ProductsWithFilters
+                products={products}
+                initialCategory={category ?? 'Todo'}
+                dark={isJordan}
+                brand={brandFilter}
+                editorialTheme={isJordan ? 'dark' : 'light'}
+              />
+            </div>
+          </>
+        )}
+
       </section>
     </main>
     </>

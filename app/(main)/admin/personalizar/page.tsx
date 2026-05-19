@@ -50,6 +50,18 @@ const SECTIONS = [
       </svg>
     ),
   },
+  {
+    href: '/admin/personalizar/brand-categorias',
+    title: 'Split de Categorías',
+    description: 'Imágenes del panel ROPA / ZAPATILLAS en las páginas de Jordan, Nike y Adidas.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="3" width="9" height="18" rx="1" />
+        <rect x="13" y="3" width="9" height="18" rx="1" />
+        <path d="M7 12h0M17 12h0" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ]
 
 export default function PersonalizarPage() {

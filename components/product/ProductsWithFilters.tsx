@@ -16,7 +16,7 @@ const JORDAN_SLIDES = [
   { image: '/brands/jordan/hero-2.webp', text: 'Elevá tu juego' },
 ] as const
 
-function JordanHeroSlider() {
+export function JordanHeroSlider() {
   const [current, setCurrent]     = useState(0)
   const [prev, setPrev]           = useState<number | null>(null)
   const [textVisible, setTextVisible] = useState(true)
@@ -105,7 +105,7 @@ function JordanHeroSlider() {
   )
 }
 
-function NikeHeroSlider() {
+export function NikeHeroSlider() {
   const [logoVisible, setLogoVisible] = useState(false)
   const [videoReady, setVideoReady] = useState(false)
   const logoTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -515,36 +515,6 @@ export default function ProductsWithFilters({
           />
         </div>
       ))}
-
-      {/* Jordan hero image */}
-      {dark && brand === 'JORDAN' && (
-        <div
-          className="mt-8"
-          style={{
-            marginLeft: 'calc(50% - 50vw)',
-            marginRight: 'calc(50% - 50vw)',
-          }}
-        >
-          <div className="pl-0 pr-[68px] md:pl-20 md:pr-20">
-            <JordanHeroSlider />
-          </div>
-        </div>
-      )}
-
-      {/* Nike hero */}
-      {!dark && brand === 'NIKE' && (
-        <div
-          className="mt-8"
-          style={{
-            marginLeft: 'calc(50% - 50vw)',
-            marginRight: 'calc(50% - 50vw)',
-          }}
-        >
-          <div className="pl-0 pr-0 md:pl-20 md:pr-20">
-            <NikeHeroSlider />
-          </div>
-        </div>
-      )}
 
       {/* Result count */}
       <p

@@ -22,6 +22,16 @@ export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
   { image: '/hero/4.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
 ]
 
+export type BrandCategorySplitConfig = {
+  ropa: { image: string }
+  zapatillas: { image: string }
+}
+
+export const DEFAULT_BRAND_CATEGORY_SPLIT: BrandCategorySplitConfig = {
+  ropa: { image: '' },
+  zapatillas: { image: '' },
+}
+
 export const DEFAULT_CATEGORY_CARDS: CategoryCard[] = [
   {
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85',
