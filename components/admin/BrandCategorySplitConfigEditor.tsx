@@ -88,7 +88,7 @@ export default function BrandCategorySplitConfigEditor({ brand, initialConfig }:
 
             {/* Imagen */}
             <div className="flex flex-col gap-2">
-              <p className="text-[10px] uppercase tracking-[0.15em] text-muted">Imagen</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">Imagen</p>
               <div className="flex items-start gap-4">
                 {panel.image ? (
                   <div className="relative h-24 w-36 shrink-0 overflow-hidden bg-surface border border-border">
@@ -133,8 +133,8 @@ export default function BrandCategorySplitConfigEditor({ brand, initialConfig }:
             {/* Overlay */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.15em] text-muted">Overlay oscuro</p>
-                <p className="text-[9px] text-muted/60 mt-0.5">Capa semitransparente sobre la imagen</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">Overlay oscuro</p>
+                <p className="text-[10px] text-muted mt-0.5">Capa semitransparente sobre la imagen</p>
               </div>
               <button
                 type="button"
@@ -147,7 +147,7 @@ export default function BrandCategorySplitConfigEditor({ brand, initialConfig }:
 
             {/* Texto */}
             <div className="flex flex-col gap-3">
-              <p className="text-[10px] uppercase tracking-[0.15em] text-muted">Texto (opcional)</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">Texto (opcional)</p>
               <input
                 type="text"
                 placeholder="Ej: NUEVA COLECCIÓN"
@@ -158,7 +158,7 @@ export default function BrandCategorySplitConfigEditor({ brand, initialConfig }:
 
               {/* Bordado */}
               <div className="flex flex-col gap-1.5">
-                <p className="text-[9px] uppercase tracking-[0.15em] text-muted/70">Bordado del texto</p>
+                <p className="text-[10px] uppercase tracking-[0.12em] text-muted">Bordado del texto</p>
                 <div className="flex gap-2 flex-wrap">
                   {BORDER_OPTIONS.map(opt => (
                     <button
@@ -166,7 +166,7 @@ export default function BrandCategorySplitConfigEditor({ brand, initialConfig }:
                       type="button"
                       disabled={!hasText}
                       onClick={() => updatePanel(key, 'textBorder', opt.value)}
-                      className={`px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.12em] border transition-colors disabled:opacity-30 disabled:pointer-events-none ${
+                      className={`px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] border transition-colors disabled:opacity-50 disabled:pointer-events-none ${
                         panel.textBorder === opt.value || (!panel.textBorder && opt.value === 'none')
                           ? 'border-foreground text-foreground bg-foreground/5'
                           : 'border-border text-muted hover:border-foreground hover:text-foreground'
@@ -180,7 +180,7 @@ export default function BrandCategorySplitConfigEditor({ brand, initialConfig }:
 
               {/* Posición */}
               <div className="flex flex-col gap-1.5">
-                <p className="text-[9px] uppercase tracking-[0.15em] text-muted/70">Posición del texto</p>
+                <p className="text-[10px] uppercase tracking-[0.12em] text-muted">Posición del texto</p>
                 <div className="flex gap-2 flex-wrap">
                   {POSITION_OPTIONS.map(opt => (
                     <button
@@ -188,7 +188,7 @@ export default function BrandCategorySplitConfigEditor({ brand, initialConfig }:
                       type="button"
                       disabled={!hasText}
                       onClick={() => updatePanel(key, 'textPosition', opt.value)}
-                      className={`px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.12em] border transition-colors disabled:opacity-30 disabled:pointer-events-none ${
+                      className={`px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] border transition-colors disabled:opacity-50 disabled:pointer-events-none ${
                         panel.textPosition === opt.value || (!panel.textPosition && opt.value === 'center')
                           ? 'border-foreground text-foreground bg-foreground/5'
                           : 'border-border text-muted hover:border-foreground hover:text-foreground'
