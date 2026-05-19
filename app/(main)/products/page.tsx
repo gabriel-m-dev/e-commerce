@@ -251,7 +251,7 @@ export default async function ProductsPage({
 
             {/* Brand hero — escape container padding, keep hero-specific side padding */}
             {isJordan && (
-              <div className="-mx-6 lg:-mx-10 pl-0 pr-[68px] md:pl-20 md:pr-20 lg:mt-[25px]">
+              <div className="-mx-6 lg:-mx-10 pl-0 pr-[68px] md:pl-20 md:pr-20 lg:mt-[45px]">
                 <JordanHeroSlider />
               </div>
             )}
