@@ -70,7 +70,7 @@ export default async function HomePage() {
                   CURATED SELECTION
                 </span>
               </div>
-              <h2 className="text-2xl font-black uppercase tracking-tight text-foreground leading-tight mt-3">
+              <h2 className="text-3xl font-black uppercase tracking-tight text-foreground leading-tight mt-3">
                 PRODUCTOS DESTACADOS
               </h2>
               <p className="text-[11px] text-muted mt-1.5">
@@ -167,8 +167,59 @@ export default async function HomePage() {
       <section className="bg-[#f5f5f7]">
         <div className="mx-auto max-w-screen-xl">
           <ScrollReveal>
-          <div className="grid grid-cols-1 divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
 
+          {/* Mobile slider */}
+          <div className="sm:hidden">
+            <div
+              className="flex snap-x snap-mandatory overflow-x-auto divide-x divide-border"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              <div className="min-w-full snap-center flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center">
+                <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
+                  <rect x="2" y="7" width="28" height="18" rx="2" />
+                  <path d="M2 13h28M7 19h5M7 22h3" />
+                </svg>
+                <div>
+                  <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Pagá como quieras</p>
+                  <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Tarjetas, transferencia o efectivo. Con Mercado Pago.</p>
+                </div>
+              </div>
+
+              <div className="min-w-full snap-center flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center">
+                <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
+                  <rect x="1" y="11" width="18" height="13" rx="1" />
+                  <path d="M19 15h5l5 5v5h-10V15z" />
+                  <circle cx="7" cy="26" r="2" />
+                  <circle cx="24" cy="26" r="2" />
+                </svg>
+                <div>
+                  <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Envíos a todo el país</p>
+                  <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Recibí tu pedido en la puerta de tu casa.</p>
+                </div>
+              </div>
+
+              <div className="min-w-full snap-center flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center">
+                <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
+                  <path d="M16 2 4 7v10c0 7.2 5.4 12 12 13 6.6-1 12-5.8 12-13V7L16 2z" />
+                </svg>
+                <div>
+                  <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Compra segura</p>
+                  <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Tus datos están protegidos en todo momento.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-center mt-4 pb-8 -mt-10 sm:hidden">
+              <div className="flex gap-2 px-3 py-2 rounded-full backdrop-blur-sm bg-white/30">
+                <span className="w-2 h-2 rounded-full bg-foreground" />
+                <span className="w-2 h-2 rounded-full bg-border" />
+                <span className="w-2 h-2 rounded-full bg-border" />
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop grid */}
+          <div className="hidden sm:grid sm:grid-cols-3 sm:divide-x divide-border">
             <div className="flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center lg:py-20 lg:pb-28">
               <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
                 <rect x="2" y="7" width="28" height="18" rx="2" />
@@ -202,8 +253,8 @@ export default async function HomePage() {
                 <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Tus datos están protegidos en todo momento.</p>
               </div>
             </div>
-
           </div>
+
           </ScrollReveal>
         </div>
       </section>
@@ -254,16 +305,15 @@ export default async function HomePage() {
           </ScrollReveal>
 
           <ScrollReveal delay={180}>
-            <ProductsWithFilters products={allProducts} />
+            <ProductsWithFilters products={allProducts.slice(0, 12)} totalProducts={allProducts.length} />
           </ScrollReveal>
 
-          {/* Bottom CTA */}
-          <div className="mt-14 flex justify-center">
+          <div className="flex justify-center mt-10">
             <Link
               href="/products"
-              className="inline-flex items-center gap-3 border border-foreground px-8 py-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground transition-colors hover:bg-foreground hover:text-background"
+              className="border border-foreground text-foreground px-8 py-3 text-sm uppercase tracking-widest hover:bg-foreground hover:text-white transition-colors"
             >
-              Ver catálogo completo <ArrowIcon className="shrink-0 text-gold" />
+              VER TODOS
             </Link>
           </div>
 

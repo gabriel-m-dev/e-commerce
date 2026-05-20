@@ -228,12 +228,14 @@ export default function ProductsWithFilters({
   dark = false,
   brand,
   editorialTheme,
+  totalProducts,
 }: {
   products: DbProduct[]
   initialCategory?: string
   dark?: boolean
   brand?: string
   editorialTheme?: 'dark' | 'light'
+  totalProducts?: number
 }) {
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory)
   const [sort, setSort] = useState<SortKey>('relevancia')
@@ -522,7 +524,10 @@ export default function ProductsWithFilters({
           dark ? 'text-white/40' : 'text-muted'
         }`}
       >
-        {filtered.length} {filtered.length === 1 ? 'producto' : 'productos'}
+        {(() => {
+          const count = filtered.length === products.length && totalProducts !== undefined ? totalProducts : filtered.length
+          return `${count} ${count === 1 ? 'producto' : 'productos'}`
+        })()}
       </p>
 
       {/* Product grid */}
