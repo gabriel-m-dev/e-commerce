@@ -29,6 +29,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: supabaseHostname,
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
     ],
   },
 }
