@@ -37,8 +37,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
   })
 
   const [colors, setColors] = useState<string[]>([])
-  const [colorInput, setColorInput] = useState('')
-  const [colorError, setColorError] = useState<string | null>(null)
+  const [currentColor, setCurrentColor] = useState('#000000')
   const [sizes, setSizes] = useState<string[]>([])
   const [newCategoryName, setNewCategoryName] = useState('')
   const [allCategories, setAllCategories] = useState<Category[]>(categories)
@@ -51,23 +50,10 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
     )
   }
 
-  const HEX_RE = /^#[0-9A-Fa-f]{6}$/
-
   function addColor() {
-    const raw = colorInput.trim()
-    if (!raw) return
-    if (!HEX_RE.test(raw)) {
-      setColorError('Formato inválido. Usá #RRGGBB (ej: #000000)')
-      return
-    }
-    const normalized = raw.toUpperCase()
-    if (colors.includes(normalized)) {
-      setColorError('Ese color ya está agregado')
-      return
-    }
+    const normalized = currentColor.toUpperCase()
+    if (colors.includes(normalized)) return
     setColors((prev) => [...prev, normalized])
-    setColorInput('')
-    setColorError(null)
   }
 
   function removeColor(hex: string) {
@@ -117,8 +103,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
       active: true,
     })
     setColors([])
-    setColorInput('')
-    setColorError(null)
+    setCurrentColor('#000000')
     setSizes([])
     setNewCategoryName('')
     setSlugManuallyEdited(false)
@@ -502,24 +487,14 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
               {/* Colores */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
-                  Colores (hex)
+                  Colores
                 </label>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <input
-                    type="text"
-                    value={colorInput}
-                    placeholder="#000000"
-                    onChange={(e) => {
-                      setColorInput(e.target.value)
-                      if (colorError) setColorError(null)
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault()
-                        addColor()
-                      }
-                    }}
-                    className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors flex-1"
+                    type="color"
+                    value={currentColor}
+                    onChange={(e) => setCurrentColor(e.target.value)}
+                    className="w-8 h-8 rounded-none border border-border cursor-pointer p-0"
                   />
                   <button
                     type="button"
@@ -529,31 +504,25 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
                     Agregar
                   </button>
                 </div>
-                {colorError && (
-                  <p className="text-[11px] font-medium text-destructive">{colorError}</p>
-                )}
                 {colors.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {colors.map((c) => (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {colors.map((color) => (
                       <span
-                        key={c}
-                        className="flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs"
+                        key={color}
+                        className="flex items-center gap-1.5 px-2 py-1 border border-border text-[10px] uppercase tracking-[0.1em]"
                       >
                         <span
-                          aria-hidden
-                          className="inline-block h-3 w-3 border border-border"
-                          style={{ backgroundColor: c }}
+                          className="w-3 h-3 inline-block shrink-0"
+                          style={{ backgroundColor: color }}
                         />
-                        <span className="font-mono">{c}</span>
+                        {color}
                         <button
                           type="button"
-                          onClick={() => removeColor(c)}
-                          className="text-muted hover:text-destructive transition-colors"
-                          aria-label={`Eliminar ${c}`}
+                          onClick={() => removeColor(color)}
+                          className="text-muted hover:text-foreground ml-1"
+                          aria-label={`Eliminar ${color}`}
                         >
-                          <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
-                            <path d="M1 1l8 8M9 1L1 9" />
-                          </svg>
+                          ×
                         </button>
                       </span>
                     ))}
