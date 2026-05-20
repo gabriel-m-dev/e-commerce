@@ -137,7 +137,7 @@ export default async function ProductsPage({
                 style={{
                   fontWeight: 900,
                   color: 'transparent',
-                  WebkitTextStroke: '1px rgba(255,255,255,0.16)',
+                  WebkitTextStroke: '1px rgba(255,255,255,0.30)',
                   lineHeight: 1,
                   letterSpacing: '0.12em',
                   filter: 'blur(0.3px)',

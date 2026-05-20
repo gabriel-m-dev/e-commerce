@@ -7,8 +7,21 @@ export default function NuestraSeleccionSection({ products }: { products: DbProd
   if (!products.length) return null
 
   return (
-    <section className="bg-[#f5f5f7]">
-      <div className="mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
+    <section className="relative overflow-hidden bg-[#f5f5f7]">
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none select-none absolute inset-0 flex items-center justify-center overflow-hidden z-0"
+      >
+        <span
+          className="w-full text-center font-bold uppercase tracking-[0.2em] whitespace-nowrap"
+          style={{ fontSize: 'clamp(300px,50vw,800px)', WebkitTextStroke: '1.5px rgba(10,10,10,0.15)', color: 'transparent' }}
+        >
+          LUXE.
+        </span>
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
 
         <div className="flex items-center gap-3 mb-4">
           <div className="h-px w-6 bg-gold" />
@@ -23,7 +36,7 @@ export default function NuestraSeleccionSection({ products }: { products: DbProd
           Los mejores picks del equipo LUXE.
         </p>
 
-        <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 lg:gap-x-6">
+        <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 lg:gap-x-6 lg:max-w-[75%] lg:mx-auto">
           {products.map((product) => (
             <li key={product.id}>
               <Link
@@ -37,18 +50,18 @@ export default function NuestraSeleccionSection({ products }: { products: DbProd
                   sizes="(min-width: 1024px) 25vw, 50vw"
                   className="object-cover object-center transition-transform duration-500 hover:scale-105"
                 />
+                <div className="absolute inset-x-0 bottom-0 z-10 min-h-[45%] bg-gradient-to-t from-black/70 to-transparent px-4 py-4 text-center text-white flex flex-col justify-end">
+                  <span className="block text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
+                    {product.category}
+                  </span>
+                  <p className="mt-0.5 text-[13px] font-medium uppercase tracking-[0.08em] leading-tight">
+                    {product.name}
+                  </p>
+                  <p className="mt-1 text-[14px] font-semibold">
+                    {formatPrice(product.price)}
+                  </p>
+                </div>
               </Link>
-              <div className="mt-3 flex flex-col gap-1">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
-                  {product.category}
-                </span>
-                <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-foreground leading-tight">
-                  {product.name}
-                </p>
-                <p className="text-[14px] font-semibold text-foreground">
-                  {formatPrice(product.price)}
-                </p>
-              </div>
             </li>
           ))}
         </ul>
