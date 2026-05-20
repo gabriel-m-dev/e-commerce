@@ -95,13 +95,13 @@ export default function BrandNewArrivalsSlider({ products, theme }: BrandNewArri
                       </span>
                     )}
                     <div className="absolute bottom-0 left-0 right-0 p-5">
-                      <h3 className="text-xl font-normal uppercase tracking-tight text-white leading-tight">
+                      <h3 className="text-sm font-normal uppercase tracking-tight text-white leading-tight">
                         {product.name}
                       </h3>
                       <div className="mt-2 flex items-baseline gap-2">
-                        <span className="text-[22px] font-bold text-white">{formatPrice(product.price)}</span>
+                        <span className="text-xs font-bold text-white">{formatPrice(product.price)}</span>
                         {hasDiscount && (
-                          <span className="text-[15px] font-normal text-white/50 line-through">
+                          <span className="text-[10px] font-normal text-white/50 line-through">
                             {formatPrice(product.comparePrice!)}
                           </span>
                         )}
