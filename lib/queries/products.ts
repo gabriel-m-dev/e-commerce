@@ -18,6 +18,7 @@ function mockToDb(p: MockProduct): DbProduct {
     stock: 99,
     brand: 'OTROS',
     colors: [],
+    sizes: [],
     active: true,
     createdAt: new Date().toISOString(),
   }
@@ -42,6 +43,7 @@ export type DbProduct = {
   stock: number
   brand: string
   colors: string[]
+  sizes: string[]
   createdAt: string
 }
 
@@ -64,6 +66,7 @@ function toDbProduct(p: any): DbProduct {
     stock: Number(p.stock),
     brand: p.brand as string,
     colors: (p.colors as string[]) ?? [],
+    sizes: (p.sizes as string[]) ?? [],
     createdAt: (p.createdAt as Date).toISOString(),
   }
 }

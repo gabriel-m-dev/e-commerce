@@ -19,7 +19,7 @@ export async function PUT(
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand, active, colors } =
+  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand, active, colors, sizes } =
     body as Record<string, unknown>
 
   if (
@@ -51,6 +51,14 @@ export async function PUT(
     normalizedColors = (colors as string[]).map((c) => c.toUpperCase())
   }
 
+  let normalizedSizes: string[] = []
+  if (sizes !== undefined) {
+    if (!Array.isArray(sizes) || !sizes.every((s) => typeof s === 'string')) {
+      return NextResponse.json({ error: 'sizes debe ser un array de strings' }, { status: 400 })
+    }
+    normalizedSizes = (sizes as string[]).map((s) => s.toUpperCase())
+  }
+
   try {
     const category = await prisma.category.findUnique({ where: { slug: categorySlug } })
     if (!category) {
@@ -70,6 +78,7 @@ export async function PUT(
         comparePrice: comparePrice != null ? Math.round(Number(comparePrice)) : null,
         images: images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0),
         colors: normalizedColors,
+        sizes: normalizedSizes,
         categoryId: category.id,
         stock: Math.round(stock),
         featured: featured === true,

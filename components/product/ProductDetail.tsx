@@ -28,7 +28,9 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
 
-  const sizes = SIZES_BY_CATEGORY[product.categorySlug] ?? []
+  const sizes = (product.sizes && product.sizes.length > 0)
+    ? product.sizes
+    : SIZES_BY_CATEGORY[product.categorySlug] ?? []
   const mainImage = product.images[activeThumb] ?? product.image
 
   function handleAddToCart() {

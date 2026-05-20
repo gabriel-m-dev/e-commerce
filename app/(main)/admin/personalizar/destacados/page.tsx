@@ -29,6 +29,7 @@ async function getFeaturedForAdmin(): Promise<DbProduct[]> {
       stock: Number(p.stock),
       brand: p.brand,
       colors: p.colors ?? [],
+      sizes: p.sizes ?? [],
       createdAt: p.createdAt.toISOString(),
     }))
   } catch {

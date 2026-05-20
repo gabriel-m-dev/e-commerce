@@ -197,22 +197,14 @@ export function NikeHeroSlider() {
   )
 }
 
-const PRODUCT_CATEGORIES = [
-  'Todo',
-  'Gorras',
-  'Hoodies',
-  'Remeras',
-  'Mochilas',
-  'Zapatillas',
-  'Pantalones',
-] as const
-
-const NAV_GROUPS: { label: string; category: string | null; sub: string[] | null }[] = [
+const BASE_NAV_GROUPS: { label: string; category: string | null; sub: string[] | null }[] = [
   { label: 'TODO',        category: 'Todo',      sub: null },
   { label: 'ACCESORIOS',  category: null,        sub: ['Gorras', 'Mochilas'] },
   { label: 'ROPA',        category: null,        sub: ['Remeras', 'Hoodies', 'Pantalones'] },
   { label: 'ZAPATILLAS',  category: 'Zapatillas', sub: null },
 ]
+
+const KNOWN_CATEGORIES = new Set(['Gorras', 'Mochilas', 'Remeras', 'Hoodies', 'Pantalones', 'Zapatillas'])
 
 type SortKey = 'relevancia' | 'precio-asc' | 'precio-desc'
 
@@ -255,6 +247,25 @@ export default function ProductsWithFilters({
   const usesGroupedNav = isEditorialBrand && editorialTheme !== undefined
   const isLightEditorial = usesGroupedNav && editorialTheme === 'light'
   const stickyVarName = brand ? `--${brand.toLowerCase()}-logo-height` : '--brand-logo-height'
+
+  const availableCategories = useMemo(
+    () => ['Todo', ...Array.from(new Set(products.map((p) => p.category))).sort()],
+    [products]
+  )
+
+  const navGroups = useMemo(() => {
+    const unknownCategories = availableCategories.filter(
+      (c) => c !== 'Todo' && !KNOWN_CATEGORIES.has(c)
+    )
+    return [
+      ...BASE_NAV_GROUPS,
+      ...unknownCategories.map((cat) => ({
+        label: cat.toUpperCase(),
+        category: cat,
+        sub: null,
+      })),
+    ]
+  }, [availableCategories])
 
   useEffect(() => {
     if (!usesGroupedNav) return
@@ -332,7 +343,7 @@ export default function ProductsWithFilters({
               aria-hidden
             />
             <div data-brand-nav-inner className="relative flex flex-wrap gap-2">
-            {NAV_GROUPS.map((group) => {
+            {navGroups.map((group) => {
               const isActive = group.sub
                 ? group.sub.includes(activeCategory)
                 : activeCategory === group.category
@@ -411,7 +422,7 @@ export default function ProductsWithFilters({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           {/* Category tabs */}
           <div className="flex flex-wrap gap-0 border-b border-border">
-            {PRODUCT_CATEGORIES.map((cat) => (
+            {availableCategories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
@@ -543,7 +554,9 @@ export default function ProductsWithFilters({
           }`}
         >
           {filtered.map((product, index) => {
-            const sizes = SIZES_BY_CATEGORY[product.categorySlug] ?? []
+            const sizes = (product.sizes && product.sizes.length > 0)
+              ? product.sizes
+              : SIZES_BY_CATEGORY[product.categorySlug] ?? []
             const selectedSize = selectedSizes[product.id]
             const isAdded = addedProductId === product.id
             const needsSize = sizes.length > 0 && !selectedSize
@@ -638,6 +651,7 @@ export default function ProductsWithFilters({
                     <button
                       type="button"
                       onClick={(e) => {
+                        e.preventDefault()
                         e.stopPropagation()
                         setOpenProductId(isOpen ? null : product.id)
                       }}
@@ -764,7 +778,7 @@ export default function ProductsWithFilters({
                   )}
                   {usesGroupedNav && (
                     <button
-                      onClick={(e) => { e.stopPropagation(); setOpenProductId(isOpen ? null : product.id) }}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenProductId(isOpen ? null : product.id) }}
                       aria-label={`Agregar ${product.name} al carrito`}
                       className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-md bg-black/60 backdrop-blur-sm text-white border border-white/20 hover:bg-black/80 transition cursor-pointer"
                     >

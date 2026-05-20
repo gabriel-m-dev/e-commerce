@@ -41,6 +41,17 @@ export default function EditProductForm({
   )
   const [colorInput, setColorInput] = useState('')
   const [colorError, setColorError] = useState<string | null>(null)
+  const [sizes, setSizes] = useState<string[]>(product.sizes ?? [])
+  const [newCategoryName, setNewCategoryName] = useState('')
+  const [allCategories, setAllCategories] = useState(categories)
+
+  const AVAILABLE_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+
+  function toggleSize(size: string) {
+    setSizes((prev) =>
+      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
+    )
+  }
 
   const HEX_RE = /^#[0-9A-Fa-f]{6}$/
 
@@ -164,6 +175,28 @@ export default function EditProductForm({
     }
 
     try {
+      let categorySlug = form.categorySlug
+      if (form.categorySlug === '__new__') {
+        if (!newCategoryName.trim()) {
+          setError('Ingresá el nombre de la nueva categoría')
+          setLoading(false)
+          return
+        }
+        const catRes = await fetch('/api/admin/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: newCategoryName.trim() }),
+        })
+        const catData = await catRes.json()
+        if (!catRes.ok) {
+          setError(catData.error ?? 'Error al crear la categoría')
+          setLoading(false)
+          return
+        }
+        categorySlug = catData.slug
+        setAllCategories((prev) => [...prev, catData])
+      }
+
       const res = await fetch(`/api/admin/products/${product.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -172,7 +205,7 @@ export default function EditProductForm({
           slug: form.slug.trim(),
           price: Number(form.price),
           comparePrice: form.comparePrice ? Number(form.comparePrice) : null,
-          categorySlug: form.categorySlug,
+          categorySlug,
           brand: form.brand,
           images,
           description: form.description.trim(),
@@ -180,6 +213,7 @@ export default function EditProductForm({
           featured: form.featured,
           active: form.active,
           colors,
+          sizes,
         }),
       })
 
@@ -239,10 +273,20 @@ export default function EditProductForm({
               <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Categoría</label>
               <select required value={form.categorySlug} onChange={(e) => setForm((prev) => ({ ...prev, categorySlug: e.target.value }))}
                 className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full cursor-pointer">
-                {categories.map((cat) => (
+                {allCategories.map((cat) => (
                   <option key={cat.id} value={cat.slug}>{cat.name}</option>
                 ))}
+                <option value="__new__">+ Nueva categoría...</option>
               </select>
+              {form.categorySlug === '__new__' && (
+                <input
+                  type="text"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="Nombre de la nueva categoría"
+                  className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full"
+                />
+              )}
             </div>
 
             {/* Marca */}
@@ -385,6 +429,26 @@ export default function EditProductForm({
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* Tallas */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Tallas</label>
+              <div className="flex flex-wrap gap-2">
+                {AVAILABLE_SIZES.map((size) => (
+                  <label key={size} className="flex items-center gap-1.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={sizes.includes(size)}
+                      onChange={() => toggleSize(size)}
+                      className="h-4 w-4 cursor-pointer accent-foreground"
+                    />
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground">
+                      {size}
+                    </span>
+                  </label>
+                ))}
+              </div>
             </div>
 
             {/* Stock */}

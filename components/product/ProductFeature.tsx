@@ -28,6 +28,7 @@ const DEFAULT_PRODUCT: DbProduct = {
   stock: 10,
   brand: 'NIKE',
   colors: [],
+  sizes: [],
   createdAt: new Date().toISOString(),
 }
 
@@ -37,7 +38,9 @@ export default function ProductFeature({ product: productProp }: { product?: DbP
   const addItem = useCartStore((s) => s.addItem)
 
   const thumbnails = product.images.length > 0 ? product.images : [product.image]
-  const sizes = SIZES_BY_CATEGORY[product.categorySlug] ?? []
+  const sizes = (product.sizes && product.sizes.length > 0)
+    ? product.sizes
+    : SIZES_BY_CATEGORY[product.categorySlug] ?? []
 
   const [activeThumb, setActiveThumb] = useState(0)
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
