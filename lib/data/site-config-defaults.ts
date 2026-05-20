@@ -28,6 +28,7 @@ export type BrandHeroPanel = {
   text?: string
   textBorder?: 'full' | 'bottom' | 'none'
   textPosition?: 'center' | 'bottom-center' | 'bottom-left'
+  fontSize?: 'small' | 'medium' | 'large'
 }
 
 export type BrandCategorySplitConfig = {

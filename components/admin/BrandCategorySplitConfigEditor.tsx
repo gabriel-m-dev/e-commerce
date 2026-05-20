@@ -28,6 +28,12 @@ const POSITION_OPTIONS: { value: BrandHeroPanel['textPosition']; label: string }
   { value: 'bottom-left',   label: 'Abajo izquierda' },
 ]
 
+const FONT_SIZE_OPTIONS: { value: NonNullable<BrandHeroPanel['fontSize']>; label: string }[] = [
+  { value: 'small',  label: 'Chico' },
+  { value: 'medium', label: 'Mediano' },
+  { value: 'large',  label: 'Grande' },
+]
+
 export default function BrandCategorySplitConfigEditor({ brand, initialConfig }: BrandCategorySplitConfigEditorProps) {
   const [config, setConfig] = useState<BrandCategorySplitConfig>(initialConfig)
   const [uploading, setUploading] = useState<Set<string>>(new Set())
@@ -190,6 +196,28 @@ export default function BrandCategorySplitConfigEditor({ brand, initialConfig }:
                       onClick={() => updatePanel(key, 'textPosition', opt.value)}
                       className={`px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] border transition-colors disabled:opacity-50 disabled:pointer-events-none ${
                         panel.textPosition === opt.value || (!panel.textPosition && opt.value === 'center')
+                          ? 'border-foreground text-foreground bg-foreground/5'
+                          : 'border-border text-muted hover:border-foreground hover:text-foreground'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tamaño de fuente */}
+              <div className="flex flex-col gap-1.5">
+                <p className="text-[10px] uppercase tracking-[0.12em] text-muted">Tamaño de fuente</p>
+                <div className="flex gap-2 flex-wrap">
+                  {FONT_SIZE_OPTIONS.map(opt => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      disabled={!hasText}
+                      onClick={() => updatePanel(key, 'fontSize', opt.value)}
+                      className={`px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] border transition-colors disabled:opacity-50 disabled:pointer-events-none ${
+                        (panel.fontSize ?? 'small') === opt.value
                           ? 'border-foreground text-foreground bg-foreground/5'
                           : 'border-border text-muted hover:border-foreground hover:text-foreground'
                       }`}

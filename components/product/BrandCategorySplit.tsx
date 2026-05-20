@@ -18,6 +18,12 @@ function textBorderClasses(border?: string) {
   return ''
 }
 
+function textFontSizeClass(fontSize?: string) {
+  if (fontSize === 'medium') return 'text-xl'
+  if (fontSize === 'large')  return 'text-3xl'
+  return 'text-[13px]'
+}
+
 export default function BrandCategorySplit({ ropaPanel, zapatillasPanel }: BrandCategorySplitProps) {
   const panels = [ropaPanel, zapatillasPanel]
   if (panels.every(p => !p.image)) return null
@@ -46,7 +52,7 @@ export default function BrandCategorySplit({ ropaPanel, zapatillasPanel }: Brand
 
             {text && (
               <div className={textPositionClasses(panel.textPosition)}>
-                <span className={`text-[13px] font-black uppercase tracking-[0.32em] text-white ${textBorderClasses(panel.textBorder)}`}>
+                <span className={`${textFontSizeClass(panel.fontSize)} font-black uppercase tracking-[0.32em] text-white ${textBorderClasses(panel.textBorder)}`}>
                   {text}
                 </span>
               </div>

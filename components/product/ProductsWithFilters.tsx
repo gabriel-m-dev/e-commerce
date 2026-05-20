@@ -46,7 +46,7 @@ export function JordanHeroSlider() {
       // then fade new text in
       textShowTimer = setTimeout(() => setTextVisible(true), 600)
       prevTimer     = setTimeout(() => setPrev(null), 700)
-    }, 5000)
+    }, 4000)
 
     return () => {
       clearInterval(interval)
