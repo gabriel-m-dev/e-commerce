@@ -17,6 +17,7 @@ export type OrderWithItems = {
     price: number
     quantity: number
     size: string | null
+    image: string | null
   }[]
   address: {
     id: string
@@ -38,7 +39,14 @@ function mapOrder(order: {
   shipping: number
   total: number
   createdAt: Date
-  items: { id: string; name: string; price: number; quantity: number; size: string | null }[]
+  items: {
+    id: string
+    name: string
+    price: number
+    quantity: number
+    size: string | null
+    product: { images: string[] }
+  }[]
   address: { id: string; name: string; street: string; city: string; state: string; zipCode: string; country: string } | null
 }): OrderWithItems {
   return {
@@ -56,6 +64,7 @@ function mapOrder(order: {
       price: Number(item.price),
       quantity: item.quantity,
       size: item.size,
+      image: item.product.images[0] ?? null,
     })),
     address: order.address ?? null,
   }
@@ -67,7 +76,16 @@ export async function getAllOrders(status?: OrderStatus): Promise<OrderWithItems
       where: status ? { status } : undefined,
       orderBy: { createdAt: 'desc' },
       include: {
-        items: { select: { id: true, name: true, price: true, quantity: true, size: true } },
+        items: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            quantity: true,
+            size: true,
+            product: { select: { images: true } },
+          },
+        },
         address: true,
       },
     })
@@ -84,7 +102,16 @@ export async function getOrdersByEmail(email: string): Promise<OrderWithItems[]>
       where: { email },
       orderBy: { createdAt: 'desc' },
       include: {
-        items: { select: { id: true, name: true, price: true, quantity: true, size: true } },
+        items: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            quantity: true,
+            size: true,
+            product: { select: { images: true } },
+          },
+        },
         address: true,
       },
     })
@@ -106,7 +133,16 @@ export async function getOrdersByUserId(userId: string, email: string): Promise<
       },
       orderBy: { createdAt: 'desc' },
       include: {
-        items: { select: { id: true, name: true, price: true, quantity: true, size: true } },
+        items: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            quantity: true,
+            size: true,
+            product: { select: { images: true } },
+          },
+        },
         address: true,
       },
     })
