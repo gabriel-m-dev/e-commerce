@@ -24,20 +24,20 @@ function toSneakerItem(p: DbProduct): SneakerItem {
 }
 
 export default function BrandSneakersSection({ products, theme = 'light' }: BrandSneakersSectionProps) {
-  if (products.length === 0) return null
-
   const items: SneakerItem[] = products.map(toSneakerItem)
   const isDark = theme === 'dark'
 
   const scrollRef = useRef<HTMLDivElement>(null)
+  const innerRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
   // Track active index via IntersectionObserver
   useEffect(() => {
     const container = scrollRef.current
-    if (!container) return
+    const inner = innerRef.current
+    if (!container || !inner) return
 
-    const itemEls = Array.from(container.children) as HTMLElement[]
+    const itemEls = Array.from(inner.children) as HTMLElement[]
     if (itemEls.length === 0) return
 
     const observer = new IntersectionObserver(
@@ -62,9 +62,11 @@ export default function BrandSneakersSection({ products, theme = 'light' }: Bran
 
   const scrollTo = useCallback((index: number) => {
     const container = scrollRef.current
-    if (!container) return
-    const item = container.children[index] as HTMLElement | undefined
+    const inner = innerRef.current
+    if (!container || !inner) return
+    const item = inner.children[index] as HTMLElement | undefined
     if (!item) return
+    // Use offsetLeft relative to the inner flex container + container's own scrollLeft offset
     container.scrollTo({ left: item.offsetLeft, behavior: 'smooth' })
   }, [])
 
@@ -78,6 +80,8 @@ export default function BrandSneakersSection({ products, theme = 'light' }: Bran
 
   const canPrev = activeIndex > 0
   const canNext = activeIndex < items.length - 1
+
+  if (products.length === 0) return null
 
   return (
     <div className="py-10">
@@ -129,7 +133,7 @@ export default function BrandSneakersSection({ products, theme = 'light' }: Bran
             scrollSnapType: 'x mandatory',
           }}
         >
-          <div className="flex gap-3" style={{ width: 'max-content' }}>
+          <div ref={innerRef} className="flex gap-3" style={{ width: 'max-content' }}>
             {items.map((item) => (
               <Link
                 key={item.id}
