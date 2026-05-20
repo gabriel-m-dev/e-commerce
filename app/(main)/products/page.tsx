@@ -114,7 +114,7 @@ export default async function ProductsPage({
             ? 'overflow-x-clip overflow-y-visible bg-[#0a0a0a] text-white'
             : isEditorialBrand
               ? 'overflow-x-clip overflow-y-visible bg-[#f5f5f7]'
-              : 'overflow-hidden bg-[#f5f5f7]'
+              : 'overflow-x-clip overflow-y-visible bg-[#f5f5f7]'
         }`}
       >
 

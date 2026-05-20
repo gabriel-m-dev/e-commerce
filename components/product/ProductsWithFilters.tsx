@@ -706,7 +706,30 @@ export default function ProductsWithFilters({
 
                   {/* Panel expandible — absolute para no afectar altura del grid row */}
                   {isOpen && (
-                    <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-b-lg bg-[#1a1a1a] border border-white/10 p-3 flex flex-col gap-2">
+                    <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-b-lg bg-[#1a1a1a] border border-white/10 p-3 pb-4 flex flex-col gap-2">
+                      {product.colors && product.colors.length > 0 && (
+                        <div>
+                          <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-white/50">Color</p>
+                          <div className="flex flex-wrap gap-2">
+                            {product.colors.map((color) => (
+                              <button
+                                key={color}
+                                type="button"
+                                onClick={() =>
+                                  setSelectedColors((prev) => ({ ...prev, [product.id]: color }))
+                                }
+                                aria-label={`Seleccionar color ${color}`}
+                                className={`h-5 w-5 rounded-full border transition-all ${
+                                  selectedColors[product.id] === color
+                                    ? 'ring-2 ring-offset-1 ring-white border-transparent'
+                                    : 'border-white/30 hover:border-white/70'
+                                }`}
+                                style={{ backgroundColor: color }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       {sizes.length > 0 && (
                         <div className="flex flex-wrap gap-1.5">
                           {sizes.map((s) => (
@@ -843,7 +866,30 @@ export default function ProductsWithFilters({
 
                 {/* Panel expandible (light) — absolute para no afectar altura del grid row */}
                 {isOpen && (
-                  <div className="absolute left-0 right-0 top-full z-50 mt-1 bg-white border border-border p-3 flex flex-col gap-2 shadow-sm">
+                  <div className="absolute left-0 right-0 top-full z-50 mt-1 bg-white border border-border p-3 pb-4 flex flex-col gap-2 shadow-sm">
+                    {product.colors && product.colors.length > 0 && (
+                      <div>
+                        <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-muted">Color</p>
+                        <div className="flex flex-wrap gap-2">
+                          {product.colors.map((color) => (
+                            <button
+                              key={color}
+                              type="button"
+                              onClick={() =>
+                                setSelectedColors((prev) => ({ ...prev, [product.id]: color }))
+                              }
+                              aria-label={`Seleccionar color ${color}`}
+                              className={`h-5 w-5 rounded-full border transition-all ${
+                                selectedColors[product.id] === color
+                                  ? 'ring-2 ring-offset-1 ring-foreground border-transparent'
+                                  : 'border-border hover:border-foreground/60'
+                              }`}
+                              style={{ backgroundColor: color }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     {sizes.length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
                         {sizes.map((s) => (
