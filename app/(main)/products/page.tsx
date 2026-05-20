@@ -53,13 +53,24 @@ export default async function ProductsPage({
         ? 'brandSneakersAdidas' as const
         : null
 
-  const [products, categories, newBrandProducts, categorySplitConfig, sneakersConfig] = await Promise.all([
+  const newArrivalsConfigKey = brandFilter === 'NIKE'
+    ? 'newArrivalsNike' as const
+    : brandFilter === 'JORDAN'
+      ? 'newArrivalsJordan' as const
+      : brandFilter === 'ADIDAS'
+        ? 'newArrivalsAdidas' as const
+        : null
+
+  const [products, categories, categorySplitConfig, sneakersConfig, newArrivalsConfig] = await Promise.all([
     getProducts({ brand: brandFilter }),
     getCategories(),
-    isEditorialBrand ? getNewProducts(10, brandFilter) : Promise.resolve([]),
     isEditorialBrand ? getSiteConfig(configKey) : Promise.resolve(null),
     isEditorialBrand && sneakersConfigKey ? getSiteConfig(sneakersConfigKey) : Promise.resolve(null),
+    isEditorialBrand && newArrivalsConfigKey ? getSiteConfig(newArrivalsConfigKey) : Promise.resolve(null),
   ])
+
+  const newArrivalsCustomIds = newArrivalsConfig?.productIds?.length ? newArrivalsConfig.productIds : undefined
+  const newBrandProducts = isEditorialBrand ? await getNewProducts(10, brandFilter, newArrivalsCustomIds) : []
 
   const brandSneakers = sneakersConfig?.productIds?.length
     ? await getProductsByIds(sneakersConfig.productIds)

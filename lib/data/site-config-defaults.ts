@@ -57,6 +57,14 @@ export const DEFAULT_BRAND_SNEAKERS: BrandSneakersConfig = {
   productIds: [],
 }
 
+export type NewArrivalsConfig = {
+  productIds: string[]
+}
+
+export const DEFAULT_NEW_ARRIVALS: NewArrivalsConfig = {
+  productIds: [],
+}
+
 export type BenefitCardConfig = {
   imageUrl?: string | null
 }

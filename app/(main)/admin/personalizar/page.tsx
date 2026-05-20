@@ -122,6 +122,42 @@ const SECTIONS = [
       </svg>
     ),
   },
+  {
+    href: '/admin/personalizar/nuevos-ingresos-nike',
+    title: 'Nuevos Ingresos Nike',
+    description: 'Definí el orden de los nuevos ingresos Nike que aparecen en la brand page.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 6h18M3 12h18M3 18h18" />
+        <path d="M8 4l-2 2 2 2" />
+        <path d="M16 14l2 2-2 2" />
+      </svg>
+    ),
+  },
+  {
+    href: '/admin/personalizar/nuevos-ingresos-jordan',
+    title: 'Nuevos Ingresos Jordan',
+    description: 'Definí el orden de los nuevos ingresos Jordan que aparecen en la brand page.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 6h18M3 12h18M3 18h18" />
+        <path d="M8 4l-2 2 2 2" />
+        <path d="M16 14l2 2-2 2" />
+      </svg>
+    ),
+  },
+  {
+    href: '/admin/personalizar/nuevos-ingresos-adidas',
+    title: 'Nuevos Ingresos Adidas',
+    description: 'Definí el orden de los nuevos ingresos Adidas que aparecen en la brand page.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 6h18M3 12h18M3 18h18" />
+        <path d="M8 4l-2 2 2 2" />
+        <path d="M16 14l2 2-2 2" />
+      </svg>
+    ),
+  },
 ]
 
 export default function PersonalizarPage() {

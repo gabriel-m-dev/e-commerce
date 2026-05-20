@@ -150,7 +150,22 @@ export async function getSaleProducts(): Promise<DbProduct[]> {
   }
 }
 
-export async function getNewProducts(limit = 20, brand?: string): Promise<DbProduct[]> {
+export async function getNewProducts(limit = 20, brand?: string, customIds?: string[]): Promise<DbProduct[]> {
+  if (customIds && customIds.length > 0) {
+    try {
+      const brandFilter = brand ? { brand: brand as import('../generated/prisma/client').Brand } : {}
+      const results = await prisma.product.findMany({
+        where: { id: { in: customIds }, active: true, ...brandFilter },
+        include: { category: true },
+      })
+      const mapped = results.map(toDbProduct)
+      return customIds.map((id) => mapped.find((p) => p.id === id)).filter(Boolean) as DbProduct[]
+    } catch (e) {
+      console.error('[getNewProducts] DB unavailable:', e)
+      return []
+    }
+  }
+
   const since = new Date()
   since.setDate(since.getDate() - 30)
   const brandFilter = brand ? { brand: brand as import('../generated/prisma/client').Brand } : {}

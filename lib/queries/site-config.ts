@@ -1,8 +1,8 @@
 import { prisma } from '@/lib/prisma'
-import { type HeroSlide, type CategoryCard, type BrandCategorySplitConfig, type NuestraSeleccionConfig, type BrandSneakersConfig, type BenefitCardsConfig, DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT, DEFAULT_BENEFIT_CARDS } from '@/lib/data/site-config-defaults'
+import { type HeroSlide, type CategoryCard, type BrandCategorySplitConfig, type NuestraSeleccionConfig, type BrandSneakersConfig, type BenefitCardsConfig, type NewArrivalsConfig, DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT, DEFAULT_BENEFIT_CARDS, DEFAULT_NEW_ARRIVALS } from '@/lib/data/site-config-defaults'
 
-export type { HeroSlide, CategoryCard, BrandCategorySplitConfig, NuestraSeleccionConfig, BrandSneakersConfig, BenefitCardsConfig }
-export { DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT, DEFAULT_BENEFIT_CARDS }
+export type { HeroSlide, CategoryCard, BrandCategorySplitConfig, NuestraSeleccionConfig, BrandSneakersConfig, BenefitCardsConfig, NewArrivalsConfig }
+export { DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT, DEFAULT_BENEFIT_CARDS, DEFAULT_NEW_ARRIVALS }
 
 export type SiteConfigKey =
   | 'hero'
@@ -16,6 +16,9 @@ export type SiteConfigKey =
   | 'brandSneakersJordan'
   | 'brandSneakersAdidas'
   | 'benefitCards'
+  | 'newArrivalsNike'
+  | 'newArrivalsJordan'
+  | 'newArrivalsAdidas'
 
 export type SiteConfigValues = {
   hero: { slides: HeroSlide[] }
@@ -29,6 +32,9 @@ export type SiteConfigValues = {
   brandSneakersJordan: BrandSneakersConfig
   brandSneakersAdidas: BrandSneakersConfig
   benefitCards: BenefitCardsConfig
+  newArrivalsNike: NewArrivalsConfig
+  newArrivalsJordan: NewArrivalsConfig
+  newArrivalsAdidas: NewArrivalsConfig
 }
 
 export async function getSiteConfig<K extends SiteConfigKey>(key: K): Promise<SiteConfigValues[K] | null> {
