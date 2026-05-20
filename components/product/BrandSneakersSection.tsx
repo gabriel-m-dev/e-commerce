@@ -16,50 +16,14 @@ interface SneakerItem {
   slug: string
 }
 
-const FALLBACK_SNEAKERS: SneakerItem[] = [
-  {
-    id: 'fb-1',
-    name: 'AIR MAX 270',
-    price: 189999,
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=600&fit=crop&auto=format&q=80',
-    slug: 'air-max-270',
-  },
-  {
-    id: 'fb-2',
-    name: 'JORDAN 1 RETRO HIGH',
-    price: 229999,
-    image: 'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=600&fit=crop&auto=format&q=80',
-    slug: 'jordan-1-retro-high',
-  },
-  {
-    id: 'fb-3',
-    name: 'ULTRABOOST 23',
-    price: 209999,
-    image: 'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=400&h=600&fit=crop&auto=format&q=80',
-    slug: 'ultraboost-23',
-  },
-  {
-    id: 'fb-4',
-    name: 'AIR FORCE 1 LOW',
-    price: 159999,
-    image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=600&fit=crop&auto=format&q=80',
-    slug: 'air-force-1-low',
-  },
-  {
-    id: 'fb-5',
-    name: 'JORDAN 4 RETRO',
-    price: 249999,
-    image: 'https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=600&fit=crop&auto=format&q=80',
-    slug: 'jordan-4-retro',
-  },
-]
-
 function toSneakerItem(p: DbProduct): SneakerItem {
   return { id: p.id, name: p.name, price: p.price, image: p.image, slug: p.slug }
 }
 
 export default function BrandSneakersSection({ products, theme = 'light' }: BrandSneakersSectionProps) {
-  const items: SneakerItem[] = products.length > 0 ? products.map(toSneakerItem) : FALLBACK_SNEAKERS
+  if (products.length === 0) return null
+
+  const items: SneakerItem[] = products.map(toSneakerItem)
 
   const isDark = theme === 'dark'
 

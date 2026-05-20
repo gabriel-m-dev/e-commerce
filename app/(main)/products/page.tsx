@@ -62,7 +62,9 @@ export default async function ProductsPage({
 
   const brandSneakers = sneakersConfig?.productIds?.length
     ? await getProductsByIds(sneakersConfig.productIds)
-    : []
+    : isEditorialBrand && brandFilter
+      ? await getProducts({ categorySlug: 'zapatillas', brand: brandFilter })
+      : []
 
   return (
     <>
