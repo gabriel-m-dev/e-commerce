@@ -16,9 +16,11 @@ export default function MainLayout({
       >
         Ir al contenido
       </a>
-      <Navbar />
-      <PageTransition id="main-content">{children}</PageTransition>
-      <Footer />
+      <div className="overflow-x-hidden">
+        <Navbar />
+        <PageTransition id="main-content">{children}</PageTransition>
+        <Footer />
+      </div>
       <CartDrawer />
     </>
   )

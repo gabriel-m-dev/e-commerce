@@ -68,7 +68,7 @@ export default function RootLayout({
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} ${drexs.variable}`}
     >
-      <body className="flex min-h-screen flex-col overflow-x-hidden bg-background font-sans text-foreground antialiased">
+      <body className="flex min-h-screen flex-col bg-background font-sans text-foreground antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
