@@ -60,7 +60,7 @@ export default async function AccountPage() {
   const orders = await getOrdersByUserId(user.id, email)
 
   return (
-    <div className="pt-8 md:pt-12 pb-24 px-6 max-w-2xl mx-auto">
+    <div className="bg-white pt-8 md:pt-12 pb-24 px-6 max-w-2xl mx-auto">
 
       {/* ─── Page label ─── */}
       <div className="flex items-center justify-between mb-8">
