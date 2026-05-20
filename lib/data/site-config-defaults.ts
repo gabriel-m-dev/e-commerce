@@ -49,6 +49,14 @@ export const DEFAULT_NUESTRA_SELECCION: NuestraSeleccionConfig = {
   productIds: [],
 }
 
+export type BrandSneakersConfig = {
+  productIds: string[]
+}
+
+export const DEFAULT_BRAND_SNEAKERS: BrandSneakersConfig = {
+  productIds: [],
+}
+
 export const DEFAULT_CATEGORY_CARDS: CategoryCard[] = [
   {
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85',

@@ -75,6 +75,42 @@ const SECTIONS = [
       </svg>
     ),
   },
+  {
+    href: '/admin/personalizar/zapatillas-nike',
+    title: 'Zapatillas Nike',
+    description: 'Seleccioná las zapatillas Nike que aparecen en la sección ZAPATILLAS de la brand page.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 17c0 0 4-3 8-3s8 3 8 3" />
+        <path d="M3 17l1-5h12l1 5" />
+        <path d="M7 12V9a2 2 0 0 1 2-2h6" />
+      </svg>
+    ),
+  },
+  {
+    href: '/admin/personalizar/zapatillas-jordan',
+    title: 'Zapatillas Jordan',
+    description: 'Seleccioná las zapatillas Jordan que aparecen en la sección ZAPATILLAS de la brand page.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 17c0 0 4-3 8-3s8 3 8 3" />
+        <path d="M3 17l1-5h12l1 5" />
+        <path d="M7 12V9a2 2 0 0 1 2-2h6" />
+      </svg>
+    ),
+  },
+  {
+    href: '/admin/personalizar/zapatillas-adidas',
+    title: 'Zapatillas Adidas',
+    description: 'Seleccioná las zapatillas Adidas que aparecen en la sección ZAPATILLAS de la brand page.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 17c0 0 4-3 8-3s8 3 8 3" />
+        <path d="M3 17l1-5h12l1 5" />
+        <path d="M7 12V9a2 2 0 0 1 2-2h6" />
+      </svg>
+    ),
+  },
 ]
 
 export default function PersonalizarPage() {

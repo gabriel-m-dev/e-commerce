@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
-import { getProducts, getNewProducts } from '@/lib/queries/products'
+import { getProducts, getNewProducts, getProductsByIds } from '@/lib/queries/products'
 import { getSiteConfig } from '@/lib/queries/site-config'
 import ProductsWithFilters, { JordanHeroSlider, NikeHeroSlider } from '@/components/product/ProductsWithFilters'
 import BrandBgImage from '@/components/product/BrandBgImage'
 import BrandEditorialHeader from '@/components/product/BrandEditorialHeader'
 import BrandNewArrivalsSlider from '@/components/product/BrandNewArrivalsSlider'
 import BrandCategorySplit from '@/components/product/BrandCategorySplit'
+import BrandSneakersSection from '@/components/product/BrandSneakersSection'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,11 +45,24 @@ export default async function ProductsPage({
       ? 'nikeCategorySplit' as const
       : 'adidasCategorySplit' as const
 
-  const [products, newBrandProducts, categorySplitConfig] = await Promise.all([
+  const sneakersConfigKey = brandFilter === 'NIKE'
+    ? 'brandSneakersNike' as const
+    : brandFilter === 'JORDAN'
+      ? 'brandSneakersJordan' as const
+      : brandFilter === 'ADIDAS'
+        ? 'brandSneakersAdidas' as const
+        : null
+
+  const [products, newBrandProducts, categorySplitConfig, sneakersConfig] = await Promise.all([
     getProducts({ brand: brandFilter }),
     isEditorialBrand ? getNewProducts(10, brandFilter) : Promise.resolve([]),
     isEditorialBrand ? getSiteConfig(configKey) : Promise.resolve(null),
+    isEditorialBrand && sneakersConfigKey ? getSiteConfig(sneakersConfigKey) : Promise.resolve(null),
   ])
+
+  const brandSneakers = sneakersConfig?.productIds?.length
+    ? await getProductsByIds(sneakersConfig.productIds)
+    : []
 
   return (
     <>
@@ -275,6 +289,12 @@ export default async function ProductsPage({
                 />
               </div>
             )}
+
+            <BrandSneakersSection
+              products={brandSneakers}
+              brand={brandFilter}
+              theme={isJordan ? 'dark' : 'light'}
+            />
 
             <ProductsWithFilters
               products={products}

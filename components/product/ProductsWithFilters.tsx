@@ -27,8 +27,9 @@ export function JordanHeroSlider() {
     let textSwapTimer: ReturnType<typeof setTimeout>
     let textShowTimer: ReturnType<typeof setTimeout>
     let prevTimer:     ReturnType<typeof setTimeout>
+    let intervalId:    ReturnType<typeof setInterval> | undefined
 
-    const interval = setInterval(() => {
+    const advance = () => {
       const oldIdx = currentRef.current
       const nextIdx = (oldIdx + 1) % JORDAN_SLIDES.length
       currentRef.current = nextIdx
@@ -46,10 +47,16 @@ export function JordanHeroSlider() {
       // then fade new text in
       textShowTimer = setTimeout(() => setTextVisible(true), 600)
       prevTimer     = setTimeout(() => setPrev(null), 700)
-    }, 4000)
+    }
+
+    const firstTick = setTimeout(() => {
+      advance()
+      intervalId = setInterval(advance, 4000)
+    }, 2800)
 
     return () => {
-      clearInterval(interval)
+      clearTimeout(firstTick)
+      if (intervalId !== undefined) clearInterval(intervalId)
       clearTimeout(textSwapTimer)
       clearTimeout(textShowTimer)
       clearTimeout(prevTimer)
