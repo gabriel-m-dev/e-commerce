@@ -206,21 +206,21 @@ export async function getProductsByIds(ids: string[]): Promise<DbProduct[]> {
   }
 }
 
-export async function getCategories(): Promise<{ id: string; name: string; slug: string }[]> {
+export async function getCategories(): Promise<{ id: string; name: string; slug: string; group: string }[]> {
   try {
     return await prisma.category.findMany({
       orderBy: { name: 'asc' },
-      select: { id: true, name: true, slug: true },
+      select: { id: true, name: true, slug: true, group: true },
     })
   } catch (e) {
     console.error('[getCategories] DB unavailable, using mock data:', e)
     return [
-      { id: '1', name: 'Gorras',     slug: 'gorras'     },
-      { id: '2', name: 'Hoodies',    slug: 'hoodies'    },
-      { id: '3', name: 'Mochilas',   slug: 'mochilas'   },
-      { id: '4', name: 'Pantalones', slug: 'pantalones' },
-      { id: '5', name: 'Remeras',    slug: 'remeras'    },
-      { id: '6', name: 'Zapatillas', slug: 'zapatillas' },
+      { id: '1', name: 'Gorras',     slug: 'gorras',     group: 'ACCESORIOS' },
+      { id: '2', name: 'Hoodies',    slug: 'hoodies',    group: 'ROPA'       },
+      { id: '3', name: 'Mochilas',   slug: 'mochilas',   group: 'ACCESORIOS' },
+      { id: '4', name: 'Pantalones', slug: 'pantalones', group: 'ROPA'       },
+      { id: '5', name: 'Remeras',    slug: 'remeras',    group: 'ROPA'       },
+      { id: '6', name: 'Zapatillas', slug: 'zapatillas', group: 'NONE'       },
     ]
   }
 }

@@ -4,10 +4,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const NAV_LINKS = [
-  { label: 'Dashboard', href: '/admin' },
-  { label: 'Productos', href: '/admin/products' },
+  { label: 'Dashboard',      href: '/admin'            },
+  { label: 'Productos',      href: '/admin/products'   },
+  { label: 'Categorías',     href: '/admin/categories' },
   { label: 'Personalizar web', href: '/admin/personalizar' },
-  { label: 'Órdenes', href: '/admin/orders' },
+  { label: 'Órdenes',        href: '/admin/orders'     },
 ]
 
 export default function AdminNav({ onNavigate }: { onNavigate?: () => void }) {

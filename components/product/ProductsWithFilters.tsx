@@ -205,14 +205,9 @@ export function NikeHeroSlider() {
   )
 }
 
-const BASE_NAV_GROUPS: { label: string; category: string | null; sub: string[] | null }[] = [
-  { label: 'TODO',        category: 'Todo',      sub: null },
-  { label: 'ACCESORIOS',  category: null,        sub: ['Gorras', 'Mochilas'] },
-  { label: 'ROPA',        category: null,        sub: ['Remeras', 'Hoodies', 'Pantalones'] },
-  { label: 'ZAPATILLAS',  category: 'Zapatillas', sub: null },
-]
+type NavGroup = { label: string; category: string | null; sub: string[] | null }
 
-const KNOWN_CATEGORIES = new Set(['Gorras', 'Mochilas', 'Remeras', 'Hoodies', 'Pantalones', 'Zapatillas'])
+export type CategoryMeta = { name: string; slug: string; group: string }
 
 type SortKey = 'relevancia' | 'precio-asc' | 'precio-desc'
 
@@ -224,6 +219,7 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
 
 export default function ProductsWithFilters({
   products,
+  categories = [],
   initialCategory = 'Todo',
   dark = false,
   brand,
@@ -231,6 +227,7 @@ export default function ProductsWithFilters({
   totalProducts,
 }: {
   products: DbProduct[]
+  categories?: CategoryMeta[]
   initialCategory?: string
   dark?: boolean
   brand?: string
@@ -261,19 +258,29 @@ export default function ProductsWithFilters({
     [products]
   )
 
-  const navGroups = useMemo(() => {
-    const unknownCategories = availableCategories.filter(
-      (c) => c !== 'Todo' && !KNOWN_CATEGORIES.has(c)
-    )
-    return [
-      ...BASE_NAV_GROUPS,
-      ...unknownCategories.map((cat) => ({
-        label: cat.toUpperCase(),
-        category: cat,
-        sub: null,
-      })),
-    ]
-  }, [availableCategories])
+  const navGroups = useMemo<NavGroup[]>(() => {
+    // Build nav groups dynamically from category metadata + group field.
+    // Order: TODO first, then ACCESORIOS dropdown, then ROPA dropdown, then NONE items.
+    const catMap = new Map(categories.map((c) => [c.name, c]))
+
+    const ropaNames   = availableCategories.filter((c) => c !== 'Todo' && catMap.get(c)?.group === 'ROPA')
+    const accesoriosNames = availableCategories.filter((c) => c !== 'Todo' && catMap.get(c)?.group === 'ACCESORIOS')
+    const noneNames   = availableCategories.filter((c) => c !== 'Todo' && (catMap.get(c)?.group === 'NONE' || !catMap.has(c)))
+
+    const groups: NavGroup[] = [{ label: 'TODO', category: 'Todo', sub: null }]
+
+    if (accesoriosNames.length > 0) {
+      groups.push({ label: 'ACCESORIOS', category: null, sub: accesoriosNames })
+    }
+    if (ropaNames.length > 0) {
+      groups.push({ label: 'ROPA', category: null, sub: ropaNames })
+    }
+    for (const name of noneNames) {
+      groups.push({ label: name.toUpperCase(), category: name, sub: null })
+    }
+
+    return groups
+  }, [availableCategories, categories])
 
   useEffect(() => {
     if (!usesGroupedNav) return

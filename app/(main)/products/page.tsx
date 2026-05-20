@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
-import { getProducts, getNewProducts, getProductsByIds } from '@/lib/queries/products'
+import { getProducts, getNewProducts, getProductsByIds, getCategories } from '@/lib/queries/products'
 import { getSiteConfig } from '@/lib/queries/site-config'
 import ProductsWithFilters, { JordanHeroSlider, NikeHeroSlider } from '@/components/product/ProductsWithFilters'
 import BrandBgImage from '@/components/product/BrandBgImage'
@@ -53,8 +53,9 @@ export default async function ProductsPage({
         ? 'brandSneakersAdidas' as const
         : null
 
-  const [products, newBrandProducts, categorySplitConfig, sneakersConfig] = await Promise.all([
+  const [products, categories, newBrandProducts, categorySplitConfig, sneakersConfig] = await Promise.all([
     getProducts({ brand: brandFilter }),
+    getCategories(),
     isEditorialBrand ? getNewProducts(10, brandFilter) : Promise.resolve([]),
     isEditorialBrand ? getSiteConfig(configKey) : Promise.resolve(null),
     isEditorialBrand && sneakersConfigKey ? getSiteConfig(sneakersConfigKey) : Promise.resolve(null),
@@ -252,6 +253,7 @@ export default async function ProductsPage({
             <div className={brandFilter ? 'lg:pr-[200px] xl:pr-[240px]' : ''}>
               <ProductsWithFilters
                 products={products}
+                categories={categories}
                 initialCategory={category ?? 'Todo'}
                 dark={false}
                 brand={brandFilter}
@@ -306,6 +308,7 @@ export default async function ProductsPage({
             <div className="mt-16">
               <ProductsWithFilters
                 products={products}
+                categories={categories}
                 initialCategory={category ?? 'Todo'}
                 dark={isJordan}
                 brand={brandFilter}
