@@ -14,7 +14,6 @@ interface BrandEditorialHeaderProps {
 const GOLD_FILTER =
   'brightness(0) saturate(100%) invert(76%) sepia(28%) saturate(700%) hue-rotate(358deg)'
 
-const JORDAN_SLOGAN_SWEEP = [',', 'D', 'O', ' ', 'I', 'T', '.'] as const
 
 const BRAND_COPY: Record<
   SupportedBrand,
@@ -59,20 +58,13 @@ const BRAND_COPY: Record<
   },
 }
 
-function splitSweepCharacters(line: string) {
-  return line.split('')
-}
-
-function getLine2StartIndex(brand: SupportedBrand) {
-  return BRAND_COPY[brand].punctuation === 'comma' ? 1 : 0
-}
 
 export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHeaderProps) {
   const logoRowRef = useRef<HTMLDivElement>(null)
   const stickySentinelRef = useRef<HTMLDivElement>(null)
   const [isLogoPinned, setIsLogoPinned] = useState(false)
   const [isLogoCollapsed, setIsLogoCollapsed] = useState(false)
-  const [activeSloganSweepIndex, setActiveSloganSweepIndex] = useState(0)
+  const [jordanPhase, setJordanPhase] = useState<0 | 1 | 2 | 3>(0)
   const [adidasPhase, setAdidasPhase] = useState<'question' | 'answer'>('question')
 
   const copy = BRAND_COPY[brand]
@@ -80,8 +72,6 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
   const textColor = isDark ? 'text-white' : 'text-foreground'
   const overlayColor = isDark ? '#0a0a0a' : '#ffffff'
   const pinnedTextColor = isDark ? 'text-gold' : 'text-foreground'
-  const line2Chars = splitSweepCharacters(copy.line2)
-  const line2StartIndex = getLine2StartIndex(brand)
 
   useEffect(() => {
     const rootStyle = document.documentElement.style
@@ -213,28 +203,24 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
   useEffect(() => {
     if (brand !== 'JORDAN') return
 
-    setActiveSloganSweepIndex(0)
+    setJordanPhase(0)
 
-    let intervalId: number | undefined
-
-    const timeoutId = window.setTimeout(() => {
-      let nextIndex = 1
-      intervalId = window.setInterval(() => {
-        setActiveSloganSweepIndex(nextIndex)
-
-        if (nextIndex >= JORDAN_SLOGAN_SWEEP.length - 1) {
-          window.clearInterval(intervalId)
-        }
-
-        nextIndex += 1
-      }, 125)
-    }, 600)
+    let t2: number | undefined
+    let t3: number | undefined
+    const t1 = window.setTimeout(() => {
+      setJordanPhase(1)
+      t2 = window.setTimeout(() => {
+        setJordanPhase(2)
+        t3 = window.setTimeout(() => {
+          setJordanPhase(3)
+        }, 450)
+      }, 900)
+    }, 400)
 
     return () => {
-      window.clearTimeout(timeoutId)
-      if (intervalId !== undefined) {
-        window.clearInterval(intervalId)
-      }
+      window.clearTimeout(t1)
+      window.clearTimeout(t2)
+      window.clearTimeout(t3)
     }
   }, [brand])
 
@@ -332,37 +318,39 @@ export default function BrandEditorialHeader({ brand, theme }: BrandEditorialHea
           <p className="text-3xl max-[374px]:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold uppercase tracking-[0.07em] leading-tight">
             {brand === 'JORDAN' ? (
               <>
-                <span className="max-[470px]:block">
+                {/* Phase 1+: "DREAM IT," \u2014 gold in phase 1, transitions to white in phase 2+ */}
+                <span
+                  className={`max-[470px]:block ${
+                    jordanPhase === 0
+                      ? 'opacity-0'
+                      : jordanPhase === 1
+                        ? 'text-gold opacity-100'
+                        : `${textColor} opacity-100`
+                  }`}
+                  style={{
+                    transition: jordanPhase >= 2
+                      ? 'color 400ms ease-in-out, opacity 150ms ease-in-out'
+                      : 'opacity 150ms ease-in-out',
+                  }}
+                >
                   {copy.line1}
-                  <span
-                    className={`transition-colors duration-150 ${
-                      activeSloganSweepIndex === 0 ? 'text-gold' : textColor
-                    }`}
-                  >
-                    ,
-                  </span>
+                  <span>,</span>
                 </span>
-                <span className="max-[470px]:block">
-                  {line2Chars.map((char, index) => {
-                    const sweepIndex = line2StartIndex + index
-                    return (
-                      <span
-                        key={`${char}-${index}`}
-                        className={`transition-colors duration-150 ${
-                          activeSloganSweepIndex === sweepIndex ? 'text-gold' : textColor
-                        }`}
-                      >
-                        {char === ' ' ? '\u00A0' : char}
-                      </span>
-                    )
-                  })}
+                {/* Phase 2+: "DO IT." \u2014 appears gold, transitions to white in phase 3; dot always gold */}
+                <span
+                  className={`max-[470px]:block transition-[opacity] duration-300 ease-in-out ${
+                    jordanPhase >= 2 ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  <span
+                    className={jordanPhase >= 3 ? textColor : 'text-gold'}
+                    style={{ transition: 'color 400ms ease-in-out' }}
+                  >
+                    {copy.line2}
+                  </span>
                   <span className="relative ml-1 inline-flex h-[0.8em] w-[0.8em] align-middle">
                     <span
-                      className={`absolute left-1/2 top-[76%] h-[0.22em] w-[0.22em] -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-150 ${
-                        activeSloganSweepIndex === JORDAN_SLOGAN_SWEEP.length - 1
-                          ? 'scale-100 bg-gold opacity-100'
-                          : 'scale-100 bg-white opacity-100'
-                      }`}
+                      className="absolute left-1/2 top-[76%] h-[0.22em] w-[0.22em] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold"
                       aria-hidden
                     />
                   </span>
