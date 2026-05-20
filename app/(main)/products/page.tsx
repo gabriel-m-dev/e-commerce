@@ -280,12 +280,14 @@ export default async function ProductsPage({
 
             {/* Lo nuevo */}
             {newBrandProducts.length > 0 && (
-              <BrandNewArrivalsSlider products={newBrandProducts} theme={isJordan ? 'dark' : 'light'} />
+              <div className="mt-16">
+                <BrandNewArrivalsSlider products={newBrandProducts} theme={isJordan ? 'dark' : 'light'} />
+              </div>
             )}
 
             {/* Hero de marca — full viewport width via margin escape */}
             {(categorySplitConfig?.ropa.image || categorySplitConfig?.zapatillas.image) && (
-              <div className="mb-12" style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}>
+              <div className="mt-16 mb-12" style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}>
                 <BrandCategorySplit
                   ropaPanel={categorySplitConfig?.ropa ?? { image: '' }}
                   zapatillasPanel={categorySplitConfig?.zapatillas ?? { image: '' }}
@@ -293,19 +295,23 @@ export default async function ProductsPage({
               </div>
             )}
 
-            <BrandSneakersSection
-              products={brandSneakers}
-              brand={brandFilter}
-              theme={isJordan ? 'dark' : 'light'}
-            />
+            <div className="mt-16">
+              <BrandSneakersSection
+                products={brandSneakers}
+                brand={brandFilter}
+                theme={isJordan ? 'dark' : 'light'}
+              />
+            </div>
 
-            <ProductsWithFilters
-              products={products}
-              initialCategory={category ?? 'Todo'}
-              dark={isJordan}
-              brand={brandFilter}
-              editorialTheme={isJordan ? 'dark' : 'light'}
-            />
+            <div className="mt-16">
+              <ProductsWithFilters
+                products={products}
+                initialCategory={category ?? 'Todo'}
+                dark={isJordan}
+                brand={brandFilter}
+                editorialTheme={isJordan ? 'dark' : 'light'}
+              />
+            </div>
           </div>
         )}
 
