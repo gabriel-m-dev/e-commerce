@@ -56,7 +56,7 @@ function ProductCard({
       )}
 
       <div className="absolute bottom-0 left-0 right-0 p-5">
-        <h3 className="text-xl font-normal uppercase tracking-tight text-white leading-tight">
+        <h3 className="text-base md:text-xl font-normal uppercase tracking-tight text-white leading-tight">
           {product.name}
         </h3>
         <div className="mt-2 flex items-baseline gap-2">
