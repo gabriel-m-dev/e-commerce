@@ -40,7 +40,7 @@ export default function NuestraSeleccionSection({ products }: { products: DbProd
           {products.map((product) => (
             <li key={product.id}>
               <Link
-                href={`/products/${product.slug}`}
+                href={`/product/${product.slug}`}
                 className="relative block aspect-[3/4] overflow-hidden bg-surface"
               >
                 <Image
