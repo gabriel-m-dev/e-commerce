@@ -25,6 +25,9 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
     setGalleryHeight(`${window.innerHeight - absoluteTop}px`)
   }, [])
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const [selectedColor, setSelectedColor] = useState<string | null>(
+    product.colors && product.colors.length > 0 ? product.colors[0] : null
+  )
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
 
@@ -49,7 +52,8 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         stock: product.stock,
       },
       quantity,
-      selectedSize ?? undefined
+      selectedSize ?? undefined,
+      selectedColor ?? undefined
     )
     toast.success('Agregado al carrito')
     setAdded(true)
@@ -62,9 +66,13 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
       return
     }
     const size = selectedSize ?? undefined
+    const color = selectedColor ?? undefined
     const currentItems = useCartStore.getState().items
     const alreadyInCart = currentItems.some(
-      (i) => i.product.id === product.id && (i.size ?? '') === (size ?? '')
+      (i) =>
+        i.product.id === product.id &&
+        (i.size ?? '') === (size ?? '') &&
+        (i.color ?? '') === (color ?? '')
     )
     if (!alreadyInCart) {
       addItem(
@@ -78,7 +86,8 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
           stock: product.stock,
         },
         quantity,
-        size
+        size,
+        color
       )
     }
     router.push('/checkout')
@@ -206,6 +215,31 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         <p className="text-sm leading-relaxed text-muted">
           {product.description}
         </p>
+
+        {/* Color selector */}
+        {product.colors && product.colors.length > 0 && (
+          <div className="mt-8 w-full">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground">
+              Color
+            </p>
+            <div className="flex flex-wrap justify-center gap-2.5">
+              {product.colors.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setSelectedColor(color)}
+                  aria-label={`Seleccionar color ${color}`}
+                  className={`h-6 w-6 rounded-full border transition-all ${
+                    selectedColor === color
+                      ? 'ring-2 ring-offset-1 ring-foreground border-transparent'
+                      : 'border-border hover:border-foreground/60'
+                  }`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Size selector */}
         {sizes.length > 0 && (

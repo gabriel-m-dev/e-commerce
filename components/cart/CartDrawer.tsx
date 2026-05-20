@@ -140,7 +140,7 @@ export default function CartDrawer() {
         ) : (
           <ul className="flex-1 divide-y divide-border overflow-y-auto">
             {items.map((item) => {
-              const key = `${item.product.id}-${item.size ?? ''}`
+              const key = `${item.product.id}-${item.size ?? ''}-${item.color ?? ''}`
               return (
                 <li key={key} className="flex gap-4 px-6 py-5">
                   {/* Image */}
@@ -177,6 +177,17 @@ export default function CartDrawer() {
                             Talle {item.size}
                           </p>
                         )}
+                        {item.color && (
+                          <div className="mt-0.5 flex items-center gap-1.5">
+                            <span
+                              className="inline-block h-3 w-3 rounded-full border border-border"
+                              style={{ backgroundColor: item.color }}
+                            />
+                            <p className="text-[10px] uppercase tracking-[0.1em] text-muted">
+                              {item.color}
+                            </p>
+                          </div>
+                        )}
                         {/* Size editor */}
                         {editingId === key && item.size && (() => {
                           const sizes = SIZES_BY_CATEGORY[item.product.category.toLowerCase()] ?? []
@@ -186,7 +197,7 @@ export default function CartDrawer() {
                                 <button
                                   key={s}
                                   onClick={() => {
-                                    if (s !== item.size) updateSize(item.product.id, item.size, s)
+                                    if (s !== item.size) updateSize(item.product.id, item.size, s, item.color)
                                     setEditingId(null)
                                   }}
                                   className={`h-7 min-w-[2rem] border px-1.5 text-[10px] font-medium transition-colors cursor-pointer ${
@@ -218,7 +229,7 @@ export default function CartDrawer() {
                           <button
                             onClick={() => {
                               if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current)
-                              removeItem(item.product.id, item.size)
+                              removeItem(item.product.id, item.size, item.color)
                               setConfirmingId(null)
                             }}
                             aria-label="Confirmar eliminación"
@@ -283,7 +294,7 @@ export default function CartDrawer() {
                     <div className="mt-3 flex items-center justify-between">
                       <div className="inline-flex items-center border border-border">
                         <button
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.size)}
+                          onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.size, item.color)}
                           aria-label="Reducir"
                           className="flex h-7 w-7 items-center justify-center text-xs text-foreground transition-colors hover:bg-surface cursor-pointer"
                         >
@@ -293,7 +304,7 @@ export default function CartDrawer() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.size)}
+                          onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.size, item.color)}
                           aria-label="Aumentar"
                           disabled={item.quantity >= item.product.stock}
                           className="flex h-7 w-7 items-center justify-center text-xs text-foreground transition-colors hover:bg-surface cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
