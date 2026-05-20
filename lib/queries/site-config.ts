@@ -1,8 +1,8 @@
 import { prisma } from '@/lib/prisma'
-import { type HeroSlide, type CategoryCard, type BrandCategorySplitConfig, type NuestraSeleccionConfig, type BrandSneakersConfig, DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT } from '@/lib/data/site-config-defaults'
+import { type HeroSlide, type CategoryCard, type BrandCategorySplitConfig, type NuestraSeleccionConfig, type BrandSneakersConfig, type BenefitCardsConfig, DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT, DEFAULT_BENEFIT_CARDS } from '@/lib/data/site-config-defaults'
 
-export type { HeroSlide, CategoryCard, BrandCategorySplitConfig, NuestraSeleccionConfig, BrandSneakersConfig }
-export { DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT }
+export type { HeroSlide, CategoryCard, BrandCategorySplitConfig, NuestraSeleccionConfig, BrandSneakersConfig, BenefitCardsConfig }
+export { DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT, DEFAULT_BENEFIT_CARDS }
 
 export type SiteConfigKey =
   | 'hero'
@@ -15,6 +15,7 @@ export type SiteConfigKey =
   | 'brandSneakersNike'
   | 'brandSneakersJordan'
   | 'brandSneakersAdidas'
+  | 'benefitCards'
 
 export type SiteConfigValues = {
   hero: { slides: HeroSlide[] }
@@ -27,6 +28,7 @@ export type SiteConfigValues = {
   brandSneakersNike: BrandSneakersConfig
   brandSneakersJordan: BrandSneakersConfig
   brandSneakersAdidas: BrandSneakersConfig
+  benefitCards: BenefitCardsConfig
 }
 
 export async function getSiteConfig<K extends SiteConfigKey>(key: K): Promise<SiteConfigValues[K] | null> {
@@ -54,4 +56,19 @@ export async function upsertSiteConfig<K extends SiteConfigKey>(key: K, value: S
     update: { value: value as object },
     create: { key, value: value as object },
   })
+}
+
+export async function getBenefitCardsConfig(): Promise<BenefitCardsConfig> {
+  try {
+    const config = await prisma.siteConfig.findUnique({ where: { key: 'benefitCards' } })
+    if (!config) return DEFAULT_BENEFIT_CARDS
+    const parsed = config.value as Partial<BenefitCardsConfig>
+    return {
+      payment:  { imageUrl: parsed.payment?.imageUrl  ?? null },
+      shipping: { imageUrl: parsed.shipping?.imageUrl ?? null },
+      security: { imageUrl: parsed.security?.imageUrl ?? null },
+    }
+  } catch {
+    return DEFAULT_BENEFIT_CARDS
+  }
 }

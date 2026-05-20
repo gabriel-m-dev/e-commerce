@@ -14,7 +14,7 @@ import CategoryShowcase from '@/components/product/CategoryShowcase'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 import HeroSection from '@/components/layout/HeroSection'
 import ScrollReveal from '@/components/ui/ScrollReveal'
-import FeatureStripSlider from '@/components/FeatureStripSlider'
+import BenefitCardsSection from '@/components/BenefitCardsSection'
 
 export const dynamic = 'force-dynamic'
 
@@ -165,53 +165,9 @@ export default async function HomePage() {
       <div className="h-2 bg-white" aria-hidden />
 
       {/* ─── Features Strip ─── */}
-      <section className="bg-[#f5f5f7]">
-        <div className="mx-auto max-w-screen-xl">
-          <ScrollReveal>
-
-          {/* Mobile slider */}
-          <FeatureStripSlider />
-
-          {/* Desktop grid */}
-          <div className="hidden sm:grid sm:grid-cols-3 sm:divide-x divide-border">
-            <div className="flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center lg:py-20 lg:pb-28">
-              <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
-                <rect x="2" y="7" width="28" height="18" rx="2" />
-                <path d="M2 13h28M7 19h5M7 22h3" />
-              </svg>
-              <div>
-                <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Pagá como quieras</p>
-                <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Tarjetas, transferencia o efectivo. Con Mercado Pago.</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center lg:py-20 lg:pb-28">
-              <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
-                <rect x="1" y="11" width="18" height="13" rx="1" />
-                <path d="M19 15h5l5 5v5h-10V15z" />
-                <circle cx="7" cy="26" r="2" />
-                <circle cx="24" cy="26" r="2" />
-              </svg>
-              <div>
-                <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Envíos a todo el país</p>
-                <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Recibí tu pedido en la puerta de tu casa.</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center lg:py-20 lg:pb-28">
-              <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
-                <path d="M16 2 4 7v10c0 7.2 5.4 12 12 13 6.6-1 12-5.8 12-13V7L16 2z" />
-              </svg>
-              <div>
-                <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Compra segura</p>
-                <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Tus datos están protegidos en todo momento.</p>
-              </div>
-            </div>
-          </div>
-
-          </ScrollReveal>
-        </div>
-      </section>
+      <ScrollReveal>
+        <BenefitCardsSection />
+      </ScrollReveal>
 
       <div className="h-2 bg-white" aria-hidden />
 

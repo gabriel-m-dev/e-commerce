@@ -76,6 +76,17 @@ const SECTIONS = [
     ),
   },
   {
+    href: '/admin/personalizar/cards-beneficios',
+    title: 'Cards de Beneficios',
+    description: 'Elegí si cada card muestra el diseño predeterminado o una imagen custom que la ocupa completa.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="5" width="20" height="14" rx="1.5" />
+        <path d="M2 9h20M7 14h4M7 17h2" />
+      </svg>
+    ),
+  },
+  {
     href: '/admin/personalizar/zapatillas-nike',
     title: 'Zapatillas Nike',
     description: 'Seleccioná las zapatillas Nike que aparecen en la sección ZAPATILLAS de la brand page.',

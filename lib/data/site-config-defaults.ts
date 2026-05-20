@@ -57,6 +57,22 @@ export const DEFAULT_BRAND_SNEAKERS: BrandSneakersConfig = {
   productIds: [],
 }
 
+export type BenefitCardConfig = {
+  imageUrl?: string | null
+}
+
+export type BenefitCardsConfig = {
+  payment: BenefitCardConfig
+  shipping: BenefitCardConfig
+  security: BenefitCardConfig
+}
+
+export const DEFAULT_BENEFIT_CARDS: BenefitCardsConfig = {
+  payment:  { imageUrl: null },
+  shipping: { imageUrl: null },
+  security: { imageUrl: null },
+}
+
 export const DEFAULT_CATEGORY_CARDS: CategoryCard[] = [
   {
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85',
