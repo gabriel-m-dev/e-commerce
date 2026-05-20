@@ -16,7 +16,7 @@ export default function MainLayout({
       >
         Ir al contenido
       </a>
-      <div className="overflow-x-hidden">
+      <div className="[overflow-x:clip]">
         <Navbar />
         <PageTransition id="main-content">{children}</PageTransition>
         <Footer />
