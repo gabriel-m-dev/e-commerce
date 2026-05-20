@@ -62,13 +62,13 @@ export const DEFAULT_CATEGORY_CARDS: CategoryCard[] = [
     label: 'Temporada actual',
     title: 'Ropa',
     subtitle: 'Hoodies · Remeras · Pantalones',
-    link: '/products?category=Hoodies',
+    link: '/products?category=Hoodies,Pantalones,Remeras',
   },
   {
     image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=900&auto=format&fit=crop&q=85',
     label: 'Esenciales',
     title: 'Accesorios',
     subtitle: 'Gorras · Mochilas',
-    link: '/products?category=Gorras',
+    link: '/products?category=Gorras,Mochilas',
   },
 ]

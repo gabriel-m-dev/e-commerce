@@ -274,9 +274,10 @@ export default function ProductsWithFilters({
   }, [usesGroupedNav])
 
   const filtered = useMemo(() => {
-    let list = activeCategory === 'Todo'
+    const categories = activeCategory.split(',').map((c) => c.trim())
+    let list = categories.includes('Todo')
       ? products
-      : products.filter((p) => p.category === activeCategory)
+      : products.filter((p) => categories.includes(p.category))
 
     if (search.trim()) {
       const q = search.toLowerCase()
