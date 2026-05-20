@@ -19,6 +19,7 @@ export default function BenefitCardsConfigEditor({ initialConfig }: { initialCon
   const [config, setConfig] = useState<BenefitCardsConfig>(initialConfig)
   const [uploading, setUploading] = useState<Set<SlotKey>>(new Set())
   const [saving, setSaving] = useState<SlotKey | null>(null)
+  const [removing, setRemoving] = useState<SlotKey | null>(null)
   const fileRefs = useRef<Partial<Record<SlotKey, HTMLInputElement | null>>>({})
 
   function setImageUrl(slot: SlotKey, url: string | null) {
@@ -62,7 +63,7 @@ export default function BenefitCardsConfigEditor({ initialConfig }: { initialCon
 
   async function handleRemoveImage(slot: SlotKey) {
     setImageUrl(slot, null)
-    setSaving(slot)
+    setRemoving(slot)
     try {
       const newConfig = { ...config, [slot]: { imageUrl: null } }
       const res = await fetch('/api/admin/site-config', {
@@ -76,7 +77,7 @@ export default function BenefitCardsConfigEditor({ initialConfig }: { initialCon
     } catch {
       toast.error('Error al eliminar')
     } finally {
-      setSaving(null)
+      setRemoving(null)
     }
   }
 
@@ -87,6 +88,7 @@ export default function BenefitCardsConfigEditor({ initialConfig }: { initialCon
         const imageUrl = config[slot]?.imageUrl
         const isUploading = uploading.has(slot)
         const isSaving = saving === slot
+        const isRemoving = removing === slot
         const hasImage = !!imageUrl
 
         return (
@@ -140,10 +142,10 @@ export default function BenefitCardsConfigEditor({ initialConfig }: { initialCon
                       <button
                         type="button"
                         onClick={() => handleRemoveImage(slot)}
-                        disabled={isSaving}
+                        disabled={isRemoving}
                         className="self-start border border-destructive px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.15em] text-destructive transition-colors hover:bg-destructive hover:text-white disabled:opacity-40 disabled:pointer-events-none"
                       >
-                        {isSaving ? 'Eliminando...' : 'Quitar imagen'}
+                        {isRemoving ? 'Eliminando...' : 'Quitar imagen'}
                       </button>
                     </div>
                   </div>
@@ -188,7 +190,7 @@ export default function BenefitCardsConfigEditor({ initialConfig }: { initialCon
                   <button
                     type="button"
                     onClick={() => handleSaveCard(slot)}
-                    disabled={isSaving || isUploading}
+                    disabled={isSaving || isUploading || isRemoving}
                     className="bg-foreground px-6 py-2.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 disabled:opacity-40"
                   >
                     {isSaving ? 'Guardando...' : 'Guardar card'}
