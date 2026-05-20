@@ -6,7 +6,8 @@ import {
   DndContext,
   closestCenter,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -48,6 +49,7 @@ function SortableRow({ product }: { product: DbProduct }) {
         {...attributes}
         {...listeners}
         className="flex flex-col gap-[3px] cursor-grab active:cursor-grabbing text-muted hover:text-foreground transition-colors shrink-0"
+        style={{ touchAction: 'none' }}
         aria-label="Arrastrar"
       >
         <span className="block w-4 h-px bg-current" />
@@ -84,7 +86,13 @@ export default function FeaturedOrderManager({ products }: FeaturedOrderManagerP
   const [message, setMessage] = useState<{ type: 'ok' | 'error'; text: string } | null>(null)
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(MouseSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
 
