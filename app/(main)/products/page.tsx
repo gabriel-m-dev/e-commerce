@@ -139,6 +139,7 @@ export default async function ProductsPage({
                 alt=""
                 width={2400}
                 height={2399}
+                priority
                 className="object-contain shrink-0"
                 style={{
                   width: '52px',

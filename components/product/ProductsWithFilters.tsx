@@ -189,6 +189,7 @@ export function NikeHeroSlider() {
             alt=""
             width={2400}
             height={2399}
+            priority
             sizes="(min-width: 1024px) 420px, 32vw"
             style={{
               display: 'block',
