@@ -14,6 +14,7 @@ import CategoryShowcase from '@/components/product/CategoryShowcase'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 import HeroSection from '@/components/layout/HeroSection'
 import ScrollReveal from '@/components/ui/ScrollReveal'
+import FeatureStripSlider from '@/components/FeatureStripSlider'
 
 export const dynamic = 'force-dynamic'
 
@@ -169,54 +170,7 @@ export default async function HomePage() {
           <ScrollReveal>
 
           {/* Mobile slider */}
-          <div className="sm:hidden">
-            <div
-              className="flex snap-x snap-mandatory overflow-x-auto divide-x divide-border"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              <div className="min-w-full snap-center flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center">
-                <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
-                  <rect x="2" y="7" width="28" height="18" rx="2" />
-                  <path d="M2 13h28M7 19h5M7 22h3" />
-                </svg>
-                <div>
-                  <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Pagá como quieras</p>
-                  <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Tarjetas, transferencia o efectivo. Con Mercado Pago.</p>
-                </div>
-              </div>
-
-              <div className="min-w-full snap-center flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center">
-                <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
-                  <rect x="1" y="11" width="18" height="13" rx="1" />
-                  <path d="M19 15h5l5 5v5h-10V15z" />
-                  <circle cx="7" cy="26" r="2" />
-                  <circle cx="24" cy="26" r="2" />
-                </svg>
-                <div>
-                  <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Envíos a todo el país</p>
-                  <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Recibí tu pedido en la puerta de tu casa.</p>
-                </div>
-              </div>
-
-              <div className="min-w-full snap-center flex flex-col items-center gap-6 px-10 py-14 pb-20 text-center">
-                <svg width="80" height="80" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
-                  <path d="M16 2 4 7v10c0 7.2 5.4 12 12 13 6.6-1 12-5.8 12-13V7L16 2z" />
-                </svg>
-                <div>
-                  <p className="text-base font-semibold uppercase tracking-[0.22em] text-foreground">Compra segura</p>
-                  <p className="mt-2.5 text-sm leading-relaxed text-foreground/60">Tus datos están protegidos en todo momento.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-center mt-4 pb-8 -mt-10 sm:hidden">
-              <div className="flex gap-2 px-3 py-2 rounded-full backdrop-blur-sm bg-white/30">
-                <span className="w-2 h-2 rounded-full bg-foreground" />
-                <span className="w-2 h-2 rounded-full bg-border" />
-                <span className="w-2 h-2 rounded-full bg-border" />
-              </div>
-            </div>
-          </div>
+          <FeatureStripSlider />
 
           {/* Desktop grid */}
           <div className="hidden sm:grid sm:grid-cols-3 sm:divide-x divide-border">
