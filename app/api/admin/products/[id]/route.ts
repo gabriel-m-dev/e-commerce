@@ -1,6 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createSupabaseAdmin } from '@supabase/supabase-js'
+
+const STORAGE_BUCKET = 'products'
+
+function extractStoragePath(url: string): string | null {
+  // Public URL format: https://<project>.supabase.co/storage/v1/object/public/<bucket>/<path>
+  const marker = `/object/public/${STORAGE_BUCKET}/`
+  const idx = url.indexOf(marker)
+  if (idx === -1) return null
+  const path = url.slice(idx + marker.length)
+  return path || null
+}
+
+async function deleteStorageImageIfOwned(oldUrl: string): Promise<void> {
+  if (!oldUrl) return
+  if (!oldUrl.includes('supabase')) return
+
+  const filePath = extractStoragePath(oldUrl)
+  if (!filePath) return
+
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!serviceRoleKey) {
+    console.warn('[Storage] SUPABASE_SERVICE_ROLE_KEY not set — skipping old image deletion')
+    return
+  }
+
+  try {
+    const adminClient = createSupabaseAdmin(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      serviceRoleKey,
+      { auth: { persistSession: false } }
+    )
+    const { error } = await adminClient.storage.from(STORAGE_BUCKET).remove([filePath])
+    if (error) {
+      console.error('[Storage] Failed to delete old image:', filePath, error.message)
+    }
+  } catch (err) {
+    console.error('[Storage] Unexpected error deleting old image:', err)
+  }
+}
 
 export async function PUT(
   request: NextRequest,
@@ -67,6 +107,13 @@ export async function PUT(
 
     const existing = await prisma.product.findUnique({ where: { id } })
     if (!existing) return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 })
+
+    // Best-effort: delete removed images from Storage (does not block update on failure)
+    const newImages = (images as string[]).filter((img): img is string => typeof img === 'string' && img.trim().length > 0)
+    const removedImages = existing.images.filter((old) => !newImages.includes(old))
+    await Promise.allSettled(
+      removedImages.map((oldUrl) => deleteStorageImageIfOwned(oldUrl))
+    )
 
     const product = await prisma.product.update({
       where: { id },
