@@ -23,13 +23,14 @@ model User {
 // ─── Catalog ──────────────────────────────────────────────────────────────────
 
 model Category {
-  id          String    @id @default(cuid())
+  id          String        @id @default(cuid())
   name        String
-  slug        String    @unique
+  slug        String        @unique
   description String?
   image       String?
+  group       CategoryGroup @default(NONE)
   products    Product[]
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime      @default(now())
 }
 
 model Product {
@@ -140,6 +141,12 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+enum CategoryGroup {
+  ROPA
+  ACCESORIOS
+  NONE
 }
 
 // ─── Site Config ──────────────────────────────────────────────────────────────
