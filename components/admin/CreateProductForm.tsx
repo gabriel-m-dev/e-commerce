@@ -42,7 +42,10 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
   const [newCategoryName, setNewCategoryName] = useState('')
   const [allCategories, setAllCategories] = useState<Category[]>(categories)
 
-  const AVAILABLE_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+  const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+  const SHOE_SIZES = ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46']
+  const isSneakers = form.categorySlug === 'zapatillas'
+  const AVAILABLE_SIZES = isSneakers ? SHOE_SIZES : CLOTHING_SIZES
 
   function toggleSize(size: string) {
     setSizes((prev) =>
@@ -316,7 +319,10 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
                 <select
                   required
                   value={form.categorySlug}
-                  onChange={(e) => setForm((prev) => ({ ...prev, categorySlug: e.target.value }))}
+                  onChange={(e) => {
+                    setForm((prev) => ({ ...prev, categorySlug: e.target.value }))
+                    setSizes([])
+                  }}
                   className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full cursor-pointer"
                 >
                   {allCategories.map((cat) => (
