@@ -51,13 +51,13 @@ export default function NuestraSeleccionSection({ products }: { products: DbProd
                   className="object-cover object-center transition-transform duration-500 hover:scale-105"
                 />
                 <div className="absolute inset-x-0 bottom-0 z-10 min-h-[45%] bg-gradient-to-t from-black/70 to-transparent px-4 py-4 text-center text-white flex flex-col justify-end">
-                  <span className="block text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
+                  <span className="hidden md:block text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
                     {product.category}
                   </span>
-                  <p className="mt-0.5 text-[13px] font-medium uppercase tracking-[0.08em] leading-tight">
+                  <p className="mt-0.5 text-xs md:text-[13px] font-medium uppercase tracking-[0.08em] leading-tight">
                     {product.name}
                   </p>
-                  <p className="mt-1 text-[14px] font-semibold">
+                  <p className="mt-1 text-xs md:text-[14px] font-semibold">
                     {formatPrice(product.price)}
                   </p>
                 </div>
