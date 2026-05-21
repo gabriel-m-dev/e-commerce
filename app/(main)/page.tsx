@@ -58,7 +58,7 @@ export default async function HomePage() {
       {/* ─── Hero ─── */}
       <HeroSection slides={heroConfig?.slides} />
 
-      <div className="h-2 bg-white" aria-hidden />
+      <div className="h-24 bg-white" aria-hidden />
 
       {/* ─── Categorías ─── */}
       <ScrollReveal>
