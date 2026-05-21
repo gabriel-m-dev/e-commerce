@@ -46,8 +46,6 @@ export default function HeroSection({ slides: slidesProp }: { slides?: HeroSlide
         ))}
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-white pointer-events-none z-20" />
-
       <div className="mx-auto max-w-screen-xl px-6 lg:px-10">
         <div className="grid min-h-[88svh] grid-cols-1 items-start lg:grid-cols-[1fr_460px] lg:items-center xl:grid-cols-[1fr_540px]">
 
