@@ -241,20 +241,24 @@ export default async function HomePage() {
 
       {/* ─── Nuestro Local ─── */}
       <ScrollReveal>
-        <section className="relative h-[400px] overflow-hidden lg:h-[560px]">
-          <Image
-            src="/local_buenapilcha.png"
-            alt="Nuestro local — Buena Pilcha"
-            fill
-            className="object-cover object-center"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-black/50" aria-hidden />
-          <div className="relative z-10 flex h-full flex-col items-center justify-center">
-            <div className="h-px w-8 bg-gold mx-auto mb-4" aria-hidden />
-            <h2 className="text-3xl font-black uppercase tracking-[0.2em] text-white lg:text-5xl">
-              NUESTRO LOCAL
-            </h2>
+        <section className="bg-white py-16 lg:py-20">
+          <div className="mx-auto max-w-screen-xl px-6 lg:px-10">
+            <div className="relative h-[400px] overflow-hidden lg:h-[560px]">
+              <Image
+                src="/local_buenapilcha.png"
+                alt="Nuestro local — Buena Pilcha"
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 1280px) 100vw, 1280px"
+              />
+              <div className="absolute inset-0 bg-black/50" aria-hidden />
+              <div className="relative z-10 flex h-full flex-col items-center justify-center">
+                <div className="h-px w-8 bg-gold mx-auto mb-4" aria-hidden />
+                <h2 className="text-3xl font-black uppercase tracking-[0.2em] text-white lg:text-5xl">
+                  NUESTRO LOCAL
+                </h2>
+              </div>
+            </div>
           </div>
         </section>
       </ScrollReveal>
