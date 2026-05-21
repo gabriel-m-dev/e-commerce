@@ -41,15 +41,24 @@ export default function NuestraSeleccionSection({ products }: { products: DbProd
             <li key={product.id}>
               <Link
                 href={`/product/${product.slug}`}
-                className="relative block aspect-[3/4] overflow-hidden bg-surface"
+                className="group relative block aspect-[3/4] overflow-hidden bg-surface"
               >
                 <Image
                   src={product.image}
                   alt={product.name}
                   fill
                   sizes="(min-width: 1024px) 25vw, 50vw"
-                  className="object-cover object-center transition-transform duration-500 hover:scale-105"
+                  className={`object-cover object-center transition-opacity duration-500${product.images?.[1] ? ' [@media(hover:hover)]:group-hover:opacity-0' : ''}`}
                 />
+                {product.images?.[1] && (
+                  <Image
+                    src={product.images[1]}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 25vw, 50vw"
+                    className="object-cover object-center opacity-0 transition-opacity duration-500 [@media(hover:hover)]:group-hover:opacity-100"
+                  />
+                )}
                 <div className="absolute inset-x-0 bottom-0 z-10 min-h-[45%] bg-gradient-to-t from-black/70 to-transparent px-4 py-4 text-center text-white flex flex-col justify-end">
                   <span className="hidden md:block text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
                     {product.category}

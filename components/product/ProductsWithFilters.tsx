@@ -653,9 +653,18 @@ export default function ProductsWithFilters({
                       alt={product.name}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
-                      className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                      className={`object-cover object-center transition-opacity duration-500${product.images?.[1] ? ' [@media(hover:hover)]:group-hover:opacity-0' : ''}`}
                       priority={index < 4}
                     />
+                    {product.images?.[1] && (
+                      <Image
+                        src={product.images[1]}
+                        alt=""
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
+                        className="object-cover object-center opacity-0 transition-opacity duration-500 [@media(hover:hover)]:group-hover:opacity-100"
+                      />
+                    )}
                     {product.comparePrice && product.comparePrice > product.price && (
                       <span className="absolute bottom-2 left-2 bg-destructive px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-white">
                         {Math.round((1 - product.price / product.comparePrice) * 100)}% OFF
@@ -805,10 +814,18 @@ export default function ProductsWithFilters({
                     alt={product.name}
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
-                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                    className={`object-cover object-center transition-opacity duration-500${product.images?.[1] ? ' [@media(hover:hover)]:group-hover:opacity-0' : ''}`}
                     priority={index < 4}
                   />
-                  <div className="absolute inset-0 bg-foreground/0 transition-colors duration-500 group-hover:bg-foreground/15" />
+                  {product.images?.[1] && (
+                    <Image
+                      src={product.images[1]}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
+                      className="object-cover object-center opacity-0 transition-opacity duration-500 [@media(hover:hover)]:group-hover:opacity-100"
+                    />
+                  )}
                   {product.comparePrice && product.comparePrice > product.price && (
                     <span className="absolute bottom-2 right-2 bg-destructive px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-white">
                       {Math.round((1 - product.price / product.comparePrice) * 100)}% OFF
