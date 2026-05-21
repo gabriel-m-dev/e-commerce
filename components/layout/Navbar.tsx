@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { SITE_NAME } from '@/lib/constants'
+import Image from 'next/image'
 import NavLinks from './NavLinks'
 import NavbarActions from './NavbarActions'
 import NavbarShell from './NavbarShell'
@@ -16,11 +16,15 @@ export default async function Navbar() {
       <div className="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-6 lg:px-10">
 
         {/* Logo */}
-        <Link
-          href="/"
-          className="text-lg font-black tracking-tighter text-foreground transition-opacity hover:opacity-70"
-        >
-          {SITE_NAME}
+        <Link href="/" className="transition-opacity hover:opacity-70">
+          <Image
+            src="/buena_pilcha_logo.png"
+            alt="Logo"
+            height={36}
+            width={120}
+            className="object-contain"
+            priority
+          />
         </Link>
 
         {/* Nav — centered, desktop only */}
