@@ -243,13 +243,20 @@ export default async function HomePage() {
       <ScrollReveal>
         <section className="bg-white py-16 lg:py-20">
           <div className="mx-auto max-w-screen-xl px-6 lg:px-10">
-            <div className="relative h-[280px] overflow-hidden lg:h-[390px]">
+            <div className="relative h-[280px] overflow-hidden lg:h-[500px]">
               <Image
                 src="/local_buenapilcha--new.png"
-                alt="Nuestro local — Buena Pilcha"
+                alt="Nuestro local"
                 fill
-                className="object-cover object-center"
-                sizes="(max-width: 1280px) 100vw, 1280px"
+                className="object-cover object-center block lg:hidden"
+                sizes="100vw"
+              />
+              <Image
+                src="/local_buenapilcha_panoramica.png"
+                alt="Nuestro local"
+                fill
+                className="object-cover object-center hidden lg:block"
+                sizes="1280px"
               />
               <div className="absolute inset-0 bg-black/50" aria-hidden />
               <div className="relative z-10 flex h-full flex-col items-center justify-center">
