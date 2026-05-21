@@ -57,6 +57,7 @@ export default async function AccountPage() {
   const avatarUrl: string | null =
     user.user_metadata?.avatar_url ?? user.user_metadata?.picture ?? null
 
+  const isAdmin = user.app_metadata?.role === 'admin'
   const orders = await getOrdersByUserId(user.id, email)
 
   return (
@@ -67,7 +68,17 @@ export default async function AccountPage() {
         <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">
           Mi Cuenta
         </p>
-        <LogoutButton className="bg-white text-black border border-black px-4 py-1.5 text-[10px] uppercase tracking-[0.15em] font-semibold rounded-sm hover:bg-black hover:text-white transition-colors" />
+        <div className="flex items-center gap-3">
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="bg-gold text-white px-4 py-1.5 text-[10px] uppercase tracking-[0.15em] font-semibold rounded-sm hover:opacity-90 transition-opacity"
+            >
+              Panel de administración
+            </Link>
+          )}
+          <LogoutButton className="bg-white text-black border border-black px-4 py-1.5 text-[10px] uppercase tracking-[0.15em] font-semibold rounded-sm hover:bg-black hover:text-white transition-colors" />
+        </div>
       </div>
 
       {/* ─── Profile header ─── */}
