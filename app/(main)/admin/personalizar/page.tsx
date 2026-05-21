@@ -6,7 +6,7 @@ const SECTIONS = [
     title: 'Hero',
     description: 'Imágenes del slider, título, subtítulo y botón CTA por slide.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="3" width="20" height="14" rx="1.5" />
         <path d="M8 21h8M12 17v4" />
         <path d="M6 8h6M6 11h4" />
@@ -18,7 +18,7 @@ const SECTIONS = [
     title: 'Producto Destacado',
     description: 'Elegí qué producto se muestra en la sección de producto único.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="2" width="9" height="9" rx="1" />
         <rect x="13" y="2" width="9" height="9" rx="1" />
         <rect x="2" y="13" width="9" height="9" rx="1" />
@@ -31,7 +31,7 @@ const SECTIONS = [
     title: 'Cards de Categorías',
     description: 'Imagen de fondo, etiqueta, título y subtítulo de las 3 cards finales.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="3" width="6" height="18" rx="1" />
         <rect x="9" y="3" width="6" height="18" rx="1" />
         <rect x="16" y="3" width="6" height="18" rx="1" />
@@ -43,7 +43,7 @@ const SECTIONS = [
     title: 'Orden de Destacados',
     description: 'Arrastrá los productos para cambiar el orden en que aparecen.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 6h18M3 12h18M3 18h18" />
         <path d="M8 4l-2 2 2 2" />
         <path d="M16 14l2 2-2 2" />
@@ -55,7 +55,7 @@ const SECTIONS = [
     title: 'Hero de Marca',
     description: 'Doble panel hero editorial en las páginas de Jordan, Nike y Adidas. Dos imágenes side by side.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="3" width="9" height="18" rx="1" />
         <rect x="13" y="3" width="9" height="18" rx="1" />
         <path d="M7 12h0M17 12h0" strokeWidth="2" strokeLinecap="round" />
@@ -67,7 +67,7 @@ const SECTIONS = [
     title: 'Nuestra Selección',
     description: 'Elegí hasta 4 productos para destacar en la sección editorial de la homepage.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="2" width="9" height="11" rx="1" />
         <rect x="13" y="2" width="9" height="11" rx="1" />
         <rect x="2" y="15" width="9" height="7" rx="1" />
@@ -80,7 +80,7 @@ const SECTIONS = [
     title: 'Cards de Beneficios',
     description: 'Elegí si cada card muestra el diseño predeterminado o una imagen custom que la ocupa completa.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="5" width="20" height="14" rx="1.5" />
         <path d="M2 9h20M7 14h4M7 17h2" />
       </svg>
@@ -91,7 +91,7 @@ const SECTIONS = [
     title: 'Zapatillas Nike',
     description: 'Seleccioná las zapatillas Nike que aparecen en la sección ZAPATILLAS de la brand page.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <path d="M2 17c0 0 4-3 8-3s8 3 8 3" />
         <path d="M3 17l1-5h12l1 5" />
         <path d="M7 12V9a2 2 0 0 1 2-2h6" />
@@ -103,7 +103,7 @@ const SECTIONS = [
     title: 'Zapatillas Jordan',
     description: 'Seleccioná las zapatillas Jordan que aparecen en la sección ZAPATILLAS de la brand page.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <path d="M2 17c0 0 4-3 8-3s8 3 8 3" />
         <path d="M3 17l1-5h12l1 5" />
         <path d="M7 12V9a2 2 0 0 1 2-2h6" />
@@ -115,7 +115,7 @@ const SECTIONS = [
     title: 'Zapatillas Adidas',
     description: 'Seleccioná las zapatillas Adidas que aparecen en la sección ZAPATILLAS de la brand page.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <path d="M2 17c0 0 4-3 8-3s8 3 8 3" />
         <path d="M3 17l1-5h12l1 5" />
         <path d="M7 12V9a2 2 0 0 1 2-2h6" />
@@ -127,7 +127,7 @@ const SECTIONS = [
     title: 'Nuevos Ingresos Nike',
     description: 'Definí el orden de los nuevos ingresos Nike que aparecen en la brand page.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 6h18M3 12h18M3 18h18" />
         <path d="M8 4l-2 2 2 2" />
         <path d="M16 14l2 2-2 2" />
@@ -139,7 +139,7 @@ const SECTIONS = [
     title: 'Nuevos Ingresos Jordan',
     description: 'Definí el orden de los nuevos ingresos Jordan que aparecen en la brand page.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 6h18M3 12h18M3 18h18" />
         <path d="M8 4l-2 2 2 2" />
         <path d="M16 14l2 2-2 2" />
@@ -151,7 +151,7 @@ const SECTIONS = [
     title: 'Nuevos Ingresos Adidas',
     description: 'Definí el orden de los nuevos ingresos Adidas que aparecen en la brand page.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 6h18M3 12h18M3 18h18" />
         <path d="M8 4l-2 2 2 2" />
         <path d="M16 14l2 2-2 2" />
@@ -173,20 +173,19 @@ export default function PersonalizarPage() {
           <Link
             key={section.href}
             href={section.href}
-            className="group flex flex-col gap-4 border border-border bg-surface p-6 transition-colors hover:border-foreground"
+            className="group flex items-center gap-4 border border-border bg-white p-5 transition-colors hover:border-gold lg:gap-5 lg:p-6"
           >
-            <div className="text-muted transition-colors group-hover:text-foreground">
+            <div className="size-12 shrink-0 text-gold lg:size-14">
               {section.icon}
             </div>
-            <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-foreground">
+            <div className="flex flex-col gap-1">
+              <span className="text-sm font-semibold uppercase tracking-[0.12em] text-foreground lg:text-base">
                 {section.title}
-              </p>
-              <p className="mt-1.5 text-[10px] leading-relaxed text-muted">
+              </span>
+              <span className="text-xs leading-relaxed text-muted lg:text-sm">
                 {section.description}
-              </p>
+              </span>
             </div>
-            <div className="h-px w-6 bg-gold transition-all duration-300 group-hover:w-10" aria-hidden />
           </Link>
         ))}
       </div>
