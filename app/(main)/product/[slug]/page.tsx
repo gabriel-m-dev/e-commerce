@@ -10,7 +10,6 @@ export const dynamic = 'force-dynamic'
 import { formatPrice } from '@/lib/utils'
 import ProductDetail from '@/components/product/ProductDetail'
 import ArrowIcon from '@/components/ui/ArrowIcon'
-import AddToCartButton from '@/components/product/AddToCartButton'
 
 export async function generateMetadata({
   params,
@@ -167,32 +166,19 @@ export default async function ProductPage({
                       className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
-                  <div className="mt-3.5 flex items-end justify-between">
-                    <div>
-                      <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted">
-                        {rel.category}
-                      </p>
-                      <h3 className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-foreground">
-                        {rel.name}
-                      </h3>
-                      <div className="mt-1 flex items-baseline gap-1.5">
-                        <span className="text-sm font-semibold text-foreground">{formatPrice(rel.price)}</span>
-                        {rel.comparePrice != null && rel.comparePrice > rel.price && (
-                          <span className="text-xs font-normal text-muted line-through">{formatPrice(rel.comparePrice)}</span>
-                        )}
-                      </div>
+                  <div className="mt-3.5">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted">
+                      {rel.category}
+                    </p>
+                    <h3 className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-foreground">
+                      {rel.name}
+                    </h3>
+                    <div className="mt-1 flex items-baseline gap-1.5">
+                      <span className="text-sm font-semibold text-foreground">{formatPrice(rel.price)}</span>
+                      {rel.comparePrice != null && rel.comparePrice > rel.price && (
+                        <span className="text-xs font-normal text-muted line-through">{formatPrice(rel.comparePrice)}</span>
+                      )}
                     </div>
-                    <AddToCartButton
-                      product={{
-                        id: rel.id,
-                        name: rel.name,
-                        slug: rel.slug,
-                        price: rel.price,
-                        image: rel.image,
-                        category: rel.category,
-                        stock: rel.stock,
-                      }}
-                    />
                   </div>
                 </Link>
               ))}
