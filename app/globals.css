@@ -78,6 +78,13 @@ header.nav-hero button {
   color: white;
   transition: color 0.3s;
 }
+header.nav-hero img[alt="Logo"] {
+  filter: brightness(0) invert(1);
+  transition: filter 0.3s;
+}
+img[alt="Logo"] {
+  transition: filter 0.3s;
+}
 /* Keep dropdown panel links readable */
 header.nav-hero .nav-dropdown a {
   color: var(--color-muted);
