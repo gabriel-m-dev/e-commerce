@@ -239,40 +239,24 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── CTA ─── */}
+      {/* ─── Nuestro Local ─── */}
       <ScrollReveal>
-      <section
-        className="relative h-[90px] overflow-hidden lg:h-[115px]"
-        style={{ background: '#e3d9e2' }}
-      >
-        {/* Mochila — decorativa, desborda hacia la derecha */}
-        <div
-          className="absolute z-0 h-[170%] w-40 lg:w-56"
-          style={{ right: '-60px', top: '50%', transform: 'translateY(-50%)' }}
-          aria-hidden
-        >
+        <section className="relative h-[400px] overflow-hidden lg:h-[560px]">
           <Image
-            src="https://images.unsplash.com/photo-1622560480654-d96214fdc887?w=600&auto=format&fit=crop&q=80"
-            alt=""
+            src="/local_buenapilcha.png"
+            alt="Nuestro local — Buena Pilcha"
             fill
-            sizes="(max-width: 1024px) 160px, 224px"
             className="object-cover object-center"
+            sizes="100vw"
           />
-        </div>
-
-        {/* Contenido */}
-        <div className="relative z-10 flex h-full flex-col items-start justify-center gap-3 pl-6 pr-[45%] sm:items-center sm:pl-0 sm:pr-0">
-          <h2 className="text-left text-[11px] font-medium uppercase tracking-[0.18em] text-foreground sm:text-center sm:text-[13px] lg:text-base">
-            Listo para comprar sin complicaciones.
-          </h2>
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-3 bg-foreground px-6 py-2.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-background transition-opacity hover:opacity-80"
-          >
-            Ver productos <ArrowIcon className="shrink-0 text-gold" size={14} />
-          </Link>
-        </div>
-      </section>
+          <div className="absolute inset-0 bg-black/50" aria-hidden />
+          <div className="relative z-10 flex h-full flex-col items-center justify-center">
+            <div className="h-px w-8 bg-gold mx-auto mb-4" aria-hidden />
+            <h2 className="text-3xl font-black uppercase tracking-[0.2em] text-white lg:text-5xl">
+              NUESTRO LOCAL
+            </h2>
+          </div>
+        </section>
       </ScrollReveal>
 
     </>
