@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { formatSlug } from '@/lib/utils'
 
@@ -41,6 +42,9 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
   const [sizes, setSizes] = useState<string[]>([])
   const [newCategoryName, setNewCategoryName] = useState('')
   const [allCategories, setAllCategories] = useState<Category[]>(categories)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => { setMounted(true) }, [])
 
   const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
   const SHOE_SIZES = ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46']
@@ -260,7 +264,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
       </button>
 
       {/* Modal */}
-      {open && (
+      {open && mounted && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40">
           <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-background border border-border">
             {/* Header */}
@@ -631,7 +635,8 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )
