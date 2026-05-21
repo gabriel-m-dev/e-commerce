@@ -261,9 +261,8 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
 
       {/* Modal */}
       {open && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-foreground/40">
-          <div className="flex min-h-full items-center justify-center p-4">
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-background border border-border">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-background border border-border">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-border px-6 py-4">
               <h2 className="text-[12px] font-black uppercase tracking-[0.22em]">
@@ -631,7 +630,6 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
                 </button>
               </div>
             </form>
-          </div>
           </div>
         </div>
       )}
