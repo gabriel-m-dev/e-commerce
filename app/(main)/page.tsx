@@ -58,6 +58,15 @@ export default async function HomePage() {
       {/* ─── Hero ─── */}
       <HeroSection slides={heroConfig?.slides} />
 
+      <div className="h-2 bg-white" aria-hidden />
+
+      {/* ─── Categorías ─── */}
+      <ScrollReveal>
+        <CategoryShowcase cards={categoryCardsConfig?.cards} />
+      </ScrollReveal>
+
+      <div className="h-2 bg-white" aria-hidden />
+
       {/* ─── Featured Products ─── */}
       <section className="bg-[#f5f5f7]">
         <div className="mx-auto max-w-screen-xl px-6 py-20 lg:px-10">
@@ -266,10 +275,6 @@ export default async function HomePage() {
       </section>
       </ScrollReveal>
 
-      {/* ─── Categorías ─── */}
-      <ScrollReveal>
-        <CategoryShowcase cards={categoryCardsConfig?.cards} />
-      </ScrollReveal>
     </>
   )
 }
