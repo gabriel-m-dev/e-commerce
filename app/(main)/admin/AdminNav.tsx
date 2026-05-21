@@ -26,8 +26,8 @@ export default function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
             className={[
               'px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors',
               isActive
-                ? 'text-gold'
-                : 'text-background/60 hover:text-background',
+                ? 'bg-gold text-foreground'
+                : 'text-white opacity-80 hover:opacity-100',
             ].join(' ')}
           >
             {label}
