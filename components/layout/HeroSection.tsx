@@ -30,20 +30,21 @@ export default function HeroSection({ slides: slidesProp }: { slides?: HeroSlide
         <span className="text-[11px] font-medium text-background/25">{totalLabel}</span>
       </div>
 
-      {/* Mobile — shoe floating at bottom-right as depth element */}
-      <div className="absolute bottom-10 right-[-30px] h-[65%] w-[100%] lg:hidden" aria-hidden>
+      {/* Background image — full hero cover (all breakpoints) */}
+      <div className="absolute inset-0 z-0" aria-hidden>
         {slides.map((s, i) => (
           <Image
             key={i}
             src={s.image}
             alt=""
             fill
-            sizes="85vw"
-            className={`object-contain transition-opacity duration-[800ms] ${i === current ? 'opacity-100' : 'opacity-0'}`}
-            style={{ objectPosition: i === 0 ? 'calc(100% - 20px) bottom' : 'right bottom' }}
+            sizes="100vw"
+            className={`object-cover object-center transition-opacity duration-[800ms] ${i === current ? 'opacity-100' : 'opacity-0'}`}
             priority={i === 0}
           />
         ))}
+        {/* Dark overlay so text remains legible over the image */}
+        <div className="absolute inset-0 bg-black/50" />
       </div>
 
       <div className="mx-auto max-w-screen-xl px-6 lg:px-10">
@@ -79,20 +80,8 @@ export default function HeroSection({ slides: slidesProp }: { slides?: HeroSlide
             </div>
           </div>
 
-          {/* Right — hero image (desktop only) */}
-          <div className="relative hidden h-[88svh] lg:block overflow-hidden">
-            {slides.map((s, i) => (
-              <Image
-                key={i}
-                src={s.image}
-                alt={i === 0 ? `Hero — ${s.title}` : ''}
-                fill
-                sizes="(max-width: 1280px) 460px, 540px"
-                className={`object-contain object-center transition-opacity duration-[800ms] ${i === current ? 'opacity-100' : 'opacity-0'}`}
-                priority={i === 0}
-              />
-            ))}
-          </div>
+          {/* Right column — empty spacer (desktop), keeps grid proportions */}
+          <div className="hidden lg:block" aria-hidden />
 
         </div>
       </div>
