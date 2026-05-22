@@ -51,6 +51,17 @@ const SECTIONS = [
     ),
   },
   {
+    href: '/admin/personalizar/hero-nike',
+    title: 'Hero Nike',
+    description: 'Dos bloques con efecto de recorte poligonal. Imagen fija que se recorta al scroll.',
+    icon: (
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="2,3 22,3 22,15 2,19" />
+        <polygon points="2,17 22,13 22,21 2,21" />
+      </svg>
+    ),
+  },
+  {
     href: '/admin/personalizar/brand-categorias',
     title: 'Hero de Marca',
     description: 'Doble panel hero editorial en las páginas de Jordan, Nike y Adidas. Dos imágenes side by side.',

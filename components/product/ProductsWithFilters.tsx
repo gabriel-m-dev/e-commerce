@@ -112,98 +112,108 @@ export function JordanHeroSlider() {
   )
 }
 
+
+const NIKE_SLIDES = [
+  { image: '/brands/nike/hero_nike_1.jpg', text: 'Just Do It' },
+  { image: '/brands/nike/hero_nike_2.jpg', text: 'Built to Move' },
+] as const
+
 export function NikeHeroSlider() {
-  const [logoVisible, setLogoVisible] = useState(false)
-  const [videoReady, setVideoReady] = useState(false)
-  const logoTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [current, setCurrent]     = useState(0)
+  const [prev, setPrev]           = useState<number | null>(null)
+  const [textVisible, setTextVisible] = useState(true)
+  const [textIndex, setTextIndex] = useState(0)
+  const currentRef = useRef(0)
 
-  useEffect(() => () => { if (logoTimer.current) clearTimeout(logoTimer.current) }, [])
+  useEffect(() => {
+    let textSwapTimer: ReturnType<typeof setTimeout>
+    let textShowTimer: ReturnType<typeof setTimeout>
+    let prevTimer:     ReturnType<typeof setTimeout>
+    let intervalId:    ReturnType<typeof setInterval> | undefined
 
-  function handleCanPlay() {
-    setVideoReady(true)
-    if (!logoTimer.current) {
-      logoTimer.current = setTimeout(() => setLogoVisible(true), 20000)
+    const advance = () => {
+      const oldIdx = currentRef.current
+      const nextIdx = (oldIdx + 1) % NIKE_SLIDES.length
+      currentRef.current = nextIdx
+
+      setPrev(oldIdx)
+      setCurrent(nextIdx)
+      setTextVisible(false)
+
+      clearTimeout(textSwapTimer)
+      clearTimeout(textShowTimer)
+      clearTimeout(prevTimer)
+
+      // swap text content once it's fully invisible (after 350ms fade-out)
+      textSwapTimer = setTimeout(() => setTextIndex(nextIdx), 400)
+      // then fade new text in
+      textShowTimer = setTimeout(() => setTextVisible(true), 600)
+      prevTimer     = setTimeout(() => setPrev(null), 700)
     }
-  }
+
+    const firstTick = setTimeout(() => {
+      advance()
+      intervalId = setInterval(advance, 4000)
+    }, 2800)
+
+    return () => {
+      clearTimeout(firstTick)
+      if (intervalId !== undefined) clearInterval(intervalId)
+      clearTimeout(textSwapTimer)
+      clearTimeout(textShowTimer)
+      clearTimeout(prevTimer)
+    }
+  }, [])
 
   return (
-    <div className="relative w-full aspect-[4/3] md:aspect-[16/7] overflow-hidden bg-[#111]">
+    <div className="-ml-[5px] relative w-full aspect-[3/4] md:aspect-[16/7] overflow-hidden">
       <style>{`
-        @keyframes nike-logo-in {
-          from { transform: translateX(-220px); opacity: 0; }
-          to   { transform: translateX(0);      opacity: 1; }
-        }
-        @keyframes nike-shimmer {
-          0%   { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
+        @keyframes nike-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+        @keyframes nike-slide-in  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
       `}</style>
 
-      {/* Skeleton — visible mientras el video no está listo */}
-      {!videoReady && (
-        <div className="absolute inset-0 z-10 bg-[#111] overflow-hidden">
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%)',
-              animation: 'nike-shimmer 1.6s ease-in-out infinite',
-            }}
-            aria-hidden
-          />
-        </div>
-      )}
+      {/* All slides always in DOM so images are preloaded before any transition */}
+      {NIKE_SLIDES.map((slide, i) => {
+        const isCurrent = i === current
+        const isPrev    = i === prev
 
-      <video
-        src="/brands/nike/hero-video.mp4"
-        autoPlay
-        muted
-        playsInline
-        loop={false}
-        preload="auto"
-        onCanPlay={handleCanPlay}
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
-      />
+        let style: React.CSSProperties
+        if (isPrev)              style = { zIndex: 1, animation: 'nike-slide-out 700ms ease-in-out forwards' }
+        else if (isCurrent && prev !== null) style = { zIndex: 2, animation: 'nike-slide-in 700ms ease-in-out forwards' }
+        else if (isCurrent)     style = { zIndex: 1 }
+        else                    style = { zIndex: 0, opacity: 0 }
 
-      {/* Overlay — aparece con fade junto al logo */}
-      <div
-        className="absolute inset-0 transition-opacity duration-700"
-        style={{ zIndex: 1, backgroundColor: 'rgba(0,0,0,0.45)', opacity: logoVisible ? 1 : 0 }}
-        aria-hidden
-      />
+        return (
+          <div key={i} className="absolute inset-0" style={style}>
+            <Image
+              src={slide.image}
+              alt={isCurrent ? 'Nike Collection' : ''}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        )
+      })}
 
-      {/* Logo Nike — centrado, entra desde la izquierda en el segundo 20 */}
-      {logoVisible && (
-        <div
-          className="absolute"
+      <div className="absolute inset-0 bg-black/45" style={{ zIndex: 3 }} aria-hidden />
+
+      <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-8" style={{ zIndex: 4 }}>
+        <p
+          className="text-white uppercase tracking-[0.32em] text-lg font-medium md:text-2xl leading-tight"
           style={{
-            top: '50%',
-            left: '50%',
-            zIndex: 2,
-            pointerEvents: 'none',
-            animation: 'nike-logo-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            opacity: textVisible ? 1 : 0,
+            transform: textVisible ? 'translateY(0)' : 'translateY(8px)',
+            transition: 'opacity 350ms ease, transform 350ms ease',
           }}
-          aria-hidden
         >
-          <Image
-            src="/brands/nike/logo.webp"
-            alt=""
-            width={2400}
-            height={2399}
-            priority
-            sizes="(min-width: 1024px) 420px, 32vw"
-            style={{
-              display: 'block',
-              width: 'clamp(220px, 32vw, 420px)',
-              height: 'auto',
-              transform: 'translate(-50%, -50%)',
-              filter: 'brightness(0) invert(1)',
-            }}
-          />
-        </div>
-      )}
+          {NIKE_SLIDES[textIndex].text}
+        </p>
+      </div>
     </div>
   )
 }
+
 
 type NavGroup = { label: string; category: string | null; sub: string[] | null }
 
