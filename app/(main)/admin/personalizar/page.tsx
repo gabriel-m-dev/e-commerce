@@ -2,6 +2,18 @@ import Link from 'next/link'
 
 const SECTIONS = [
   {
+    href: '/admin/personalizar/announcement-bar',
+    title: 'Barra de Anuncio',
+    description: 'Texto que se desplaza en bucle sobre el nav. Activá o desactivá la barra y editá el mensaje.',
+    icon: (
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="4" width="20" height="5" rx="1" />
+        <path d="M6 6.5h12" />
+        <path d="M2 13h20M2 17h14" />
+      </svg>
+    ),
+  },
+  {
     href: '/admin/personalizar/hero',
     title: 'Hero',
     description: 'Imágenes del slider, título, subtítulo y botón CTA por slide.',
@@ -166,6 +178,16 @@ const SECTIONS = [
         <path d="M3 6h18M3 12h18M3 18h18" />
         <path d="M8 4l-2 2 2 2" />
         <path d="M16 14l2 2-2 2" />
+      </svg>
+    ),
+  },
+  {
+    href: '/admin/personalizar/mas-pedido',
+    title: 'Mas Pedido',
+    description: 'Elegí un producto por marca para destacar como el más pedido en la brand page de Jordan, Nike y Adidas.',
+    icon: (
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
       </svg>
     ),
   },

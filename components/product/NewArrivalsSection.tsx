@@ -8,7 +8,7 @@ export default function NewArrivalsSection({ products }: { products: DbProduct[]
   if (!products.length) return null
 
   return (
-    <section className="bg-[#f5f5f7]">
+    <section className="bg-[#0a0a0a]">
       <div className="mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
 
         {/* Header */}
@@ -18,7 +18,7 @@ export default function NewArrivalsSection({ products }: { products: DbProduct[]
             Nuevos ingresos
           </span>
         </div>
-        <h2 className="text-3xl font-black uppercase tracking-tight text-foreground leading-tight">
+        <h2 className="text-3xl font-black uppercase tracking-tight text-white leading-tight">
           Nuevos ingresos
         </h2>
         <p className="mt-2 text-[12px] text-muted">
@@ -40,7 +40,7 @@ export default function NewArrivalsSection({ products }: { products: DbProduct[]
               {/* Image */}
               <Link
                 href={`/product/${product.slug}`}
-                className="relative h-32 w-32 shrink-0 overflow-hidden bg-surface block sm:h-36 sm:w-36 md:h-auto md:w-full md:aspect-[3/4]"
+                className="relative h-32 w-32 shrink-0 overflow-hidden block sm:h-36 sm:w-36 md:h-auto md:w-full md:aspect-[3/4]"
               >
                 <Image
                   src={product.image}
@@ -49,9 +49,6 @@ export default function NewArrivalsSection({ products }: { products: DbProduct[]
                   sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 144px"
                   className="object-cover"
                 />
-                <span className="absolute top-0 left-0 bg-foreground px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.15em] text-gold">
-                  Nuevo
-                </span>
               </Link>
 
               {/* Info */}
@@ -61,19 +58,19 @@ export default function NewArrivalsSection({ products }: { products: DbProduct[]
                 </span>
                 <Link
                   href={`/product/${product.slug}`}
-                  className="text-[15px] font-medium uppercase tracking-[0.08em] text-foreground leading-tight hover:opacity-70 transition-opacity truncate md:text-[13px] md:whitespace-normal md:line-clamp-2"
+                  className="text-[15px] font-medium uppercase tracking-[0.08em] text-white leading-tight hover:opacity-70 transition-opacity truncate md:text-[13px] md:whitespace-normal md:line-clamp-2"
                 >
                   {product.name}
                 </Link>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-[16px] font-semibold text-foreground md:text-[15px]">{formatPrice(product.price)}</span>
+                  <span className="text-[16px] font-semibold text-white md:text-[15px]">{formatPrice(product.price)}</span>
                   {product.comparePrice != null && product.comparePrice > product.price && (
                     <span className="text-[13px] font-normal text-muted line-through md:text-[12px]">{formatPrice(product.comparePrice)}</span>
                   )}
                 </div>
                 <Link
                   href={`/product/${product.slug}`}
-                  className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted hover:text-foreground transition-colors mt-1"
+                  className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted hover:text-white transition-colors mt-1"
                 >
                   Ver producto <ArrowIcon size={12} className="text-gold" />
                 </Link>
@@ -85,7 +82,7 @@ export default function NewArrivalsSection({ products }: { products: DbProduct[]
         {/* CTA */}
         <Link
           href="/nuevos-ingresos"
-          className="mt-10 mx-auto flex w-fit items-center gap-3 border border-foreground px-8 py-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground transition-colors hover:bg-foreground hover:text-background"
+          className="mt-10 mx-auto flex w-fit items-center gap-3 border border-white px-8 py-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-white transition-colors hover:bg-white hover:text-[#0a0a0a]"
         >
           VER TODOS LOS NUEVOS INGRESOS <ArrowIcon size={14} className="text-gold" />
         </Link>

@@ -81,6 +81,24 @@ export const DEFAULT_BENEFIT_CARDS: BenefitCardsConfig = {
   security: { imageUrl: null },
 }
 
+export type AnnouncementBarConfig = {
+  text: string
+  enabled: boolean
+}
+
+export const DEFAULT_ANNOUNCEMENT_BAR: AnnouncementBarConfig = {
+  text: 'ENVÍOS A TODO EL PAÍS · PAGÁ EN CUOTAS · NUEVOS INGRESOS DISPONIBLES',
+  enabled: false,
+}
+
+export type MasPedidoConfig = {
+  productId: string
+}
+
+export const DEFAULT_MAS_PEDIDO: MasPedidoConfig = {
+  productId: '',
+}
+
 export const DEFAULT_CATEGORY_CARDS: CategoryCard[] = [
   {
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85',

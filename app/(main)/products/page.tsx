@@ -2,13 +2,14 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import { getProducts, getNewProducts, getProductsByIds, getCategories } from '@/lib/queries/products'
-import { getSiteConfig } from '@/lib/queries/site-config'
+import { getSiteConfig, getMasPedidoProduct } from '@/lib/queries/site-config'
 import ProductsWithFilters, { JordanHeroSlider, NikeHeroSlider } from '@/components/product/ProductsWithFilters'
 import BrandBgImage from '@/components/product/BrandBgImage'
 import BrandEditorialHeader from '@/components/product/BrandEditorialHeader'
 import BrandNewArrivalsSlider from '@/components/product/BrandNewArrivalsSlider'
 import BrandCategorySplit from '@/components/product/BrandCategorySplit'
 import BrandSneakersSection from '@/components/product/BrandSneakersSection'
+import BrandMasPedido from '@/components/BrandMasPedido'
 
 export const dynamic = 'force-dynamic'
 
@@ -61,12 +62,13 @@ export default async function ProductsPage({
         ? 'newArrivalsAdidas' as const
         : null
 
-  const [products, categories, categorySplitConfig, sneakersConfig, newArrivalsConfig] = await Promise.all([
+  const [products, categories, categorySplitConfig, sneakersConfig, newArrivalsConfig, masPedidoProduct] = await Promise.all([
     getProducts({ brand: brandFilter }),
     getCategories(),
     isEditorialBrand ? getSiteConfig(configKey) : Promise.resolve(null),
     isEditorialBrand && sneakersConfigKey ? getSiteConfig(sneakersConfigKey) : Promise.resolve(null),
     isEditorialBrand && newArrivalsConfigKey ? getSiteConfig(newArrivalsConfigKey) : Promise.resolve(null),
+    isEditorialBrand && brandFilter ? getMasPedidoProduct(brandFilter as 'JORDAN' | 'NIKE' | 'ADIDAS') : Promise.resolve(null),
   ])
 
   const newArrivalsCustomIds = newArrivalsConfig?.productIds?.length ? newArrivalsConfig.productIds : undefined
@@ -135,7 +137,7 @@ export default async function ProductsPage({
         {/* Editorial watermark for brand pages */}
         {brandFilter === 'JORDAN' && (
           <div
-            className="pointer-events-none select-none absolute right-[-16px] top-0 h-screen w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center"
+            className="pointer-events-none select-none absolute right-[-16px] top-0 h-screen w-[80px] lg:w-[110px] overflow-hidden flex items-center justify-center lg:translate-y-[170px]"
             aria-hidden
           >
             <div
@@ -315,6 +317,13 @@ export default async function ProductsPage({
                 theme={isJordan ? 'dark' : 'light'}
               />
             </div>
+
+            {/* Mas Pedido — hero card for the most requested product */}
+            {masPedidoProduct && (
+              <div className="mt-16 -mx-6 lg:-mx-10">
+                <BrandMasPedido product={masPedidoProduct} />
+              </div>
+            )}
 
             <div className="mt-16">
               <ProductsWithFilters

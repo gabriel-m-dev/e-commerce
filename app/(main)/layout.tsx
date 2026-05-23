@@ -2,12 +2,16 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
 import PageTransition from '@/components/layout/PageTransition'
+import AnnouncementBar from '@/components/AnnouncementBar'
+import { getAnnouncementBarConfig } from '@/lib/queries/site-config'
 
-export default function MainLayout({
+export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const announcementConfig = await getAnnouncementBarConfig()
+
   return (
     <>
       <a
@@ -17,6 +21,7 @@ export default function MainLayout({
         Ir al contenido
       </a>
       <div className="[overflow-x:clip]">
+        <AnnouncementBar config={announcementConfig} />
         <Navbar />
         <PageTransition id="main-content">{children}</PageTransition>
         <Footer />
