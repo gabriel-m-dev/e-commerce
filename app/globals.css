@@ -82,6 +82,12 @@ h1, h2, h3, h4, h5, h6 {
   animation: page-in 0.35s ease-out both;
 }
 
+@keyframes ember-rise {
+  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0.8; }
+  50%  { transform: translateY(-40%) translateX(var(--dx, 8px)) scale(0.8); opacity: 0.5; }
+  100% { transform: translateY(-90%) translateX(var(--dx2, -6px)) scale(0.3); opacity: 0; }
+}
+
 
 /* Homepage hero nav — black bg, white text */
 header.nav-hero a,

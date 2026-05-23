@@ -1,21 +1,44 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import Particles, { ParticlesProvider } from '@tsparticles/react'
-import { loadFirePreset } from '@tsparticles/preset-fire'
-import type { Engine } from '@tsparticles/engine'
 import { formatPrice } from '@/lib/utils'
 import type { DbProduct } from '@/lib/queries/products'
+
+const TOP_EMBERS = [
+  { left: "32%",   delay: "0.1s",  dur: "3.4s", dx: "5px",  dx2: "-7px"  },
+  { left: "36%",   delay: "0.7s",  dur: "2.9s", dx: "-8px", dx2: "4px"   },
+  { left: "40%",   delay: "1.3s",  dur: "3.7s", dx: "7px",  dx2: "-5px"  },
+  { left: "44%",   delay: "0.5s",  dur: "2.6s", dx: "-4px", dx2: "9px"   },
+  { left: "50%",   delay: "1.9s",  dur: "3.1s", dx: "6px",  dx2: "-8px"  },
+  { left: "56%",   delay: "0.3s",  dur: "3.8s", dx: "-9px", dx2: "5px"   },
+  { left: "62%",   delay: "1.1s",  dur: "2.7s", dx: "8px",  dx2: "-3px"  },
+  { left: "68%",   delay: "1.7s",  dur: "3.3s", dx: "-5px", dx2: "7px"   },
+]
+
+const EMBERS = [
+  { left: "25%",   delay: "0s",    dur: "3.2s", dx: "6px",  dx2: "-4px"  },
+  { left: "28.3%", delay: "0.4s",  dur: "2.8s", dx: "-8px", dx2: "5px"   },
+  { left: "31.7%", delay: "0.8s",  dur: "3.6s", dx: "10px", dx2: "-7px"  },
+  { left: "35%",   delay: "1.2s",  dur: "2.5s", dx: "-5px", dx2: "8px"   },
+  { left: "38.3%", delay: "0.2s",  dur: "3.9s", dx: "7px",  dx2: "-3px"  },
+  { left: "41.7%", delay: "1.6s",  dur: "2.7s", dx: "-9px", dx2: "6px"   },
+  { left: "45%",   delay: "0.6s",  dur: "3.3s", dx: "4px",  dx2: "-8px"  },
+  { left: "48.3%", delay: "1.0s",  dur: "2.9s", dx: "-6px", dx2: "7px"   },
+  { left: "51.7%", delay: "1.8s",  dur: "3.5s", dx: "8px",  dx2: "-5px"  },
+  { left: "55%",   delay: "0.3s",  dur: "2.6s", dx: "-7px", dx2: "4px"   },
+  { left: "58.3%", delay: "1.4s",  dur: "3.8s", dx: "5px",  dx2: "-9px"  },
+  { left: "61.7%", delay: "0.7s",  dur: "3.1s", dx: "-4px", dx2: "6px"   },
+  { left: "65%",   delay: "2.0s",  dur: "2.4s", dx: "9px",  dx2: "-6px"  },
+  { left: "68.3%", delay: "1.5s",  dur: "3.7s", dx: "-3px", dx2: "8px"   },
+  { left: "71.7%", delay: "2.2s",  dur: "2.8s", dx: "6px",  dx2: "-5px"  },
+  { left: "75%",   delay: "0.9s",  dur: "3.4s", dx: "-8px", dx2: "3px"   },
+]
 
 export default function BrandMasPedido({ product }: { product: DbProduct | null }) {
   const [activeThumb, setActiveThumb] = useState(0)
   const touchStartX = useRef(0)
-
-  const particlesInit = useCallback(async (engine: Engine) => {
-    await loadFirePreset(engine)
-  }, [])
 
   if (!product) return null
 
@@ -31,23 +54,45 @@ export default function BrandMasPedido({ product }: { product: DbProduct | null 
 
   return (
     <div className="relative overflow-hidden w-full bg-[#0a0a0a] text-white px-6 lg:px-10 py-12">
-      <ParticlesProvider init={particlesInit}>
-        <Particles
-          className="absolute inset-0 z-0 pointer-events-none"
-          style={{ width: '100%', height: '100%' }}
-          options={{
-            preset: 'fire',
-            fullScreen: { enable: false },
-            background: { color: { value: 'transparent' }, opacity: 0, image: '' },
-            particles: {
-              number: { value: 20 },
-              size: { value: { min: 1, max: 3 } },
-              opacity: { value: { min: 0.3, max: 0.9 } },
-              move: { speed: 2 },
-            },
-          }}
-        />
-      </ParticlesProvider>
+      {/* Pure CSS ember layer */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        {EMBERS.map((e, i) => (
+          <span
+            key={i}
+            style={{
+              position: "absolute",
+              bottom: "0",
+              left: e.left,
+              width: "3px",
+              height: "3px",
+              borderRadius: "50%",
+              backgroundColor: i % 3 === 0 ? "#ffd700" : i % 3 === 1 ? "#f5a623" : "#ffc107",
+              animation: `ember-rise ${e.dur} ease-in infinite`,
+              animationDelay: e.delay,
+              ["--dx" as string]: e.dx,
+              ["--dx2" as string]: e.dx2,
+            }}
+          />
+        ))}
+        {TOP_EMBERS.map((e, i) => (
+          <span
+            key={`top-${i}`}
+            style={{
+              position: "absolute",
+              top: "0",
+              left: e.left,
+              width: "3px",
+              height: "3px",
+              borderRadius: "50%",
+              backgroundColor: i % 3 === 0 ? "#ffd700" : i % 3 === 1 ? "#f5a623" : "#ffc107",
+              animation: `ember-rise ${e.dur} ease-in infinite`,
+              animationDelay: e.delay,
+              ["--dx" as string]: e.dx,
+              ["--dx2" as string]: e.dx2,
+            }}
+          />
+        ))}
+      </div>
 
       {/* Section title — matches "NUEVOS INGRESOS" style */}
       <p className="relative z-10 text-[22px] font-medium uppercase tracking-[0.18em] leading-none text-white mb-8 text-center">
