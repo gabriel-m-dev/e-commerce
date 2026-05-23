@@ -82,6 +82,7 @@ h1, h2, h3, h4, h5, h6 {
   animation: page-in 0.35s ease-out both;
 }
 
+
 /* Homepage hero nav — black bg, white text */
 header.nav-hero a,
 header.nav-hero button {
