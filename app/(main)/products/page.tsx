@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import { getProducts, getNewProducts, getProductsByIds, getCategories } from '@/lib/queries/products'
-import { getSiteConfig, getMasPedidoProduct } from '@/lib/queries/site-config'
+import { getSiteConfig, getMasPedidoProduct, getBrandHeroConfig } from '@/lib/queries/site-config'
 import ProductsWithFilters, { JordanHeroSlider, NikeHeroSlider } from '@/components/product/ProductsWithFilters'
 import BrandBgImage from '@/components/product/BrandBgImage'
 import BrandEditorialHeader from '@/components/product/BrandEditorialHeader'
@@ -62,13 +62,14 @@ export default async function ProductsPage({
         ? 'newArrivalsAdidas' as const
         : null
 
-  const [products, categories, categorySplitConfig, sneakersConfig, newArrivalsConfig, masPedidoProduct] = await Promise.all([
+  const [products, categories, categorySplitConfig, sneakersConfig, newArrivalsConfig, masPedidoProduct, brandHeroConfig] = await Promise.all([
     getProducts({ brand: brandFilter }),
     getCategories(),
     isEditorialBrand ? getSiteConfig(configKey) : Promise.resolve(null),
     isEditorialBrand && sneakersConfigKey ? getSiteConfig(sneakersConfigKey) : Promise.resolve(null),
     isEditorialBrand && newArrivalsConfigKey ? getSiteConfig(newArrivalsConfigKey) : Promise.resolve(null),
     isEditorialBrand && brandFilter ? getMasPedidoProduct(brandFilter as 'JORDAN' | 'NIKE' | 'ADIDAS') : Promise.resolve(null),
+    isEditorialBrand && brandFilter ? getBrandHeroConfig(brandFilter as 'JORDAN' | 'NIKE' | 'ADIDAS') : Promise.resolve(null),
   ])
 
   const newArrivalsCustomIds = newArrivalsConfig?.productIds?.length ? newArrivalsConfig.productIds : undefined
@@ -284,12 +285,12 @@ export default async function ProductsPage({
             {/* Brand hero — escape container padding, keep hero-specific side padding */}
             {isJordan && (
               <div className="-mx-6 lg:-mx-10 pl-0 pr-[68px] md:pl-20 md:pr-20 lg:mt-[45px]">
-                <JordanHeroSlider />
+                <JordanHeroSlider slides={brandHeroConfig?.slides} />
               </div>
             )}
             {brandFilter === 'NIKE' && (
               <div className="-mx-6 lg:-mx-10 md:px-20">
-                <NikeHeroSlider />
+                <NikeHeroSlider slides={brandHeroConfig?.slides} />
               </div>
             )}
 

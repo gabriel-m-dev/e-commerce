@@ -1,9 +1,9 @@
 import { prisma } from '@/lib/prisma'
-import { type HeroSlide, type CategoryCard, type BrandCategorySplitConfig, type NuestraSeleccionConfig, type BrandSneakersConfig, type BenefitCardsConfig, type NewArrivalsConfig, type AnnouncementBarConfig, type MasPedidoConfig, DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT, DEFAULT_BENEFIT_CARDS, DEFAULT_NEW_ARRIVALS, DEFAULT_ANNOUNCEMENT_BAR, DEFAULT_MAS_PEDIDO } from '@/lib/data/site-config-defaults'
+import { type HeroSlide, type CategoryCard, type BrandCategorySplitConfig, type NuestraSeleccionConfig, type BrandSneakersConfig, type BenefitCardsConfig, type NewArrivalsConfig, type AnnouncementBarConfig, type MasPedidoConfig, type BrandHeroConfig, DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT, DEFAULT_BENEFIT_CARDS, DEFAULT_NEW_ARRIVALS, DEFAULT_ANNOUNCEMENT_BAR, DEFAULT_MAS_PEDIDO, DEFAULT_JORDAN_HERO, DEFAULT_NIKE_HERO, DEFAULT_ADIDAS_HERO } from '@/lib/data/site-config-defaults'
 import { getProductById } from '@/lib/queries/products'
 
-export type { HeroSlide, CategoryCard, BrandCategorySplitConfig, NuestraSeleccionConfig, BrandSneakersConfig, BenefitCardsConfig, NewArrivalsConfig, AnnouncementBarConfig, MasPedidoConfig }
-export { DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT, DEFAULT_BENEFIT_CARDS, DEFAULT_NEW_ARRIVALS, DEFAULT_ANNOUNCEMENT_BAR, DEFAULT_MAS_PEDIDO }
+export type { HeroSlide, CategoryCard, BrandCategorySplitConfig, NuestraSeleccionConfig, BrandSneakersConfig, BenefitCardsConfig, NewArrivalsConfig, AnnouncementBarConfig, MasPedidoConfig, BrandHeroConfig }
+export { DEFAULT_HERO_SLIDES, DEFAULT_CATEGORY_CARDS, DEFAULT_BRAND_CATEGORY_SPLIT, DEFAULT_BENEFIT_CARDS, DEFAULT_NEW_ARRIVALS, DEFAULT_ANNOUNCEMENT_BAR, DEFAULT_MAS_PEDIDO, DEFAULT_JORDAN_HERO, DEFAULT_NIKE_HERO, DEFAULT_ADIDAS_HERO }
 
 export type SiteConfigKey =
   | 'hero'
@@ -24,6 +24,9 @@ export type SiteConfigKey =
   | 'jordanMasPedido'
   | 'nikeMasPedido'
   | 'adidasMasPedido'
+  | 'jordanHero'
+  | 'nikeHero'
+  | 'adidasHero'
 
 export type SiteConfigValues = {
   hero: { slides: HeroSlide[] }
@@ -44,6 +47,9 @@ export type SiteConfigValues = {
   jordanMasPedido: MasPedidoConfig
   nikeMasPedido: MasPedidoConfig
   adidasMasPedido: MasPedidoConfig
+  jordanHero: BrandHeroConfig
+  nikeHero: BrandHeroConfig
+  adidasHero: BrandHeroConfig
 }
 
 export async function getSiteConfig<K extends SiteConfigKey>(key: K): Promise<SiteConfigValues[K] | null> {
@@ -117,5 +123,29 @@ export async function getMasPedidoProduct(brand: 'JORDAN' | 'NIKE' | 'ADIDAS') {
     return getProductById(productId)
   } catch {
     return null
+  }
+}
+
+export async function getBrandHeroConfig(brand: 'JORDAN' | 'NIKE' | 'ADIDAS'): Promise<BrandHeroConfig> {
+  const configKey = brand === 'JORDAN'
+    ? 'jordanHero' as const
+    : brand === 'NIKE'
+      ? 'nikeHero' as const
+      : 'adidasHero' as const
+  const defaultConfig = brand === 'JORDAN'
+    ? DEFAULT_JORDAN_HERO
+    : brand === 'NIKE'
+      ? DEFAULT_NIKE_HERO
+      : DEFAULT_ADIDAS_HERO
+  try {
+    const config = await prisma.siteConfig.findUnique({ where: { key: configKey } })
+    if (!config) return defaultConfig
+    const parsed = config.value as Partial<BrandHeroConfig>
+    const slides = Array.isArray(parsed.slides) && parsed.slides.length > 0
+      ? parsed.slides
+      : defaultConfig.slides
+    return { slides }
+  } catch {
+    return defaultConfig
   }
 }

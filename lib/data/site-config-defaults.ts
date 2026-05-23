@@ -99,6 +99,35 @@ export const DEFAULT_MAS_PEDIDO: MasPedidoConfig = {
   productId: '',
 }
 
+export type BrandHeroSlide = {
+  image: string
+  text: string
+}
+
+export type BrandHeroConfig = {
+  slides: BrandHeroSlide[]
+}
+
+export const DEFAULT_JORDAN_HERO: BrandHeroConfig = {
+  slides: [
+    { image: '/brands/jordan/hero-1.webp', text: 'Listo para volar' },
+    { image: '/brands/jordan/hero-2.webp', text: 'Elevá tu juego' },
+  ],
+}
+
+export const DEFAULT_NIKE_HERO: BrandHeroConfig = {
+  slides: [
+    { image: '/brands/nike/hero_nike_1.jpg', text: 'Just Do It' },
+    { image: '/brands/nike/hero_nike_2.jpg', text: 'Built to Move' },
+  ],
+}
+
+export const DEFAULT_ADIDAS_HERO: BrandHeroConfig = {
+  slides: [
+    { image: '', text: '' },
+  ],
+}
+
 export const DEFAULT_CATEGORY_CARDS: CategoryCard[] = [
   {
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85',

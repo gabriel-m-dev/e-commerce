@@ -11,12 +11,15 @@ import { formatPrice } from '@/lib/utils'
 import useCartStore from '@/store/cart'
 import ProductColorSelector from './ProductColorSelector'
 
-const JORDAN_SLIDES = [
+const JORDAN_SLIDES_DEFAULT = [
   { image: '/brands/jordan/hero-1.webp', text: 'Listo para volar' },
   { image: '/brands/jordan/hero-2.webp', text: 'Elevá tu juego' },
-] as const
+]
 
-export function JordanHeroSlider() {
+type BrandHeroSlide = { image: string; text: string }
+
+export function JordanHeroSlider({ slides }: { slides?: BrandHeroSlide[] }) {
+  const SLIDES = slides && slides.length > 0 ? slides : JORDAN_SLIDES_DEFAULT
   const [current, setCurrent]     = useState(0)
   const [prev, setPrev]           = useState<number | null>(null)
   const [textVisible, setTextVisible] = useState(true)
@@ -31,7 +34,7 @@ export function JordanHeroSlider() {
 
     const advance = () => {
       const oldIdx = currentRef.current
-      const nextIdx = (oldIdx + 1) % JORDAN_SLIDES.length
+      const nextIdx = (oldIdx + 1) % SLIDES.length
       currentRef.current = nextIdx
 
       setPrev(oldIdx)
@@ -61,6 +64,7 @@ export function JordanHeroSlider() {
       clearTimeout(textShowTimer)
       clearTimeout(prevTimer)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -71,7 +75,7 @@ export function JordanHeroSlider() {
       `}</style>
 
       {/* All slides always in DOM so images are preloaded before any transition */}
-      {JORDAN_SLIDES.map((slide, i) => {
+      {SLIDES.map((slide, i) => {
         const isCurrent = i === current
         const isPrev    = i === prev
 
@@ -105,7 +109,7 @@ export function JordanHeroSlider() {
             transition: 'opacity 350ms ease, transform 350ms ease',
           }}
         >
-          {JORDAN_SLIDES[textIndex].text}
+          {SLIDES[textIndex].text}
         </p>
       </div>
     </div>
@@ -113,12 +117,13 @@ export function JordanHeroSlider() {
 }
 
 
-const NIKE_SLIDES = [
+const NIKE_SLIDES_DEFAULT = [
   { image: '/brands/nike/hero_nike_1.jpg', text: 'Just Do It' },
   { image: '/brands/nike/hero_nike_2.jpg', text: 'Built to Move' },
-] as const
+]
 
-export function NikeHeroSlider() {
+export function NikeHeroSlider({ slides }: { slides?: BrandHeroSlide[] }) {
+  const SLIDES = slides && slides.length > 0 ? slides : NIKE_SLIDES_DEFAULT
   const [current, setCurrent]     = useState(0)
   const [prev, setPrev]           = useState<number | null>(null)
   const [textVisible, setTextVisible] = useState(true)
@@ -133,7 +138,7 @@ export function NikeHeroSlider() {
 
     const advance = () => {
       const oldIdx = currentRef.current
-      const nextIdx = (oldIdx + 1) % NIKE_SLIDES.length
+      const nextIdx = (oldIdx + 1) % SLIDES.length
       currentRef.current = nextIdx
 
       setPrev(oldIdx)
@@ -163,6 +168,7 @@ export function NikeHeroSlider() {
       clearTimeout(textShowTimer)
       clearTimeout(prevTimer)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -173,7 +179,7 @@ export function NikeHeroSlider() {
       `}</style>
 
       {/* All slides always in DOM so images are preloaded before any transition */}
-      {NIKE_SLIDES.map((slide, i) => {
+      {SLIDES.map((slide, i) => {
         const isCurrent = i === current
         const isPrev    = i === prev
 
@@ -207,7 +213,7 @@ export function NikeHeroSlider() {
             transition: 'opacity 350ms ease, transform 350ms ease',
           }}
         >
-          {NIKE_SLIDES[textIndex].text}
+          {SLIDES[textIndex].text}
         </p>
       </div>
     </div>

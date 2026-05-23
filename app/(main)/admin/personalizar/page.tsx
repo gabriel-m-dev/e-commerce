@@ -86,6 +86,17 @@ const SECTIONS = [
     ),
   },
   {
+    href: '/admin/personalizar/brand-hero',
+    title: 'Slider Hero de Marcas',
+    description: 'Imágenes y texto del slider hero en las brand pages de Jordan, Nike y Adidas.',
+    icon: (
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="5" width="20" height="14" rx="1" />
+        <path d="M8 12h8M14 9l3 3-3 3" />
+      </svg>
+    ),
+  },
+  {
     href: '/admin/personalizar/nuestra-seleccion',
     title: 'Nuestra Selección',
     description: 'Elegí hasta 4 productos para destacar en la sección editorial de la homepage.',
