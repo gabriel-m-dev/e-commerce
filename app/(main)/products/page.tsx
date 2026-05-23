@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import { getProducts, getNewProducts, getProductsByIds, getCategories } from '@/lib/queries/products'
 import { getSiteConfig, getMasPedidoProduct, getBrandHeroConfig } from '@/lib/queries/site-config'
-import ProductsWithFilters, { JordanHeroSlider, NikeHeroSlider } from '@/components/product/ProductsWithFilters'
+import ProductsWithFilters, { JordanHeroSlider, NikeHeroSlider, AdidasHeroSlider } from '@/components/product/ProductsWithFilters'
 import BrandBgImage from '@/components/product/BrandBgImage'
 import BrandEditorialHeader from '@/components/product/BrandEditorialHeader'
 import BrandNewArrivalsSlider from '@/components/product/BrandNewArrivalsSlider'
@@ -291,6 +291,11 @@ export default async function ProductsPage({
             {brandFilter === 'NIKE' && (
               <div className="-mx-6 lg:-mx-10 md:px-20">
                 <NikeHeroSlider slides={brandHeroConfig?.slides} />
+              </div>
+            )}
+            {brandFilter === 'ADIDAS' && (
+              <div className="-mx-6 lg:-mx-10 md:px-20">
+                <AdidasHeroSlider slides={brandHeroConfig?.slides} />
               </div>
             )}
 

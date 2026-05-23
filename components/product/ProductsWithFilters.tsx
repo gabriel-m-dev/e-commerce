@@ -221,6 +221,110 @@ export function NikeHeroSlider({ slides }: { slides?: BrandHeroSlide[] }) {
 }
 
 
+const ADIDAS_SLIDES_DEFAULT = [
+  { image: '', text: '' },
+]
+
+export function AdidasHeroSlider({ slides }: { slides?: BrandHeroSlide[] }) {
+  const SLIDES = slides && slides.length > 0 ? slides : ADIDAS_SLIDES_DEFAULT
+  const [current, setCurrent]     = useState(0)
+  const [prev, setPrev]           = useState<number | null>(null)
+  const [textVisible, setTextVisible] = useState(true)
+  const [textIndex, setTextIndex] = useState(0)
+  const currentRef = useRef(0)
+
+  useEffect(() => {
+    let textSwapTimer: ReturnType<typeof setTimeout>
+    let textShowTimer: ReturnType<typeof setTimeout>
+    let prevTimer:     ReturnType<typeof setTimeout>
+    let intervalId:    ReturnType<typeof setInterval> | undefined
+
+    const advance = () => {
+      const oldIdx = currentRef.current
+      const nextIdx = (oldIdx + 1) % SLIDES.length
+      currentRef.current = nextIdx
+
+      setPrev(oldIdx)
+      setCurrent(nextIdx)
+      setTextVisible(false)
+
+      clearTimeout(textSwapTimer)
+      clearTimeout(textShowTimer)
+      clearTimeout(prevTimer)
+
+      textSwapTimer = setTimeout(() => setTextIndex(nextIdx), 400)
+      textShowTimer = setTimeout(() => setTextVisible(true), 600)
+      prevTimer     = setTimeout(() => setPrev(null), 700)
+    }
+
+    const firstTick = setTimeout(() => {
+      advance()
+      intervalId = setInterval(advance, 4000)
+    }, 2800)
+
+    return () => {
+      clearTimeout(firstTick)
+      if (intervalId !== undefined) clearInterval(intervalId)
+      clearTimeout(textSwapTimer)
+      clearTimeout(textShowTimer)
+      clearTimeout(prevTimer)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  if (!SLIDES.some(s => s.image)) return null
+
+  return (
+    <div className="-ml-[5px] relative w-full aspect-[3/4] md:aspect-[16/7] overflow-hidden">
+      <style>{`
+        @keyframes adidas-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+        @keyframes adidas-slide-in  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+      `}</style>
+
+      {SLIDES.map((slide, i) => {
+        const isCurrent = i === current
+        const isPrev    = i === prev
+
+        let style: React.CSSProperties
+        if (isPrev)              style = { zIndex: 1, animation: 'adidas-slide-out 700ms ease-in-out forwards' }
+        else if (isCurrent && prev !== null) style = { zIndex: 2, animation: 'adidas-slide-in 700ms ease-in-out forwards' }
+        else if (isCurrent)     style = { zIndex: 1 }
+        else                    style = { zIndex: 0, opacity: 0 }
+
+        return (
+          <div key={i} className="absolute inset-0" style={style}>
+            {slide.image && (
+              <Image
+                src={slide.image}
+                alt={isCurrent ? 'Adidas Collection' : ''}
+                fill
+                className="object-cover"
+                priority
+              />
+            )}
+          </div>
+        )
+      })}
+
+      <div className="absolute inset-0 bg-black/45" style={{ zIndex: 3 }} aria-hidden />
+
+      <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-8" style={{ zIndex: 4 }}>
+        <p
+          className="text-white uppercase tracking-[0.32em] text-lg font-medium md:text-2xl leading-tight"
+          style={{
+            opacity: textVisible ? 1 : 0,
+            transform: textVisible ? 'translateY(0)' : 'translateY(8px)',
+            transition: 'opacity 350ms ease, transform 350ms ease',
+          }}
+        >
+          {SLIDES[textIndex].text}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+
 type NavGroup = { label: string; category: string | null; sub: string[] | null }
 
 export type CategoryMeta = { name: string; slug: string; group: string }
