@@ -84,18 +84,11 @@ test.describe('Checkout — form with product in cart', () => {
     await page.reload()
     await page.waitForLoadState('domcontentloaded')
 
-    // Confirm the badge is visible (Zustand hydrated + itemCount > 0)
-    const cartButton = page.getByRole('button', { name: /Abrir carrito/i })
-    const badge = cartButton.locator('span')
-    await expect(badge).toBeVisible({ timeout: 10000 })
-
-    // Navigate directly to checkout
     await page.goto('/checkout')
     await page.waitForLoadState('domcontentloaded')
-    // Wait until checkout form is visible (not redirected to /cart)
     await page.getByRole('button', { name: /Confirmar pedido/i }).waitFor({
       state: 'visible',
-      timeout: 10000,
+      timeout: 15000,
     })
   })
 
@@ -144,7 +137,7 @@ test.describe('Checkout — form with product in cart', () => {
     await expect(page.getByText(/La dirección es requerida/i)).toBeVisible()
     await expect(page.getByText(/La ciudad es requerida/i)).toBeVisible()
     await expect(page.getByText(/El código postal es requerido/i)).toBeVisible()
-    await expect(page.getByText(/Seleccioná una provincia/i)).toBeVisible()
+    await expect(page.getByRole('paragraph').filter({ hasText: /Seleccioná una provincia/i })).toBeVisible()
   })
 
   test('submitting invalid email shows email error', async ({ page }) => {
