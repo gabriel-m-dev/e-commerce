@@ -16,7 +16,7 @@ interface BrandNewArrivalsSliderProps {
 export default function BrandNewArrivalsSlider({ products, theme }: BrandNewArrivalsSliderProps) {
   const router = useRouter()
   const isDark = theme === 'dark'
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, align: 'start' })
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, align: 'start', dragFree: false, containScroll: 'keepSnaps' })
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([])
   const [canScrollPrev, setCanScrollPrev] = useState(false)
@@ -73,7 +73,7 @@ export default function BrandNewArrivalsSlider({ products, theme }: BrandNewArri
                 : 0
 
               return (
-                <div key={product.id} className="shrink-0 pl-4 basis-[85%] md:basis-1/3">
+                <div key={product.id} className="shrink-0 pl-4 basis-[46%] md:basis-1/3">
                   <div className="relative overflow-hidden">
                     <div className="relative aspect-[4/5] w-full">
                       <Image

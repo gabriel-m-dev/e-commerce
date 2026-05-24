@@ -36,11 +36,17 @@ const EMBERS = [
   { left: "75%",   delay: "0.9s",  dur: "3.4s", dx: "-8px", dx2: "3px"   },
 ]
 
-export default function BrandMasPedido({ product }: { product: DbProduct | null }) {
+export default function BrandMasPedido({ product, bgColor = '#0a0a0a' }: { product: DbProduct | null; bgColor?: string }) {
   const [activeThumb, setActiveThumb] = useState(0)
   const touchStartX = useRef(0)
 
   if (!product) return null
+
+  const isDark = bgColor === '#0a0a0a'
+  const textPrimary = isDark ? 'text-white' : 'text-[#0a0a0a]'
+  const textMuted = isDark ? 'text-white/50' : 'text-[#0a0a0a]/50'
+  const borderColor = isDark ? 'border-white' : 'border-[#0a0a0a]'
+  const hoverBg = isDark ? 'hover:bg-white hover:text-[#0a0a0a]' : 'hover:bg-[#0a0a0a] hover:text-white'
 
   const images = product.images && product.images.length > 0 ? product.images : [product.image]
   const total = images.length
@@ -53,7 +59,7 @@ export default function BrandMasPedido({ product }: { product: DbProduct | null 
   }
 
   return (
-    <div className="relative overflow-hidden w-full bg-[#0a0a0a] text-white px-6 lg:px-10 py-12">
+    <div className="relative overflow-hidden w-full px-6 lg:px-10 py-12" style={{ backgroundColor: bgColor }}>
       {/* Pure CSS ember layer */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {EMBERS.map((e, i) => (
@@ -95,7 +101,7 @@ export default function BrandMasPedido({ product }: { product: DbProduct | null 
       </div>
 
       {/* Section title — matches "NUEVOS INGRESOS" style */}
-      <p className="relative z-10 text-[22px] font-medium uppercase tracking-[0.18em] leading-none text-white mb-8 text-center">
+      <p className={`relative z-10 text-[22px] font-medium uppercase tracking-[0.18em] leading-none mb-8 text-center ${textPrimary}`}>
         MAS PEDIDO
       </p>
 
@@ -183,7 +189,7 @@ export default function BrandMasPedido({ product }: { product: DbProduct | null 
         <div className="mt-3 flex flex-col gap-1 items-center text-center">
           <Link
             href={`/product/${product.slug}`}
-            className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white hover:opacity-80 transition-opacity line-clamp-2"
+            className={`text-[11px] font-semibold uppercase tracking-[0.12em] hover:opacity-80 transition-opacity line-clamp-2 ${textPrimary}`}
           >
             {product.name}
           </Link>
@@ -192,7 +198,7 @@ export default function BrandMasPedido({ product }: { product: DbProduct | null 
               {formatPrice(product.price)}
             </span>
             {product.comparePrice != null && product.comparePrice > product.price && (
-              <span className="text-[11px] font-normal text-white/50 line-through">
+              <span className={`text-[11px] font-normal line-through ${textMuted}`}>
                 {formatPrice(product.comparePrice)}
               </span>
             )}
@@ -200,7 +206,7 @@ export default function BrandMasPedido({ product }: { product: DbProduct | null 
           <div className="mt-3">
             <Link
               href={`/product/${product.slug}`}
-              className="inline-block border border-white px-8 py-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-white transition-colors hover:bg-white hover:text-[#0a0a0a]"
+              className={`inline-block px-8 py-3 text-[10px] font-semibold uppercase tracking-[0.22em] transition-colors border ${borderColor} ${textPrimary} ${hoverBg}`}
             >
               VER PRODUCTO
             </Link>

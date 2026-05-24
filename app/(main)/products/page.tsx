@@ -327,7 +327,7 @@ export default async function ProductsPage({
             {/* Mas Pedido — hero card for the most requested product */}
             {masPedidoProduct && (
               <div className="mt-16 -mx-6 lg:-mx-10">
-                <BrandMasPedido product={masPedidoProduct} />
+                <BrandMasPedido product={masPedidoProduct} bgColor={isJordan ? '#0a0a0a' : '#ffffff'} />
               </div>
             )}
 

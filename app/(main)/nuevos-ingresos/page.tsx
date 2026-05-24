@@ -24,9 +24,10 @@ export default async function NuevosIngresosPage() {
           No hay nuevos productos disponibles por el momento.
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-10">
           {products.map((product) => (
-            <Link key={product.id} href={`/product/${product.slug}`} className="group">
+            <div key={product.id} className="aspect-square w-full">
+            <Link href={`/product/${product.slug}`} className="group">
               <div className="relative aspect-square w-full overflow-hidden bg-surface">
                 <Image
                   src={product.image}
@@ -46,6 +47,7 @@ export default async function NuevosIngresosPage() {
                 </p>
               </div>
             </Link>
+            </div>
           ))}
         </div>
       )}

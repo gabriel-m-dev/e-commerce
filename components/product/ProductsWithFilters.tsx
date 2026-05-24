@@ -172,7 +172,14 @@ export function NikeHeroSlider({ slides }: { slides?: BrandHeroSlide[] }) {
   }, [])
 
   return (
-    <div className="-ml-[5px] relative w-full aspect-[3/4] md:aspect-[16/7] overflow-hidden">
+    <div
+      className="mt-10 relative aspect-[3/4] md:aspect-[16/7] overflow-hidden"
+      style={{
+        width: '100vw',
+        marginLeft: 'calc(50% - 50vw)',
+        marginRight: 'calc(50% - 50vw)',
+      }}
+    >
       <style>{`
         @keyframes nike-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
         @keyframes nike-slide-in  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
