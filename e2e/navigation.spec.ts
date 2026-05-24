@@ -69,7 +69,7 @@ test.describe('Nuevos Ingresos', () => {
     await page.waitForLoadState('domcontentloaded')
     await expect(page.locator('#main-content')).toBeVisible()
     await expect(
-      page.getByText('Nuevos Ingresos', { exact: false })
+      page.getByRole('heading', { name: 'Nuevos Ingresos', exact: true })
     ).toBeVisible()
   })
 })

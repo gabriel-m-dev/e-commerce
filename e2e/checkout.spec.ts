@@ -54,13 +54,19 @@ test.describe('Checkout — form with product in cart', () => {
     await addButton.waitFor({ state: 'visible', timeout: 10000 })
     await addButton.click()
 
+    // Wait for the cart badge to confirm the item was stored in Zustand/localStorage
+    // before navigating away — prevents the checkout empty-cart guard from firing.
+    const cartIconButton = page.getByRole('button', { name: /Abrir carrito/i })
+    const badge = cartIconButton.locator('span')
+    await expect(badge).toBeVisible({ timeout: 10000 })
+
     // Navigate directly to checkout
     await page.goto('/checkout')
     await page.waitForLoadState('domcontentloaded')
     // Wait until checkout form is visible (not redirected to /cart)
     await page.getByRole('button', { name: /Confirmar pedido/i }).waitFor({
       state: 'visible',
-      timeout: 8000,
+      timeout: 10000,
     })
   })
 
@@ -121,6 +127,10 @@ test.describe('Checkout — form with product in cart', () => {
   })
 
   test('valid form submission triggers redirect toward MercadoPago', async ({ page }) => {
+    // Wait for React hydration to settle before filling fields — prevents
+    // "element was detached from the DOM" errors caused by re-renders.
+    await page.waitForLoadState('networkidle')
+
     // Fill all required fields with valid data
     await page.getByLabel(/Email/i).fill('test@luxe-e2e.com')
     await page.getByLabel(/Teléfono/i).fill('+54 11 1234-5678')
@@ -149,7 +159,6 @@ test.describe('Checkout — form with product in cart', () => {
       { timeout: 15000 }
     ).catch(() => null)
 
-    await page.waitForLoadState('networkidle')
     await page.getByRole('button', { name: /Confirmar pedido/i }).click()
 
     // Wait for either redirect or error message

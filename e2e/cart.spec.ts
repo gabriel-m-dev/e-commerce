@@ -63,7 +63,10 @@ test.describe('Cart drawer', () => {
 
     // After adding, the navbar cart icon should show a badge with count >= 1.
     // The badge <span> is conditionally rendered only when mounted && itemCount > 0.
-    const badge = page.locator('button[aria-label="Abrir carrito"] > span')
+    // It sits inside the button alongside the SVG — use a scoped locator instead
+    // of a CSS child combinator so Playwright waits for hydration properly.
+    const cartButton = page.getByRole('button', { name: /Abrir carrito/i })
+    const badge = cartButton.locator('span')
     await expect(badge).toBeVisible({ timeout: 10000 })
     const badgeText = await badge.textContent()
     expect(Number(badgeText)).toBeGreaterThanOrEqual(1)
@@ -141,8 +144,9 @@ test.describe('Cart drawer', () => {
     await page.waitForLoadState('domcontentloaded')
 
     // Cart badge should still reflect item count.
-    // Use direct child selector — badge <span> is a direct child of the button.
-    const badge = page.locator('button[aria-label="Abrir carrito"] > span')
+    // Use a scoped locator on the button so Playwright retries through hydration.
+    const cartButton = page.getByRole('button', { name: /Abrir carrito/i })
+    const badge = cartButton.locator('span')
     await expect(badge).toBeVisible({ timeout: 10000 })
     const count = await badge.textContent()
     expect(Number(count)).toBeGreaterThanOrEqual(1)
