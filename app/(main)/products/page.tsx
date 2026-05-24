@@ -75,11 +75,18 @@ export default async function ProductsPage({
   const newArrivalsCustomIds = newArrivalsConfig?.productIds?.length ? newArrivalsConfig.productIds : undefined
   const newBrandProducts = isEditorialBrand ? await getNewProducts(10, brandFilter, newArrivalsCustomIds) : []
 
-  const brandSneakers = sneakersConfig?.productIds?.length
-    ? await getProductsByIds(sneakersConfig.productIds)
-    : isEditorialBrand && brandFilter
-      ? await getProducts({ categorySlug: 'zapatillas', brand: brandFilter })
-      : []
+  const brandSneakersBase = isEditorialBrand && brandFilter
+    ? await getProducts({ categorySlug: 'zapatillas', brand: brandFilter })
+    : []
+  const brandSneakers = (() => {
+    const configIds = sneakersConfig?.productIds?.length ? sneakersConfig.productIds : null
+    if (!configIds) return brandSneakersBase
+    const pinned = configIds
+      .map((pid) => brandSneakersBase.find((p) => p.id === pid))
+      .filter((p): p is NonNullable<typeof p> => p !== undefined)
+    const rest = brandSneakersBase.filter((p) => !configIds.includes(p.id))
+    return [...pinned, ...rest]
+  })()
 
   return (
     <>

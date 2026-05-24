@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createSupabaseAdmin } from '@supabase/supabase-js'
+import { getSiteConfig, upsertSiteConfig } from '@/lib/queries/site-config'
 
 const STORAGE_BUCKET = 'products'
 
@@ -134,6 +135,31 @@ export async function PUT(
       },
       include: { category: true },
     })
+
+    // If brand changed, remove product ID from old brand's sneakersConfig
+    const oldBrand = existing.brand as string | null
+    const newBrand = (brand as string | undefined) ?? 'OTROS'
+    if (oldBrand && oldBrand !== newBrand) {
+      const oldSneakersKey =
+        oldBrand === 'NIKE' ? 'brandSneakersNike' as const
+        : oldBrand === 'JORDAN' ? 'brandSneakersJordan' as const
+        : oldBrand === 'ADIDAS' ? 'brandSneakersAdidas' as const
+        : null
+      if (oldSneakersKey) {
+        try {
+          const oldConfig = await getSiteConfig(oldSneakersKey)
+          if (oldConfig?.productIds?.includes(id)) {
+            await upsertSiteConfig(oldSneakersKey, {
+              ...oldConfig,
+              productIds: oldConfig.productIds.filter((pid) => pid !== id),
+            })
+          }
+        } catch (err) {
+          console.error('[PUT /api/admin/products/[id]] sneakersConfig cleanup failed', err)
+        }
+      }
+    }
+
     return NextResponse.json({ product }, { status: 200 })
   } catch (err: unknown) {
     if (err instanceof Error && err.message.includes('Unique constraint')) {
