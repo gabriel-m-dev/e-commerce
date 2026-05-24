@@ -11,6 +11,35 @@ import { test, expect } from '@playwright/test'
  *   useEffect: `if (mounted && items.length === 0) router.replace('/cart')`).
  */
 
+/** Inject a fake product into the Zustand 'luxe-cart' localStorage key. */
+async function injectCartProduct(page: import('@playwright/test').Page) {
+  await page.evaluate(() => {
+    const cartState = {
+      state: {
+        items: [
+          {
+            product: {
+              id: 'test-product-e2e',
+              name: 'TEST PRODUCT E2E',
+              slug: 'test-product-e2e',
+              price: 10000,
+              image: '/placeholder.jpg',
+              category: 'Zapatillas',
+              stock: 10,
+            },
+            size: undefined,
+            color: undefined,
+            quantity: 1,
+          },
+        ],
+        isOpen: false,
+      },
+      version: 0,
+    }
+    localStorage.setItem('luxe-cart', JSON.stringify(cartState))
+  })
+}
+
 test.describe('Checkout — empty cart guard', () => {
   test('redirects to /cart when cart is empty', async ({ page }) => {
     // Clear any leftover cart state
@@ -39,25 +68,25 @@ test.describe('Checkout — empty cart guard', () => {
 
 test.describe('Checkout — form with product in cart', () => {
   /**
-   * Before each test: navigate to /products and add one item to the cart,
-   * then go directly to /checkout.
+   * Before each test: inject a fake product into localStorage so Zustand
+   * hydrates with cart items, then navigate directly to /checkout.
+   * This avoids brittle UI click chains to add real products.
    */
   test.beforeEach(async ({ page }) => {
-    // Clear previous cart state to keep tests independent
+    // Start on homepage, clear any previous cart state
     await page.goto('/')
     await page.evaluate(() => localStorage.clear())
 
-    await page.goto('/products')
+    // Inject fake product into localStorage before reload
+    await injectCartProduct(page)
+
+    // Reload so Zustand hydrates from the injected localStorage state
+    await page.reload()
     await page.waitForLoadState('domcontentloaded')
 
-    const addButton = page.getByRole('button', { name: /Agregar .+ al carrito/i }).first()
-    await addButton.waitFor({ state: 'visible', timeout: 10000 })
-    await addButton.click()
-
-    // Wait for the cart badge to confirm the item was stored in Zustand/localStorage
-    // before navigating away — prevents the checkout empty-cart guard from firing.
-    const cartIconButton = page.getByRole('button', { name: /Abrir carrito/i })
-    const badge = cartIconButton.locator('span')
+    // Confirm the badge is visible (Zustand hydrated + itemCount > 0)
+    const cartButton = page.getByRole('button', { name: /Abrir carrito/i })
+    const badge = cartButton.locator('span')
     await expect(badge).toBeVisible({ timeout: 10000 })
 
     // Navigate directly to checkout
