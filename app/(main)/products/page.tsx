@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Tienda',
-  description: 'Explorá toda la colección LUXE. Zapatillas, hoodies, remeras, pantalones, gorras y mochilas premium. Filtros por categoría y búsqueda instantánea.',
+  description: 'Explorá toda la colección LUXE. Zapatillas, buzos, remeras, pantalones, gorras y mochilas premium. Filtros por categoría y búsqueda instantánea.',
   openGraph: {
     title: `Tienda — ${SITE_NAME}`,
     description: 'Toda la colección LUXE. en un solo lugar. Diseño premium, calidad que se siente.',

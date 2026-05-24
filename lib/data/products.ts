@@ -32,7 +32,7 @@ export const MOCK_PRODUCTS: MockProduct[] = [
     name: 'Hoodie Oversize',
     slug: 'hoodie-oversize',
     price: 69900,
-    category: 'Hoodies',
+    category: 'Buzos',
     image: 'https://images.unsplash.com/photo-1639379789831-bbd53e09408d?q=80&w=435&auto=format&fit=crop',
     images: [
       'https://images.unsplash.com/photo-1639379789831-bbd53e09408d?w=900&auto=format&fit=crop&q=85',
@@ -92,7 +92,7 @@ export const MOCK_PRODUCTS: MockProduct[] = [
     name: 'Buzo Esencial',
     slug: 'buzo-esencial',
     price: 54900,
-    category: 'Hoodies',
+    category: 'Buzos',
     image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&auto=format&fit=crop&q=80',
     images: [
       'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=900&auto=format&fit=crop&q=85',
@@ -136,7 +136,7 @@ export const FEATURED_PRODUCTS = MOCK_PRODUCTS.filter((p) => p.featured)
 export const PRODUCT_CATEGORIES = [
   'Todo',
   'Gorras',
-  'Hoodies',
+  'Buzos',
   'Remeras',
   'Mochilas',
   'Zapatillas',
@@ -145,7 +145,7 @@ export const PRODUCT_CATEGORIES = [
 
 export const SIZES_BY_CATEGORY: Record<string, string[]> = {
   zapatillas: ['38', '39', '40', '41', '42', '43'],
-  hoodies: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+  buzos: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
   remeras: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
   pantalones: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
   gorras: [],

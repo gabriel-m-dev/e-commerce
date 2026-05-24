@@ -12,7 +12,7 @@ const prisma = new PrismaClient({ adapter })
 const categories = [
   { name: 'Zapatillas', slug: 'zapatillas' },
   { name: 'Gorras',     slug: 'gorras'     },
-  { name: 'Hoodies',   slug: 'hoodies'    },
+  { name: 'Buzos',     slug: 'buzos'      },
   { name: 'Remeras',   slug: 'remeras'    },
   { name: 'Mochilas',  slug: 'mochilas'   },
   { name: 'Pantalones',slug: 'pantalones' },
@@ -42,7 +42,7 @@ const products = [
     name:         'Hoodie Oversize',
     slug:         'hoodie-oversize',
     price:        69900,
-    categorySlug: 'hoodies',
+    categorySlug: 'buzos',
     images: [
       'https://images.unsplash.com/photo-1639379789831-bbd53e09408d?w=900&auto=format&fit=crop&q=85',
       'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=900&auto=format&fit=crop&q=85',
@@ -107,7 +107,7 @@ const products = [
     name:         'Buzo Esencial',
     slug:         'buzo-esencial',
     price:        54900,
-    categorySlug: 'hoodies',
+    categorySlug: 'buzos',
     images: [
       'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=900&auto=format&fit=crop&q=85',
       'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=900&auto=format&fit=crop&q=85',
@@ -320,7 +320,7 @@ async function main() {
   const categoryCardsDefault = {
     cards: [
       { image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85', label: 'Nueva colección', title: 'Zapatillas', subtitle: '5 modelos', link: '/products?category=Zapatillas' },
-      { image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=900&auto=format&fit=crop&q=85', label: 'Temporada actual', title: 'Ropa', subtitle: 'Hoodies · Remeras · Pantalones', link: '/products?category=Hoodies,Pantalones,Remeras' },
+      { image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=900&auto=format&fit=crop&q=85', label: 'Temporada actual', title: 'Ropa', subtitle: 'Buzos · Remeras · Pantalones', link: '/products?category=Buzos,Pantalones,Remeras' },
       { image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=900&auto=format&fit=crop&q=85', label: 'Esenciales', title: 'Accesorios', subtitle: 'Gorras · Mochilas', link: '/products?category=Gorras,Mochilas' },
     ],
   }

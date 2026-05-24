@@ -231,7 +231,7 @@ export async function getCategories(): Promise<{ id: string; name: string; slug:
     console.error('[getCategories] DB unavailable, using mock data:', e)
     return [
       { id: '1', name: 'Gorras',     slug: 'gorras',     group: 'ACCESORIOS' },
-      { id: '2', name: 'Hoodies',    slug: 'hoodies',    group: 'ROPA'       },
+      { id: '2', name: 'Buzos',      slug: 'buzos',      group: 'ROPA'       },
       { id: '3', name: 'Mochilas',   slug: 'mochilas',   group: 'ACCESORIOS' },
       { id: '4', name: 'Pantalones', slug: 'pantalones', group: 'ROPA'       },
       { id: '5', name: 'Remeras',    slug: 'remeras',    group: 'ROPA'       },

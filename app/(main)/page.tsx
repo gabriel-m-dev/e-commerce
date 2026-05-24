@@ -20,10 +20,10 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: { absolute: 'LUXE. — Moda Premium Argentina' },
-  description: 'Descubrí la nueva colección LUXE. Zapatillas, hoodies, remeras y accesorios de diseño premium. Envíos a todo el país.',
+  description: 'Descubrí la nueva colección LUXE. Zapatillas, buzos, remeras y accesorios de diseño premium. Envíos a todo el país.',
   openGraph: {
     title: 'LUXE. — Moda Premium Argentina',
-    description: 'Descubrí la nueva colección LUXE. Zapatillas, hoodies, remeras y accesorios de diseño premium.',
+    description: 'Descubrí la nueva colección LUXE. Zapatillas, buzos, remeras y accesorios de diseño premium.',
     url: '/',
     type: 'website',
   },

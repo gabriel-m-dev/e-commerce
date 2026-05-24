@@ -140,8 +140,8 @@ export const DEFAULT_CATEGORY_CARDS: CategoryCard[] = [
     image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=900&auto=format&fit=crop&q=85',
     label: 'Temporada actual',
     title: 'Ropa',
-    subtitle: 'Hoodies · Remeras · Pantalones',
-    link: '/products?category=Hoodies,Pantalones,Remeras',
+    subtitle: 'Buzos · Remeras · Pantalones',
+    link: '/products?category=Buzos,Pantalones,Remeras',
   },
   {
     image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=900&auto=format&fit=crop&q=85',
