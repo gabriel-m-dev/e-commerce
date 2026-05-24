@@ -8,8 +8,36 @@ import { formatPrice } from '@/lib/utils'
 import { SIZES_BY_CATEGORY } from '@/lib/data/products'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 
+const COLOR_NAMES: Record<string, string> = {
+  '#000000': 'Negro',
+  '#1c1c1c': 'Negro Carbón',
+  '#ffffff': 'Blanco',
+  '#f0f0f0': 'Blanco Hueso',
+  '#f5f5dc': 'Beige',
+  '#808080': 'Gris',
+  '#c0c0c0': 'Plata',
+  '#e8e8e8': 'Gris Claro',
+  '#ff0000': 'Rojo',
+  '#800000': 'Bordó',
+  '#ffa500': 'Naranja',
+  '#ffff00': 'Amarillo',
+  '#ffd700': 'Dorado',
+  '#c9a96e': 'Dorado',
+  '#ffc0cb': 'Rosa',
+  '#ff69b4': 'Rosa Fuerte',
+  '#0000ff': 'Azul',
+  '#000080': 'Azul Marino',
+  '#add8e6': 'Celeste',
+  '#008000': 'Verde',
+  '#90ee90': 'Verde Claro',
+  '#2f4f4f': 'Verde Oscuro',
+  '#800080': 'Violeta',
+  '#8b4513': 'Marrón',
+  '#d2691e': 'Chocolate',
+}
+
 export default function CartDrawer() {
-  const { isOpen, closeCart, items, removeItem, updateQuantity, updateSize, getTotal, getItemCount } =
+  const { isOpen, closeCart, items, removeItem, updateQuantity, updateSize, updateColor, getTotal, getItemCount } =
     useCartStore()
 
   const total = getTotal()
@@ -184,31 +212,56 @@ export default function CartDrawer() {
                               style={{ backgroundColor: item.color }}
                             />
                             <p className="text-[10px] uppercase tracking-[0.1em] text-muted">
-                              {item.color}
+                              {COLOR_NAMES[item.color.toLowerCase()] ?? item.color}
                             </p>
                           </div>
                         )}
-                        {/* Size editor */}
-                        {editingId === key && item.size && (() => {
-                          const sizes = SIZES_BY_CATEGORY[item.product.category.toLowerCase()] ?? []
+                        {/* Size/Color editor */}
+                        {editingId === key && (() => {
+                          const sizes = item.size ? (SIZES_BY_CATEGORY[item.product.category.toLowerCase()] ?? []) : []
+                          const colors = item.color ? (item.product.colors ?? []) : []
+                          const hasOptions = sizes.length > 0 || colors.length > 0
+                          if (!hasOptions) return null
                           return (
-                            <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                              {sizes.map((s) => (
-                                <button
-                                  key={s}
-                                  onClick={() => {
-                                    if (s !== item.size) updateSize(item.product.id, item.size, s, item.color)
-                                    setEditingId(null)
-                                  }}
-                                  className={`h-7 min-w-[2rem] border px-1.5 text-[10px] font-medium transition-colors cursor-pointer ${
-                                    s === item.size
-                                      ? 'border-foreground bg-foreground text-background'
-                                      : 'border-border text-foreground hover:border-foreground'
-                                  }`}
-                                >
-                                  {s}
-                                </button>
-                              ))}
+                            <div className="mt-2 flex flex-col gap-2">
+                              {sizes.length > 0 && (
+                                <div className="flex flex-wrap items-center gap-1.5">
+                                  {sizes.map((s) => (
+                                    <button
+                                      key={s}
+                                      onClick={() => {
+                                        if (s !== item.size) updateSize(item.product.id, item.size, s, item.color)
+                                        setEditingId(null)
+                                      }}
+                                      className={`h-7 min-w-[2rem] border px-1.5 text-[10px] font-medium transition-colors cursor-pointer ${
+                                        s === item.size
+                                          ? 'border-foreground bg-foreground text-background'
+                                          : 'border-border text-foreground hover:border-foreground'
+                                      }`}
+                                    >
+                                      {s}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                              {colors.length > 0 && (
+                                <div className="flex flex-wrap items-center gap-1.5">
+                                  {colors.map((c) => (
+                                    <button
+                                      key={c}
+                                      onClick={() => {
+                                        if (c !== item.color) updateColor(item.product.id, item.color, c, item.size)
+                                        setEditingId(null)
+                                      }}
+                                      aria-label={COLOR_NAMES[c.toLowerCase()] ?? c}
+                                      className={`h-6 w-6 rounded-full border-2 transition-all cursor-pointer ${
+                                        c === item.color ? 'border-foreground scale-110' : 'border-transparent hover:border-muted'
+                                      }`}
+                                      style={{ backgroundColor: c }}
+                                    />
+                                  ))}
+                                </div>
+                              )}
                               <button
                                 onClick={() => setEditingId(null)}
                                 aria-label="Cancelar edición"
@@ -255,11 +308,11 @@ export default function CartDrawer() {
                         </div>
                       ) : (
                         <div className="flex shrink-0 items-center gap-3">
-                          {/* Edit size — solo para productos con talle */}
-                          {item.size && (
+                          {/* Edit size/color — para productos con talle o color */}
+                          {(item.size || item.color) && (
                             <button
                               onClick={() => setEditingId(editingId === key ? null : key)}
-                              aria-label={`Editar talle de ${item.product.name}`}
+                              aria-label={`Editar ${item.product.name}`}
                               className="flex h-8 w-8 items-center justify-center text-muted transition-opacity hover:opacity-70 cursor-pointer"
                             >
                               <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

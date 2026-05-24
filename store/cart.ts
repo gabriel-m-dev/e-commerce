@@ -9,6 +9,7 @@ export type CartProduct = {
   image: string
   category: string
   stock: number
+  colors?: string[]
 }
 
 export type CartItem = {
@@ -27,6 +28,7 @@ type CartStore = {
   removeItem: (productId: string, size?: string, color?: string) => void
   updateQuantity: (productId: string, quantity: number, size?: string, color?: string) => void
   updateSize: (productId: string, oldSize: string | undefined, newSize: string, color?: string) => void
+  updateColor: (productId: string, oldColor: string | undefined, newColor: string, size?: string) => void
   clearCart: () => void
   getItemCount: () => number
   getTotal: () => number
@@ -123,6 +125,15 @@ const useCartStore = create<CartStore>()(
           }
         })
       },
+
+      updateColor: (productId, oldColor, newColor, size) =>
+        set((state) => ({
+          items: state.items.map((i) =>
+            i.product.id === productId && i.color === oldColor && i.size === size
+              ? { ...i, color: newColor }
+              : i
+          ),
+        })),
 
       clearCart: () => set({ items: [] }),
 
