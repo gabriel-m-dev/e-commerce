@@ -320,6 +320,89 @@ describe('POST /api/checkout/create-preference', () => {
 
     expect(res.status).toBe(500)
   })
+
+  it('returns 400 when product is inactive', async () => {
+    mockAnonAuth()
+    ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { id: PRODUCT_ID, price: 15000, stock: 10, active: false },
+    ])
+    const req = makeCreatePreferenceRequest({
+      items: [makeCartItem()],
+      buyer: makeBuyer(),
+      shipping: makeShipping(),
+    })
+    const res = await createPreferencePost(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('returns 400 when product does not exist in DB', async () => {
+    mockAnonAuth()
+    ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([])
+    const req = makeCreatePreferenceRequest({
+      items: [makeCartItem()],
+      buyer: makeBuyer(),
+      shipping: makeShipping(),
+    })
+    const res = await createPreferencePost(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('ignores client-sent price and uses DB price for order total', async () => {
+    mockAnonAuth()
+    ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
+    ])
+    ;(prisma.order.create as ReturnType<typeof vi.fn>).mockResolvedValue({ id: ORDER_ID })
+    mockPreferenceCreate.mockResolvedValue({ id: 'pref-x', init_point: 'https://mp.com/pref-x' })
+
+    // Client tries to send price: 1 — should be ignored
+    const itemWithFakePrice = makeCartItem()
+    ;(itemWithFakePrice as Record<string, unknown>).product = {
+      ...itemWithFakePrice.product,
+      price: 1,
+    }
+
+    const req = makeCreatePreferenceRequest({
+      items: [itemWithFakePrice],
+      buyer: makeBuyer(),
+      shipping: makeShipping(),
+    })
+    const res = await createPreferencePost(req)
+
+    expect(res.status).toBe(200)
+    const orderCreateCall = (prisma.order.create as ReturnType<typeof vi.fn>).mock.calls[0][0]
+    // Order item price must use DB price (15000), not client price (1)
+    expect(orderCreateCall.data.items.create[0].price).toBe(15000)
+    expect(Number(orderCreateCall.data.total)).toBe(15000)
+  })
+
+  it('returns 400 when quantity is zero', async () => {
+    mockAnonAuth()
+    ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
+    ])
+    const req = makeCreatePreferenceRequest({
+      items: [makeCartItem({ quantity: 0 })],
+      buyer: makeBuyer(),
+      shipping: makeShipping(),
+    })
+    const res = await createPreferencePost(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('returns 400 when quantity is negative', async () => {
+    mockAnonAuth()
+    ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
+    ])
+    const req = makeCreatePreferenceRequest({
+      items: [makeCartItem({ quantity: -5 })],
+      buyer: makeBuyer(),
+      shipping: makeShipping(),
+    })
+    const res = await createPreferencePost(req)
+    expect(res.status).toBe(400)
+  })
 })
 
 // ===========================================================================

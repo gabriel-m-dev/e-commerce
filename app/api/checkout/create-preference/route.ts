@@ -76,6 +76,12 @@ export async function POST(request: NextRequest) {
       if (!dbProduct.active) {
         return Response.json({ error: `El producto "${item.product.name}" no está disponible.` }, { status: 400 })
       }
+      if (!Number.isInteger(item.quantity) || item.quantity <= 0) {
+        return Response.json(
+          { error: `Cantidad inválida para "${item.product.name}".` },
+          { status: 400 }
+        )
+      }
       if (dbProduct.stock < item.quantity) {
         return Response.json(
           { error: `Stock insuficiente para "${item.product.name}". Disponible: ${dbProduct.stock}.` },
