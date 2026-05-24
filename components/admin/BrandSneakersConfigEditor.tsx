@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { formatPrice } from '@/lib/utils'
@@ -19,6 +20,7 @@ export default function BrandSneakersConfigEditor({
   products,
   initialProductIds,
 }: BrandSneakersConfigEditorProps) {
+  const router = useRouter()
   const [selectedIds, setSelectedIds] = useState<string[]>(initialProductIds)
   const [search, setSearch] = useState('')
   const [saving, setSaving] = useState(false)
@@ -52,6 +54,7 @@ export default function BrandSneakersConfigEditor({
       })
       if (!res.ok) throw new Error()
       toast.success('Selección guardada')
+      router.refresh()
     } catch {
       toast.error('Error al guardar')
     } finally {

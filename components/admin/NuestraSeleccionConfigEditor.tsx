@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { formatPrice } from '@/lib/utils'
@@ -20,6 +21,7 @@ export default function NuestraSeleccionConfigEditor({
   products: DbProduct[]
   initialProductIds: string[]
 }) {
+  const router = useRouter()
   const [slotIds, setSlotIds] = useState<string[]>(
     Array.from({ length: 4 }, (_, i) => initialProductIds[i] ?? '')
   )
@@ -62,6 +64,7 @@ export default function NuestraSeleccionConfigEditor({
       })
       if (!res.ok) throw new Error()
       toast.success('Selección guardada')
+      router.refresh()
     } catch {
       toast.error('Error al guardar')
     } finally {

@@ -136,7 +136,7 @@ export async function PUT(
       include: { category: true },
     })
 
-    // If brand changed, remove product ID from old brand's sneakersConfig
+    // If brand changed, remove product ID from old brand's sneakersConfig, newArrivals, and masPedido
     const oldBrand = existing.brand as string | null
     const newBrand = (brand as string | undefined) ?? 'OTROS'
     if (oldBrand && oldBrand !== newBrand) {
@@ -156,6 +156,41 @@ export async function PUT(
           }
         } catch (err) {
           console.error('[PUT /api/admin/products/[id]] sneakersConfig cleanup failed', err)
+        }
+      }
+
+      const oldNewArrivalsKey =
+        oldBrand === 'NIKE' ? 'newArrivalsNike' as const
+        : oldBrand === 'JORDAN' ? 'newArrivalsJordan' as const
+        : oldBrand === 'ADIDAS' ? 'newArrivalsAdidas' as const
+        : null
+      if (oldNewArrivalsKey) {
+        try {
+          const oldConfig = await getSiteConfig(oldNewArrivalsKey)
+          if (oldConfig?.productIds?.includes(id)) {
+            await upsertSiteConfig(oldNewArrivalsKey, {
+              ...oldConfig,
+              productIds: oldConfig.productIds.filter((pid) => pid !== id),
+            })
+          }
+        } catch (err) {
+          console.error('[PUT /api/admin/products/[id]] newArrivals cleanup failed', err)
+        }
+      }
+
+      const oldMasPedidoKey =
+        oldBrand === 'NIKE' ? 'nikeMasPedido' as const
+        : oldBrand === 'JORDAN' ? 'jordanMasPedido' as const
+        : oldBrand === 'ADIDAS' ? 'adidasMasPedido' as const
+        : null
+      if (oldMasPedidoKey) {
+        try {
+          const oldConfig = await getSiteConfig(oldMasPedidoKey)
+          if (oldConfig?.productId === id) {
+            await upsertSiteConfig(oldMasPedidoKey, { ...oldConfig, productId: null })
+          }
+        } catch (err) {
+          console.error('[PUT /api/admin/products/[id]] masPedido cleanup failed', err)
         }
       }
     }
@@ -185,6 +220,38 @@ export async function DELETE(
     if (!existing) return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 })
 
     await prisma.product.delete({ where: { id } })
+
+    // Best-effort: clean up all site-config references to this product
+    try {
+      const arrayKeys = [
+        'nuestraSeleccion',
+        'brandSneakersNike', 'brandSneakersJordan', 'brandSneakersAdidas',
+        'newArrivalsNike', 'newArrivalsJordan', 'newArrivalsAdidas',
+      ] as const
+      const singleKeys = [
+        'jordanMasPedido', 'nikeMasPedido', 'adidasMasPedido',
+        'productFeature',
+      ] as const
+
+      for (const key of arrayKeys) {
+        const cfg = await getSiteConfig(key)
+        if (cfg?.productIds?.includes(id)) {
+          await upsertSiteConfig(key, {
+            ...cfg,
+            productIds: cfg.productIds.filter((pid) => pid !== id),
+          })
+        }
+      }
+      for (const key of singleKeys) {
+        const cfg = await getSiteConfig(key)
+        if (cfg?.productId === id) {
+          await upsertSiteConfig(key, { ...cfg, productId: null })
+        }
+      }
+    } catch (err) {
+      console.error('[DELETE /api/admin/products/[id]] site-config cleanup failed', err)
+    }
+
     return NextResponse.json({ success: true }, { status: 200 })
   } catch (err: unknown) {
     if (err instanceof Error && err.message.includes('Foreign key constraint')) {

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { formatPrice } from '@/lib/utils'
@@ -21,6 +22,7 @@ export default function MasPedidoEditor({
   products: DbProduct[]
   currentIds: Record<Brand, string>
 }) {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<Brand>('JORDAN')
   const [selectedIds, setSelectedIds] = useState<Record<Brand, string>>(currentIds)
   const [search, setSearch] = useState('')
@@ -57,6 +59,7 @@ export default function MasPedidoEditor({
       })
       if (!res.ok) throw new Error()
       toast.success(`Mas Pedido ${activeTab} guardado`)
+      router.refresh()
     } catch {
       toast.error('Error al guardar')
     } finally {
