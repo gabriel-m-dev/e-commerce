@@ -41,7 +41,7 @@ test.describe('Brand pages', () => {
     await expect(page).toHaveURL(/brand=JORDAN/i)
     // The editorial page renders a <main> with product grid content
     await page.waitForLoadState('domcontentloaded')
-    await expect(page.locator('main')).toBeVisible()
+    await expect(page.locator('#main-content')).toBeVisible()
     // Confirm Jordan watermark text is rendered
     await expect(page.getByText('JORDAN', { exact: true }).first()).toBeVisible()
   })
@@ -50,7 +50,7 @@ test.describe('Brand pages', () => {
     await page.goto('/products?brand=NIKE')
     await expect(page).toHaveURL(/brand=NIKE/i)
     await page.waitForLoadState('domcontentloaded')
-    await expect(page.locator('main')).toBeVisible()
+    await expect(page.locator('#main-content')).toBeVisible()
     await expect(page.getByText('NIKE', { exact: true }).first()).toBeVisible()
   })
 
@@ -58,7 +58,7 @@ test.describe('Brand pages', () => {
     await page.goto('/products?brand=ADIDAS')
     await expect(page).toHaveURL(/brand=ADIDAS/i)
     await page.waitForLoadState('domcontentloaded')
-    await expect(page.locator('main')).toBeVisible()
+    await expect(page.locator('#main-content')).toBeVisible()
     await expect(page.getByText('ADIDAS', { exact: true }).first()).toBeVisible()
   })
 })
@@ -67,7 +67,7 @@ test.describe('Nuevos Ingresos', () => {
   test('page loads and shows heading', async ({ page }) => {
     await page.goto('/nuevos-ingresos')
     await page.waitForLoadState('domcontentloaded')
-    await expect(page.getByRole('main')).toBeVisible()
+    await expect(page.locator('#main-content')).toBeVisible()
     await expect(
       page.getByText('Nuevos Ingresos', { exact: false })
     ).toBeVisible()
@@ -80,7 +80,7 @@ test.describe('Products catalog', () => {
     await page.waitForLoadState('domcontentloaded')
     // Non-editorial view shows this label
     await expect(
-      page.getByText('Todos los productos', { exact: false })
+      page.locator('#main-content').getByText('Todos los productos', { exact: true })
     ).toBeVisible()
   })
 })

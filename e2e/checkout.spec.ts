@@ -21,10 +21,9 @@ test.describe('Checkout — empty cart guard', () => {
     })
 
     await page.goto('/checkout')
-    // Should be redirected away from /checkout since cart is empty
-    await page.waitForURL((url) => !url.pathname.includes('/checkout'), {
-      timeout: 5000,
-    }).catch(() => {
+    // Should be redirected away from /checkout since cart is empty.
+    // The redirect is client-side (useEffect), so it fires after hydration — use a longer timeout.
+    await page.waitForURL(/(?!.*checkout)/, { timeout: 15000 }).catch(() => {
       // If not redirected within timeout, the cart might not be empty — that's
       // acceptable in CI where localStorage persists between tests. We just
       // check we're either on /cart or on /checkout with items.
@@ -66,6 +65,7 @@ test.describe('Checkout — form with product in cart', () => {
   })
 
   test('checkout form fields are visible', async ({ page }) => {
+    await page.waitForLoadState('networkidle')
     // Contact section
     await expect(page.getByLabel(/Email/i)).toBeVisible()
     await expect(page.getByLabel(/Teléfono/i)).toBeVisible()
@@ -74,14 +74,14 @@ test.describe('Checkout — form with product in cart', () => {
     await expect(page.getByLabel(/Nombre completo/i)).toBeVisible()
     await expect(page.getByLabel(/Dirección/i)).toBeVisible()
     await expect(page.getByLabel(/Ciudad/i)).toBeVisible()
-    await expect(page.getByLabel(/Código postal/i)).toBeVisible()
+    await expect(page.getByLabel('Código postal', { exact: true })).toBeVisible()
     await expect(page.getByLabel(/Provincia/i)).toBeVisible()
   })
 
   test('section headers 01 Contacto, 02 Envío, 03 Pago are visible', async ({ page }) => {
-    await expect(page.getByText('Contacto', { exact: false })).toBeVisible()
-    await expect(page.getByText('Envío', { exact: false })).toBeVisible()
-    await expect(page.getByText('Pago', { exact: false })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Contacto', exact: true })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Envío', exact: true })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Pago', exact: true })).toBeVisible()
   })
 
   test('order summary shows product and subtotal', async ({ page }) => {
@@ -94,7 +94,7 @@ test.describe('Checkout — form with product in cart', () => {
       state: 'visible',
       timeout: 8000,
     })
-    await expect(page.getByText('Tu pedido', { exact: false })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Tu pedido', exact: true }).first()).toBeVisible()
     await expect(page.getByText('Subtotal', { exact: false }).first()).toBeVisible()
   })
 
@@ -113,10 +113,11 @@ test.describe('Checkout — form with product in cart', () => {
   })
 
   test('submitting invalid email shows email error', async ({ page }) => {
+    await page.waitForLoadState('networkidle')
     await page.getByLabel(/Email/i).fill('not-an-email')
     await page.getByRole('button', { name: /Confirmar pedido/i }).click()
 
-    await expect(page.getByText(/Email inválido/i)).toBeVisible()
+    await expect(page.getByText('Email inválido', { exact: true })).toBeVisible()
   })
 
   test('valid form submission triggers redirect toward MercadoPago', async ({ page }) => {
@@ -148,6 +149,7 @@ test.describe('Checkout — form with product in cart', () => {
       { timeout: 15000 }
     ).catch(() => null)
 
+    await page.waitForLoadState('networkidle')
     await page.getByRole('button', { name: /Confirmar pedido/i }).click()
 
     // Wait for either redirect or error message

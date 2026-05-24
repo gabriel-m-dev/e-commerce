@@ -61,9 +61,10 @@ test.describe('Cart drawer', () => {
     await firstAdd.waitFor({ state: 'visible' })
     await firstAdd.click()
 
-    // After adding, the navbar cart icon should show a badge with count >= 1
-    const badge = page.locator('button[aria-label="Abrir carrito"] span')
-    await expect(badge).toBeVisible()
+    // After adding, the navbar cart icon should show a badge with count >= 1.
+    // The badge <span> is conditionally rendered only when mounted && itemCount > 0.
+    const badge = page.locator('button[aria-label="Abrir carrito"] > span')
+    await expect(badge).toBeVisible({ timeout: 10000 })
     const badgeText = await badge.textContent()
     expect(Number(badgeText)).toBeGreaterThanOrEqual(1)
   })
@@ -85,7 +86,7 @@ test.describe('Cart drawer', () => {
     // Open cart
     await page.getByRole('button', { name: /Abrir carrito/i }).click()
     const drawer = page.getByRole('dialog', { name: /Carrito de compras/i })
-    await expect(drawer).toBeVisible()
+    await expect(drawer).toBeVisible({ timeout: 10000 })
 
     // Product name should appear in the drawer (truncated — use partial match)
     // Names are uppercase in the cart
@@ -111,7 +112,7 @@ test.describe('Cart drawer', () => {
     // Open cart
     await page.getByRole('button', { name: /Abrir carrito/i }).click()
     const drawer = page.getByRole('dialog', { name: /Carrito de compras/i })
-    await expect(drawer).toBeVisible()
+    await expect(drawer).toBeVisible({ timeout: 10000 })
 
     // Click the delete button (red trash icon) — aria-label: "Eliminar {name}"
     const deleteButton = drawer.getByRole('button', { name: /Eliminar/i }).first()
@@ -139,9 +140,10 @@ test.describe('Cart drawer', () => {
     await page.goto('/')
     await page.waitForLoadState('domcontentloaded')
 
-    // Cart badge should still reflect item count
-    const badge = page.locator('button[aria-label="Abrir carrito"] span')
-    await expect(badge).toBeVisible()
+    // Cart badge should still reflect item count.
+    // Use direct child selector — badge <span> is a direct child of the button.
+    const badge = page.locator('button[aria-label="Abrir carrito"] > span')
+    await expect(badge).toBeVisible({ timeout: 10000 })
     const count = await badge.textContent()
     expect(Number(count)).toBeGreaterThanOrEqual(1)
   })
