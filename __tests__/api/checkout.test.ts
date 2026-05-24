@@ -564,6 +564,113 @@ describe('POST /api/webhook/mercadopago', () => {
     // Cancellation email must have been sent
     expect(sendOrderCancelledEmail).toHaveBeenCalledTimes(1)
   })
+
+  it('returns 200 without DB changes for non-payment event type', async () => {
+    const paymentId = '800'
+    const requestId = 'req-nonpayment'
+    const ts = String(Date.now())
+    const sig = makeWebhookSignature(paymentId, requestId, ts)
+    const body = { type: 'test', data: { id: paymentId } }
+    const req = makeWebhookRequest(body, sig, paymentId, requestId)
+    const res = await webhookPost(req)
+    const json = await res.json()
+    expect(res.status).toBe(200)
+    expect(json.received).toBe(true)
+    expect(mockPaymentGet).not.toHaveBeenCalled()
+    expect(prisma.order.findUnique).not.toHaveBeenCalled()
+  })
+
+  it('returns 200 without DB changes for in_process payment status', async () => {
+    const paymentId = '801'
+    const requestId = 'req-inprocess'
+    const ts = String(Date.now())
+    const sig = makeWebhookSignature(paymentId, requestId, ts)
+    const body = { type: 'payment', data: { id: paymentId } }
+    mockPaymentGet.mockResolvedValue({
+      status: 'in_process',
+      external_reference: ORDER_ID,
+    })
+    const req = makeWebhookRequest(body, sig, paymentId, requestId)
+    const res = await webhookPost(req)
+    expect(res.status).toBe(200)
+    expect(prisma.order.findUnique).not.toHaveBeenCalled()
+    expect(prisma.$transaction).not.toHaveBeenCalled()
+    expect(prisma.order.update).not.toHaveBeenCalled()
+  })
+
+  it('returns 200 without DB changes when external_reference is null', async () => {
+    const paymentId = '802'
+    const requestId = 'req-noref'
+    const ts = String(Date.now())
+    const sig = makeWebhookSignature(paymentId, requestId, ts)
+    const body = { type: 'payment', data: { id: paymentId } }
+    mockPaymentGet.mockResolvedValue({
+      status: 'approved',
+      external_reference: null,
+    })
+    const req = makeWebhookRequest(body, sig, paymentId, requestId)
+    const res = await webhookPost(req)
+    expect(res.status).toBe(200)
+    expect(prisma.order.findUnique).not.toHaveBeenCalled()
+  })
+
+  it('cancels PENDING order when mpStatus is cancelled', async () => {
+    const paymentId = '803'
+    const requestId = 'req-cancelled'
+    const ts = String(Date.now())
+    const sig = makeWebhookSignature(paymentId, requestId, ts)
+    const body = { type: 'payment', data: { id: paymentId } }
+    mockPaymentGet.mockResolvedValue({
+      status: 'cancelled',
+      external_reference: ORDER_ID,
+    })
+    const pendingOrder = {
+      id: ORDER_ID,
+      email: 'test@example.com',
+      status: 'PENDING',
+      total: 15000,
+      items: [{ productId: PRODUCT_ID, quantity: 1, name: 'Air Max 90', price: 15000, size: null }],
+    }
+    ;(prisma.order.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(pendingOrder)
+    ;(prisma.order.update as ReturnType<typeof vi.fn>).mockResolvedValue({ ...pendingOrder, status: 'CANCELLED' })
+    const req = makeWebhookRequest(body, sig, paymentId, requestId)
+    const res = await webhookPost(req)
+    expect(res.status).toBe(200)
+    expect(prisma.order.update).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: ORDER_ID }, data: { status: 'CANCELLED' } })
+    )
+  })
+
+  it('returns 200 without DB changes when approved order is not found', async () => {
+    const paymentId = '804'
+    const requestId = 'req-notfound'
+    const ts = String(Date.now())
+    const sig = makeWebhookSignature(paymentId, requestId, ts)
+    const body = { type: 'payment', data: { id: paymentId } }
+    mockPaymentGet.mockResolvedValue({
+      status: 'approved',
+      external_reference: 'nonexistent-order-id',
+    })
+    ;(prisma.order.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(null)
+    const req = makeWebhookRequest(body, sig, paymentId, requestId)
+    const res = await webhookPost(req)
+    expect(res.status).toBe(200)
+    expect(prisma.$transaction).not.toHaveBeenCalled()
+  })
+
+  it('returns 401 when MERCADOPAGO_WEBHOOK_SECRET env var is not set', async () => {
+    const originalSecret = process.env.MERCADOPAGO_WEBHOOK_SECRET
+    delete process.env.MERCADOPAGO_WEBHOOK_SECRET
+    const paymentId = '805'
+    const requestId = 'req-nosecret'
+    const ts = String(Date.now())
+    const body = { type: 'payment', data: { id: paymentId } }
+    // Any signature — will fail because secret is missing
+    const req = makeWebhookRequest(body, `ts=${ts},v1=${'a'.repeat(64)}`, paymentId, requestId)
+    const res = await webhookPost(req)
+    expect(res.status).toBe(401)
+    process.env.MERCADOPAGO_WEBHOOK_SECRET = originalSecret
+  })
 })
 
 // ===========================================================================
