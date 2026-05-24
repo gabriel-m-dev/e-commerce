@@ -187,7 +187,7 @@ export async function PUT(
         try {
           const oldConfig = await getSiteConfig(oldMasPedidoKey)
           if (oldConfig?.productId === id) {
-            await upsertSiteConfig(oldMasPedidoKey, { ...oldConfig, productId: null })
+            await upsertSiteConfig(oldMasPedidoKey, { ...oldConfig, productId: '' })
           }
         } catch (err) {
           console.error('[PUT /api/admin/products/[id]] masPedido cleanup failed', err)
