@@ -1,8 +1,8 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import useEmblaCarousel from 'embla-carousel-react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { type DbProduct } from '@/lib/queries/products'
@@ -14,7 +14,6 @@ interface BrandNewArrivalsSliderProps {
 }
 
 export default function BrandNewArrivalsSlider({ products, theme }: BrandNewArrivalsSliderProps) {
-  const router = useRouter()
   const isDark = theme === 'dark'
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, align: 'start', dragFree: false, containScroll: 'keepSnaps' })
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -74,8 +73,8 @@ export default function BrandNewArrivalsSlider({ products, theme }: BrandNewArri
 
               return (
                 <div key={product.id} className="shrink-0 pl-4 basis-[46%] md:basis-1/3">
-                  <div className="relative overflow-hidden">
-                    <div className="relative aspect-[4/5] w-full">
+                  <Link href={`/product/${product.slug}`} className="flex flex-col">
+                    <div className="relative aspect-[4/5] w-full overflow-hidden">
                       <Image
                         src={product.image}
                         alt={product.name}
@@ -84,37 +83,31 @@ export default function BrandNewArrivalsSlider({ products, theme }: BrandNewArri
                         className="object-cover object-top"
                         priority={index === 0}
                       />
+                      {hasDiscount && (
+                        <span className="absolute top-4 right-4 bg-destructive px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.1em] text-white">
+                          {discountPct}% OFF
+                        </span>
+                      )}
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <div className="absolute top-4 left-4 bg-foreground px-2.5 py-1">
-                      <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-gold">NUEVO DROP</span>
-                    </div>
-                    {hasDiscount && (
-                      <span className="absolute top-4 right-4 bg-destructive px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.1em] text-white">
-                        {discountPct}% OFF
-                      </span>
-                    )}
-                    <div className="absolute bottom-0 left-0 right-0 p-5">
-                      <h3 className="text-sm font-normal uppercase tracking-tight text-white leading-tight">
+                    <div className="flex flex-col items-center text-center gap-1 pt-2">
+                      <h3 className={`text-sm font-normal uppercase tracking-tight leading-tight ${isDark ? 'text-white' : 'text-foreground'}`}>
                         {product.name}
                       </h3>
-                      <div className="mt-2 flex items-baseline gap-2">
-                        <span className="text-xs font-bold text-white">{formatPrice(product.price)}</span>
+                      <div className="flex items-baseline gap-2">
+                        <span className={`text-xs font-bold ${isDark ? 'text-white' : 'text-foreground'}`}>{formatPrice(product.price)}</span>
                         {hasDiscount && (
-                          <span className="text-[10px] font-normal text-white/50 line-through">
+                          <span className="text-[10px] font-normal text-muted line-through">
                             {formatPrice(product.comparePrice!)}
                           </span>
                         )}
                       </div>
-                      <div className="h-px bg-gold w-10 mt-3 mb-4" />
-                      <button
-                        onClick={() => router.push(`/product/${product.slug}`)}
-                        className="w-full bg-white/10 backdrop-blur-sm py-3.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white flex items-center justify-center gap-2 lg:w-fit lg:px-10 cursor-pointer"
+                      <span
+                        className={`mt-1 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] ${isDark ? 'bg-white/10 text-white' : 'bg-foreground text-white'}`}
                       >
                         VER PRODUCTO →
-                      </button>
+                      </span>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               )
             })}
