@@ -1,0 +1,6 @@
+import { vi } from 'vitest'
+
+// Mock env vars needed by Prisma/Supabase
+process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test'
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co'
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key'
