@@ -83,6 +83,30 @@ test.describe('Products catalog', () => {
       page.locator('#main-content').getByText('Todos los productos', { exact: true })
     ).toBeVisible()
   })
+
+  test('/products?category=zapatillas loads without error', async ({ page }) => {
+    await page.goto('/products?category=zapatillas')
+    await page.waitForLoadState('domcontentloaded')
+    await expect(page.locator('#main-content')).toBeVisible()
+    // URL must retain the category param
+    await expect(page).toHaveURL(/category=zapatillas/i)
+  })
+
+  test('/products?brand=NIKE&category=zapatillas loads without error', async ({ page }) => {
+    await page.goto('/products?brand=NIKE&category=zapatillas')
+    await page.waitForLoadState('domcontentloaded')
+    await expect(page.locator('#main-content')).toBeVisible()
+    await expect(page).toHaveURL(/brand=NIKE/i)
+  })
+
+  test('/products renders a product grid or empty state without crashing', async ({ page }) => {
+    await page.goto('/products')
+    await page.waitForLoadState('networkidle')
+    // Either products are displayed or an empty-state message is shown — either is valid
+    const hasProducts = await page.locator('#main-content img').count()
+    const hasEmptyState = await page.getByText(/sin productos/i).count()
+    expect(hasProducts + hasEmptyState).toBeGreaterThan(0)
+  })
 })
 
 test.describe('404 page', () => {
