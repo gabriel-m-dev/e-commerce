@@ -37,6 +37,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
   const mainImage = product.images[activeThumb] ?? product.image
 
   function handleAddToCart() {
+    if (product.stock === 0) return
     if (sizes.length > 0 && !selectedSize) {
       toast.error('Seleccioná un talle para continuar')
       return
@@ -62,6 +63,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
   }
 
   function handleBuyNow() {
+    if (product.stock === 0) return
     if (sizes.length > 0 && !selectedSize) {
       toast.error('Seleccioná un talle para continuar')
       return
@@ -301,13 +303,15 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         <div className="mt-8 flex w-full flex-col gap-3 sm:flex-row">
           <button
             onClick={handleAddToCart}
-            className="flex flex-1 items-center justify-center gap-3 bg-foreground py-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80"
+            disabled={product.stock === 0}
+            className={`flex flex-1 items-center justify-center gap-3 bg-foreground py-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 ${product.stock === 0 ? 'opacity-40 cursor-not-allowed' : ''}`}
           >
-            {added ? 'Agregado ✓' : 'Agregar al carrito'}
+            {product.stock === 0 ? 'SIN STOCK' : added ? 'Agregado ✓' : 'Agregar al carrito'}
           </button>
           <button
             onClick={handleBuyNow}
-            className="flex flex-1 items-center justify-center gap-3 border border-foreground py-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground transition-colors hover:bg-foreground hover:text-background"
+            disabled={product.stock === 0}
+            className={`flex flex-1 items-center justify-center gap-3 border border-foreground py-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground transition-colors hover:bg-foreground hover:text-background ${product.stock === 0 ? 'opacity-40 cursor-not-allowed' : ''}`}
           >
             Comprar ahora <ArrowIcon className="shrink-0 text-gold" />
           </button>
