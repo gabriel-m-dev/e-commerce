@@ -29,6 +29,7 @@ function ProductCard({
   const discountPct = hasDiscount
     ? Math.round((1 - product.price / product.comparePrice!) * 100)
     : 0
+  const outOfStock = product.stock === 0
 
   return (
     <div className="relative overflow-hidden bg-transparent shadow-sm">
@@ -46,7 +47,9 @@ function ProductCard({
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
       <div className="absolute top-4 left-4 bg-foreground px-2.5 py-1">
-        <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-gold">{badge}</span>
+        <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-gold">
+          {outOfStock ? 'SIN STOCK' : badge}
+        </span>
       </div>
 
       {hasDiscount && (

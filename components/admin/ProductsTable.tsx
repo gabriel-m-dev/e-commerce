@@ -53,6 +53,7 @@ export default function ProductsTable({ products, categories }: ProductsTablePro
               <th className="px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">Nombre</th>
               <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">Categoría</th>
               <th className="px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">Precio</th>
+              <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">Stock</th>
               <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">Destacado</th>
               <th className="px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">Acciones</th>
             </tr>
@@ -68,6 +69,11 @@ export default function ProductsTable({ products, categories }: ProductsTablePro
                 <td className="px-6 py-4 text-[12px] font-semibold text-foreground">{product.name}</td>
                 <td className="hidden sm:table-cell px-6 py-4 text-[11px] text-muted">{product.category}</td>
                 <td className="px-6 py-4 text-[12px] font-semibold text-foreground">{formatPrice(product.price)}</td>
+                <td className="hidden sm:table-cell px-6 py-4 text-[12px] font-semibold">
+                  <span className={product.stock === 0 ? 'text-destructive' : 'text-foreground'}>
+                    {product.stock}
+                  </span>
+                </td>
                 <td className="hidden sm:table-cell px-6 py-4 text-[13px]">
                   {product.featured ? <span className="text-gold">✓</span> : <span className="text-muted">—</span>}
                 </td>

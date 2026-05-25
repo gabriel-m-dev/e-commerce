@@ -706,7 +706,10 @@ export default function ProductsWithFilters({
             const isMobileBig = usesGroupedNav && index % 5 === 4
             const isDesktopBeat = usesGroupedNav && (index % 6 === 4 || index % 6 === 5)
 
+            const isOutOfStock = product.stock === 0
+
             function handleAddToCart() {
+              if (isOutOfStock) return
               if (needsSize) {
                 toast.error('Seleccioná un talle para continuar')
                 return
@@ -734,6 +737,7 @@ export default function ProductsWithFilters({
             }
 
             function handleBuyNow() {
+              if (isOutOfStock) return
               if (needsSize) {
                 toast.error('Seleccioná un talle para continuar')
                 return
@@ -797,6 +801,11 @@ export default function ProductsWithFilters({
                         {Math.round((1 - product.price / product.comparePrice) * 100)}% OFF
                       </span>
                     )}
+                    {isOutOfStock && (
+                      <span className="absolute top-2 left-2 bg-black/80 px-2 py-1 text-[9px] font-black uppercase tracking-[0.15em] text-gold">
+                        SIN STOCK
+                      </span>
+                    )}
 
                     {/* Cart icon — solo desktop en brand pages */}
                     <button
@@ -804,10 +813,11 @@ export default function ProductsWithFilters({
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        setOpenProductId(isOpen ? null : product.id)
+                        if (!isOutOfStock) setOpenProductId(isOpen ? null : product.id)
                       }}
-                      aria-label={`Agregar ${product.name} al carrito`}
-                      className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-md bg-black/60 backdrop-blur-sm text-white border border-white/20 hover:bg-black/80 transition cursor-pointer"
+                      aria-label={isOutOfStock ? 'Sin stock' : `Agregar ${product.name} al carrito`}
+                      disabled={isOutOfStock}
+                      className={`absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-md bg-black/60 backdrop-blur-sm text-white border border-white/20 transition ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : 'hover:bg-black/80 cursor-pointer'}`}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
@@ -895,9 +905,10 @@ export default function ProductsWithFilters({
 
                       <button
                         onClick={handleAddToCart}
-                        className="flex h-9 w-full items-center justify-center gap-2 bg-white text-[10px] font-semibold uppercase tracking-[0.18em] text-black transition-opacity hover:opacity-80 cursor-pointer rounded-sm"
+                        disabled={isOutOfStock}
+                        className={`flex h-9 w-full items-center justify-center gap-2 bg-white text-[10px] font-semibold uppercase tracking-[0.18em] text-black rounded-sm ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : 'transition-opacity hover:opacity-80 cursor-pointer'}`}
                       >
-                        {isAdded ? (
+                        {isOutOfStock ? 'SIN STOCK' : isAdded ? (
                           <svg
                             width="14"
                             height="14"
@@ -918,7 +929,8 @@ export default function ProductsWithFilters({
 
                       <button
                         onClick={handleBuyNow}
-                        className="flex h-9 w-full items-center justify-center border border-gold text-[10px] font-semibold uppercase tracking-[0.18em] text-gold transition-opacity hover:opacity-70 cursor-pointer rounded-sm"
+                        disabled={isOutOfStock}
+                        className={`flex h-9 w-full items-center justify-center border border-gold text-[10px] font-semibold uppercase tracking-[0.18em] text-gold rounded-sm ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : 'transition-opacity hover:opacity-70 cursor-pointer'}`}
                       >
                         Comprar ahora
                       </button>
@@ -958,11 +970,17 @@ export default function ProductsWithFilters({
                       {Math.round((1 - product.price / product.comparePrice) * 100)}% OFF
                     </span>
                   )}
+                  {isOutOfStock && (
+                    <span className="absolute top-2 left-2 bg-black/80 px-2 py-1 text-[9px] font-black uppercase tracking-[0.15em] text-gold">
+                      SIN STOCK
+                    </span>
+                  )}
                   {usesGroupedNav && (
                     <button
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenProductId(isOpen ? null : product.id) }}
-                      aria-label={`Agregar ${product.name} al carrito`}
-                      className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-md bg-black/60 backdrop-blur-sm text-white border border-white/20 hover:bg-black/80 transition cursor-pointer"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!isOutOfStock) setOpenProductId(isOpen ? null : product.id) }}
+                      aria-label={isOutOfStock ? 'Sin stock' : `Agregar ${product.name} al carrito`}
+                      disabled={isOutOfStock}
+                      className={`absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-md bg-black/60 backdrop-blur-sm text-white border border-white/20 transition ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : 'hover:bg-black/80 cursor-pointer'}`}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
@@ -992,9 +1010,10 @@ export default function ProductsWithFilters({
 
                   {!usesGroupedNav && (
                     <button
-                      onClick={() => setOpenProductId(isOpen ? null : product.id)}
-                      aria-label={`Agregar ${product.name} al carrito`}
-                      className="h-7 w-7 shrink-0 self-end flex items-center justify-center border border-border text-foreground transition-colors hover:border-foreground cursor-pointer"
+                      onClick={() => { if (!isOutOfStock) setOpenProductId(isOpen ? null : product.id) }}
+                      aria-label={isOutOfStock ? 'Sin stock' : `Agregar ${product.name} al carrito`}
+                      disabled={isOutOfStock}
+                      className={`h-7 w-7 shrink-0 self-end flex items-center justify-center border border-border text-foreground transition-colors ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : 'hover:border-foreground cursor-pointer'}`}
                     >
                       <svg
                         width="16"
@@ -1063,9 +1082,10 @@ export default function ProductsWithFilters({
 
                     <button
                       onClick={handleAddToCart}
-                      className="flex h-9 w-full items-center justify-center gap-2 bg-foreground text-[10px] font-semibold uppercase tracking-[0.18em] text-background transition-opacity hover:opacity-80 cursor-pointer"
+                      disabled={isOutOfStock}
+                      className={`flex h-9 w-full items-center justify-center gap-2 bg-foreground text-[10px] font-semibold uppercase tracking-[0.18em] text-background ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : 'transition-opacity hover:opacity-80 cursor-pointer'}`}
                     >
-                      {isAdded ? (
+                      {isOutOfStock ? 'SIN STOCK' : isAdded ? (
                         <svg
                           width="14"
                           height="14"
@@ -1086,7 +1106,8 @@ export default function ProductsWithFilters({
 
                     <button
                       onClick={handleBuyNow}
-                      className="flex h-9 w-full items-center justify-center border border-gold text-[10px] font-semibold uppercase tracking-[0.18em] text-gold transition-opacity hover:opacity-70 cursor-pointer"
+                      disabled={isOutOfStock}
+                      className={`flex h-9 w-full items-center justify-center border border-gold text-[10px] font-semibold uppercase tracking-[0.18em] text-gold ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : 'transition-opacity hover:opacity-70 cursor-pointer'}`}
                     >
                       Comprar ahora
                     </button>

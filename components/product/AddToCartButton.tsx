@@ -6,11 +6,31 @@ import useCartStore, { type CartProduct } from '@/store/cart'
 type Props = {
   product: CartProduct
   size?: string
+  stock?: number
   className?: string
 }
 
-export default function AddToCartButton({ product, size, className }: Props) {
+export default function AddToCartButton({ product, size, stock, className }: Props) {
   const addItem = useCartStore((s) => s.addItem)
+
+  const outOfStock = stock === 0
+
+  if (outOfStock) {
+    return (
+      <button
+        disabled
+        aria-label="Sin stock"
+        className={
+          className ??
+          'flex h-7 w-7 shrink-0 items-center justify-center border border-border text-muted opacity-50 cursor-not-allowed'
+        }
+      >
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden>
+          <path d="M5.5 0h-1v4.5H0v1h4.5V10h1V5.5H10v-1H5.5z" />
+        </svg>
+      </button>
+    )
+  }
 
   return (
     <button
