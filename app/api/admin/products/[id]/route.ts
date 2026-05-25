@@ -245,7 +245,7 @@ export async function DELETE(
       for (const key of singleKeys) {
         const cfg = await getSiteConfig(key)
         if (cfg?.productId === id) {
-          await upsertSiteConfig(key, { ...cfg, productId: null })
+          await upsertSiteConfig(key, { ...cfg, productId: "" })
         }
       }
     } catch (err) {
