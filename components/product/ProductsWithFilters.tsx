@@ -173,7 +173,7 @@ export function NikeHeroSlider({ slides }: { slides?: BrandHeroSlide[] }) {
 
   return (
     <div
-      className="mt-10 relative aspect-[3/4] md:aspect-[16/7] overflow-hidden"
+      className="mt-10 md:mt-20 relative aspect-[3/4] md:aspect-[16/7] overflow-hidden"
       style={{
         width: '100vw',
         marginLeft: 'calc(50% - 50vw)',

@@ -133,7 +133,7 @@ export default function BrandMasPedido({ product, bgColor = '#0a0a0a' }: { produ
                   alt={`${product.name} — vista ${i + 1}`}
                   fill
                   sizes="(max-width: 1024px) 100vw, 672px"
-                  className="object-cover object-center"
+                  className="object-cover lg:object-contain object-center"
                   priority={i === 0}
                 />
               </Link>
