@@ -1,9 +1,12 @@
 import { Suspense } from 'react'
+import Link from 'next/link'
 import { getAllOrders } from '@/lib/queries/orders'
+import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import OrderStatusSelect from '@/components/admin/OrderStatusSelect'
 import TrackingNumberInput from '@/components/admin/TrackingNumberInput'
 import OrdersFilter from '@/components/admin/OrdersFilter'
+import OrdersPagination from '@/components/admin/OrdersPagination'
 import type { OrderStatus } from '@/lib/queries/orders'
 
 export const dynamic = 'force-dynamic'
@@ -21,33 +24,46 @@ function formatDate(date: Date): string {
 export default async function AdminOrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>
+  searchParams: Promise<{ status?: string; q?: string; cursor?: string; limit?: string }>
 }) {
-  const { status: statusParam } = await searchParams
+  const { status: statusParam, q, cursor, limit: limitParam } = await searchParams
+
   const activeStatus = VALID_STATUSES.includes(statusParam as OrderStatus)
     ? (statusParam as OrderStatus)
     : undefined
 
-  const [allOrders, filteredOrders] = await Promise.all([
-    getAllOrders(),
-    activeStatus ? getAllOrders(activeStatus) : Promise.resolve(null),
-  ])
+  const search = q && q.trim().length >= 2 ? q.trim() : undefined
+  const limit = limitParam ? Math.min(Number(limitParam) || 25, 100) : 25
 
-  const orders = filteredOrders ?? allOrders
+  // Fetch the paginated + filtered result
+  const result = await getAllOrders({
+    status: activeStatus,
+    search,
+    cursor: cursor || undefined,
+    limit,
+  })
 
-  const counts = allOrders.reduce<Record<string, number>>((acc, o) => {
-    acc[o.status] = (acc[o.status] ?? 0) + 1
-    return acc
-  }, {})
+  const { orders, nextCursor } = result
+
+  // Fetch status counts for tab badges via groupBy (no full row scan)
+  const statusCounts = await prisma.order.groupBy({ by: ['status'], _count: { _all: true } })
+  const totalCount = statusCounts.reduce((sum, c) => sum + c._count._all, 0)
+
+  const counts = Object.fromEntries(statusCounts.map((c) => [c.status, c._count._all]))
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-[13px] font-black uppercase tracking-[0.22em] text-foreground">
-          Órdenes
+          Ordenes
         </h1>
         <p className="mt-1 text-[11px] text-muted">
-          {allOrders.length} {allOrders.length === 1 ? 'pedido' : 'pedidos'} en total
+          {totalCount} {totalCount === 1 ? 'pedido' : 'pedidos'} en total
+          {search && (
+            <span className="ml-2 text-muted">
+              — buscando &ldquo;{search}&rdquo;
+            </span>
+          )}
         </p>
       </div>
 
@@ -61,7 +77,7 @@ export default async function AdminOrdersPage({
             <thead>
               <tr className="border-b border-border bg-surface">
                 <th className="px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
-                  N° Orden
+                  N Orden
                 </th>
                 <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
                   Cliente
@@ -81,12 +97,15 @@ export default async function AdminOrdersPage({
                 <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
                   Fecha
                 </th>
+                <th className="px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted sr-only">
+                  Ver
+                </th>
               </tr>
             </thead>
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan={7}>
+                  <td colSpan={8}>
                     <div className="flex flex-col items-center justify-center py-20 text-center">
                       <div className="mb-4 flex h-12 w-12 items-center justify-center border border-border">
                         <svg
@@ -108,7 +127,9 @@ export default async function AdminOrdersPage({
                         </svg>
                       </div>
                       <p className="text-[12px] font-black uppercase tracking-[0.18em] text-foreground">
-                        Sin órdenes{activeStatus ? ' con este estado' : ' aún'}
+                        {search
+                          ? `Sin resultados para "${search}"`
+                          : `Sin ordenes${activeStatus ? ' con este estado' : ' aun'}`}
                       </p>
                     </div>
                   </td>
@@ -123,7 +144,7 @@ export default async function AdminOrdersPage({
                       {order.email}
                     </td>
                     <td className="hidden md:table-cell px-6 py-3 text-[11px] text-muted max-w-[200px] truncate">
-                      {order.items.map((i) => `${i.name} ×${i.quantity}`).join(', ')}
+                      {order.items.map((i) => `${i.name} x${i.quantity}`).join(', ')}
                     </td>
                     <td className="px-6 py-3 text-[12px] font-semibold text-foreground">
                       {formatPrice(order.total)}
@@ -137,12 +158,26 @@ export default async function AdminOrdersPage({
                     <td className="hidden sm:table-cell px-6 py-3 text-[11px] text-muted">
                       {formatDate(order.createdAt)}
                     </td>
+                    <td className="px-6 py-3">
+                      <Link
+                        href={`/admin/orders/${order.id}${statusParam || q ? `?${new URLSearchParams({ ...(statusParam ? { status: statusParam } : {}), ...(q ? { q } : {}) }).toString()}` : ''}`}
+                        className="text-[10px] uppercase tracking-[0.12em] text-muted hover:text-foreground transition-colors"
+                      >
+                        Ver
+                      </Link>
+                    </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
         </div>
+
+        {orders.length > 0 && (
+          <Suspense>
+            <OrdersPagination nextCursor={nextCursor} prevCursor={null} />
+          </Suspense>
+        )}
       </div>
     </div>
   )

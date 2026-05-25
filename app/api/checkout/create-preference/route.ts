@@ -112,6 +112,7 @@ export async function POST(request: NextRequest) {
             price: priceMap.get(item.product.id) as number,
             quantity: item.quantity,
             size: item.size ?? null,
+            color: item.color ?? null,
           })),
         },
         address: {
