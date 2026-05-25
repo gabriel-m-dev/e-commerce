@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@/lib/generated/prisma'
 
 export type OrderStatus = 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'
 
@@ -159,7 +160,7 @@ export async function getAllOrders(
         : undefined
 
     // Combine conditions
-    const andConditions: unknown[] = []
+    const andConditions: Prisma.OrderWhereInput[] = []
     if (status) andConditions.push({ status })
     if (searchWhere) andConditions.push(searchWhere)
     if (cursorWhere) andConditions.push(cursorWhere)
