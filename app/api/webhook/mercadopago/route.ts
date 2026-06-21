@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
         await prisma.$transaction([
           prisma.order.update({
             where: { id: externalReference },
-            data: { status: 'PROCESSING' },
+            data: { status: 'CONFIRMED' },
           }),
           ...order.items.map((item) =>
             prisma.product.updateMany({

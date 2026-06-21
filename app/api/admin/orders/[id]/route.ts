@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
-import { sendOrderCancelledEmail, sendOrderShippedEmail } from '@/lib/email'
+import { sendOrderCancelledEmail, sendOrderShippedEmail, sendOutForDeliveryEmail } from '@/lib/email'
 
-const VALID_STATUSES = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'] as const
+const VALID_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'] as const
 type OrderStatus = typeof VALID_STATUSES[number]
 
 // Statuses where payment was confirmed and stock was decremented
-const POST_PAYMENT: OrderStatus[] = ['PROCESSING', 'SHIPPED', 'DELIVERED']
+const POST_PAYMENT: OrderStatus[] = ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED']
 
 export async function PATCH(
   request: NextRequest,
@@ -60,6 +60,7 @@ export async function PATCH(
   const nextStatus = status as OrderStatus | undefined
   const isCancelling = nextStatus === 'CANCELLED' && current.status !== 'CANCELLED'
   const isShipping = nextStatus === 'SHIPPED' && current.status !== 'SHIPPED'
+  const isOutForDelivery = nextStatus === 'OUT_FOR_DELIVERY' && current.status !== 'OUT_FOR_DELIVERY'
   const shouldRestoreStock = isCancelling && POST_PAYMENT.includes(current.status as OrderStatus)
 
   try {
@@ -103,6 +104,10 @@ export async function PATCH(
     } else if (isShipping) {
       sendOrderShippedEmail(emailData).catch((e) =>
         console.error('[admin/orders] shipped email failed:', e)
+      )
+    } else if (isOutForDelivery) {
+      sendOutForDeliveryEmail(emailData).catch((e) =>
+        console.error('[admin/orders] out-for-delivery email failed:', e)
       )
     }
 
