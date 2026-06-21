@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '../generated/prisma/client'
 
-export type OrderStatus = 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'
+// SYNC WITH schema.prisma enum OrderStatus
+export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED'
 
 export type OrderWithItems = {
   id: string

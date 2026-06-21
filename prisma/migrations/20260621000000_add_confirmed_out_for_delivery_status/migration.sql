@@ -1,0 +1,3 @@
+-- AlterEnum: add CONFIRMED and OUT_FOR_DELIVERY to OrderStatus
+ALTER TYPE "OrderStatus" ADD VALUE 'CONFIRMED';
+ALTER TYPE "OrderStatus" ADD VALUE 'OUT_FOR_DELIVERY';

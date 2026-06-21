@@ -33,20 +33,13 @@ export type Cart = {
   itemCount: number
 }
 
-export type OrderStatus =
-  | 'pending'
-  | 'processing'
-  | 'shipped'
-  | 'delivered'
-  | 'cancelled'
-
 export type Order = {
   id: string
   items: CartItem[]
   subtotal: number
   shipping: number
   total: number
-  status: OrderStatus
+  status: string
   shippingAddress: Address
   createdAt: Date
 }
