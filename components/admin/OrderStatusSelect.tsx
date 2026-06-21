@@ -5,19 +5,23 @@ import { useState } from 'react'
 import type { OrderStatus } from '@/lib/queries/orders'
 
 const STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
-  { value: 'PENDING',    label: 'Pendiente'   },
-  { value: 'PROCESSING', label: 'En proceso'  },
-  { value: 'SHIPPED',    label: 'Enviado'     },
-  { value: 'DELIVERED',  label: 'Entregado'   },
-  { value: 'CANCELLED',  label: 'Cancelado'   },
+  { value: 'PENDING',          label: 'Pendiente'   },
+  { value: 'CONFIRMED',        label: 'Confirmado'  },
+  { value: 'PROCESSING',       label: 'En proceso'  },
+  { value: 'SHIPPED',          label: 'Enviado'     },
+  { value: 'OUT_FOR_DELIVERY', label: 'En reparto'  },
+  { value: 'DELIVERED',        label: 'Entregado'   },
+  { value: 'CANCELLED',        label: 'Cancelado'   },
 ]
 
 const STATUS_COLOR: Record<OrderStatus, string> = {
-  PENDING:    'text-muted',
-  PROCESSING: 'text-gold',
-  SHIPPED:    'text-foreground',
-  DELIVERED:  'text-foreground font-bold',
-  CANCELLED:  'text-destructive',
+  PENDING:          'text-muted',
+  CONFIRMED:        'text-[#3b82f6]',
+  PROCESSING:       'text-gold',
+  SHIPPED:          'text-foreground',
+  OUT_FOR_DELIVERY: 'text-[#f97316]',
+  DELIVERED:        'text-foreground font-bold',
+  CANCELLED:        'text-destructive',
 }
 
 export default function OrderStatusSelect({

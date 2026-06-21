@@ -17,19 +17,23 @@ function formatDate(date: Date): string {
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  PENDING: 'Pendiente',
-  PROCESSING: 'En proceso',
-  SHIPPED: 'Enviado',
-  DELIVERED: 'Entregado',
-  CANCELLED: 'Cancelado',
+  PENDING:          'Pendiente',
+  CONFIRMED:        'Confirmado',
+  PROCESSING:       'En proceso',
+  SHIPPED:          'Enviado',
+  OUT_FOR_DELIVERY: 'En reparto',
+  DELIVERED:        'Entregado',
+  CANCELLED:        'Cancelado',
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  PENDING: 'text-muted border-muted',
-  PROCESSING: 'text-gold border-gold',
-  SHIPPED: 'text-foreground border-foreground',
-  DELIVERED: 'text-foreground border-foreground font-bold',
-  CANCELLED: 'text-destructive border-destructive',
+  PENDING:          'text-muted border-muted',
+  CONFIRMED:        'text-[#3b82f6] border-[#3b82f6]',
+  PROCESSING:       'text-gold border-gold',
+  SHIPPED:          'text-foreground border-foreground',
+  OUT_FOR_DELIVERY: 'text-[#f97316] border-[#f97316]',
+  DELIVERED:        'text-foreground border-foreground font-bold',
+  CANCELLED:        'text-destructive border-destructive',
 }
 
 export default async function AdminOrderDetailPage({
