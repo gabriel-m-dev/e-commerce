@@ -19,15 +19,15 @@ const FAQ_ITEMS = [
     questions: [
       {
         q: '¿A dónde envían?',
-        a: 'Enviamos a todo el territorio argentino. Los envíos se realizan a través de empresas de logística reconocidas con seguimiento en tiempo real.',
+        a: 'Enviamos a todo el territorio argentino. El costo de envío se calcula en el checkout según la ubicación de entrega.',
       },
       {
         q: '¿Cuánto tarda el envío?',
-        a: 'CABA y GBA: 24 a 48 horas hábiles. Interior del país: 3 a 7 días hábiles dependiendo de la localidad.',
+        a: 'Los envíos tardan entre 20 y 60 días hábiles desde la confirmación del pago. El tiempo varía según el origen del producto y los procesos de aduana.',
       },
       {
         q: '¿El envío tiene costo?',
-        a: 'El envío es gratis en compras superiores a $50.000 ARS. Para compras menores, el costo varía según la distancia y se calcula en el checkout.',
+        a: 'El costo de envío se calcula en el checkout según la dirección de entrega.',
       },
     ],
   },
@@ -140,7 +140,7 @@ export default function FAQPage() {
               >
                 hola@luxe.com
               </a>
-              {' '}y te respondemos en menos de 24 horas hábiles.
+              {' '}y te respondemos a la brevedad.
             </p>
           </div>
         </div>

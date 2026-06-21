@@ -1,44 +1,25 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 
 export const metadata: Metadata = {
-  title: 'Envíos',
-  description: 'Información sobre envíos de LUXE. Zonas de cobertura, tiempos de entrega y costos. Envío gratis en compras mayores a $50.000 ARS.',
+  title: 'Envíos — LUXE.',
+  description:
+    'Los envíos de LUXE. toman entre 20 y 60 días hábiles. Conocé cómo funciona el proceso y cómo te mantenemos informado.',
   openGraph: {
     title: `Envíos — ${SITE_NAME}`,
-    description: 'Cobertura nacional, seguimiento en tiempo real. Envío gratis en compras mayores a $50.000 ARS.',
+    description:
+      'Los envíos toman entre 20 y 60 días hábiles. Sin tracking automático — te avisamos por email en cada etapa.',
     url: '/shipping',
     type: 'website',
   },
   alternates: { canonical: `${SITE_URL}/shipping` },
 }
 
-const ZONES = [
-  {
-    zone: 'CABA',
-    time: '24 – 48 hs hábiles',
-    cost: 'Gratis en compras +$50.000',
-  },
-  {
-    zone: 'Gran Buenos Aires',
-    time: '24 – 72 hs hábiles',
-    cost: 'Gratis en compras +$50.000',
-  },
-  {
-    zone: 'Provincia de Buenos Aires',
-    time: '2 – 4 días hábiles',
-    cost: 'Varía según localidad',
-  },
-  {
-    zone: 'Interior del país',
-    time: '3 – 7 días hábiles',
-    cost: 'Varía según distancia',
-  },
-]
-
 export default function ShippingPage() {
   return (
     <main>
+
       {/* ─── Header ─── */}
       <section className="border-b border-border bg-background">
         <div className="mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
@@ -52,62 +33,17 @@ export default function ShippingPage() {
             className="mt-5 font-black uppercase leading-tight tracking-tight text-foreground"
             style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
           >
-            Llegamos a todo el país.
+            ¿CUÁNDO LLEGA MI PEDIDO?
           </h1>
-          <p className="mt-4 max-w-md text-[13px] leading-relaxed text-muted">
-            Trabajamos con empresas de logística líderes para garantizar que tu pedido llegue
-            en perfectas condiciones y con seguimiento en tiempo real.
+          <p className="mt-4 max-w-xl text-[13px] leading-relaxed text-muted">
+            20 a 60 días hábiles desde la confirmación del pago. El tiempo varía según el
+            origen del producto, el operador logístico y los procesos de aduana.
           </p>
         </div>
       </section>
 
-      {/* ─── Free shipping highlight ─── */}
-      <section className="bg-foreground">
-        <div className="mx-auto max-w-screen-xl px-6 py-10 lg:px-10">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gold">
-            Envío gratis
-          </p>
-          <p className="mt-2 text-[13px] text-background/70">
-            En todas las compras mayores a{' '}
-            <span className="font-semibold text-background">$50.000 ARS</span> — sin excepciones.
-          </p>
-        </div>
-      </section>
-
-      {/* ─── Zones table ─── */}
-      <section className="bg-background">
-        <div className="mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
-          <div className="mb-10 flex items-center gap-4">
-            <div className="h-px w-8 bg-gold" aria-hidden />
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
-              Tiempos de entrega
-            </p>
-          </div>
-
-          <div className="divide-y divide-border border border-border">
-            {/* Header row */}
-            <div className="grid grid-cols-3 bg-surface px-6 py-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Zona</p>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Plazo estimado</p>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Costo</p>
-            </div>
-            {ZONES.map((z) => (
-              <div key={z.zone} className="grid grid-cols-3 px-6 py-4">
-                <p className="text-[12px] font-semibold text-foreground">{z.zone}</p>
-                <p className="text-[12px] text-muted">{z.time}</p>
-                <p className="text-[12px] text-muted">{z.cost}</p>
-              </div>
-            ))}
-          </div>
-
-          <p className="mt-6 text-[11px] text-muted">
-            * Los plazos son estimados y pueden extenderse en períodos de alta demanda o feriados nacionales.
-          </p>
-        </div>
-      </section>
-
-      {/* ─── Process ─── */}
-      <section className="border-t border-border bg-surface">
+      {/* ─── Cómo funciona ─── */}
+      <section className="bg-surface">
         <div className="mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
           <div className="mb-10 flex items-center gap-4">
             <div className="h-px w-8 bg-gold" aria-hidden />
@@ -115,20 +51,76 @@ export default function ShippingPage() {
               ¿Cómo funciona?
             </p>
           </div>
-          <div className="grid gap-8 sm:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { step: '01', text: 'Confirmás tu compra y recibís un email con el número de pedido.' },
-              { step: '02', text: 'En 24 hs hábiles preparamos y despachamos tu paquete.' },
-              { step: '03', text: 'Recibís el código de seguimiento para rastrear tu pedido en tiempo real.' },
+              {
+                step: '01',
+                title: 'Realizás tu compra',
+                text: 'Completás el formulario y confirmás el pago a través de Mercado Pago.',
+              },
+              {
+                step: '02',
+                title: 'Confirmamos el pago',
+                text: 'Una vez verificado el pago, te enviamos una confirmación por email con el número de pedido.',
+              },
+              {
+                step: '03',
+                title: 'Gestionamos el pedido',
+                text: 'Coordinamos el pedido con nuestros proveedores. Este proceso puede tomar varias semanas.',
+              },
+              {
+                step: '04',
+                title: 'Te notificamos',
+                text: 'Cuando tu pedido se despacha, te avisamos por email con la información de envío disponible.',
+              },
             ].map((s) => (
               <div key={s.step}>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">{s.step}</p>
-                <p className="mt-3 text-[12px] leading-relaxed text-muted">{s.text}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">
+                  {s.step}
+                </p>
+                <p className="mt-2 text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground">
+                  {s.title}
+                </p>
+                <p className="mt-2 text-[12px] leading-relaxed text-muted">{s.text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* ─── Seguimiento ─── */}
+      <section className="bg-background">
+        <div className="mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
+          <div className="mb-6 flex items-center gap-4">
+            <div className="h-px w-8 bg-gold" aria-hidden />
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
+              Seguimiento
+            </p>
+          </div>
+          <p className="max-w-xl text-[13px] leading-relaxed text-muted">
+            No contamos con tracking automático. Te informamos por email en cada etapa del proceso: confirmación de pago, despacho del pedido y cualquier novedad relevante.
+          </p>
+        </div>
+      </section>
+
+      {/* ─── Preguntas ─── */}
+      <section className="bg-foreground">
+        <div className="mx-auto max-w-screen-xl px-6 py-16 lg:px-10">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gold">
+            ¿Tenés preguntas?
+          </p>
+          <p className="mt-3 max-w-lg text-[13px] leading-relaxed text-background/70">
+            Consultá nuestra sección de Preguntas Frecuentes o escribinos directamente.
+          </p>
+          <Link
+            href="/faq"
+            className="mt-6 inline-flex items-center gap-2 border border-background/30 px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-70"
+          >
+            Ver preguntas frecuentes
+          </Link>
+        </div>
+      </section>
+
     </main>
   )
 }
