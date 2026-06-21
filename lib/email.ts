@@ -173,6 +173,48 @@ export async function sendOrderCancelledEmail(order: OrderEmailData): Promise<vo
   }
 }
 
+export async function sendOutForDeliveryEmail(order: OrderEmailData): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const shortId = order.orderId.slice(0, 8).toUpperCase()
+
+  const html = baseLayout(`
+    <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:#f97316;">
+      En reparto
+    </p>
+    <h1 style="margin:0 0 24px;font-size:18px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:#0a0a0a;">
+      Tu pedido está en camino
+    </h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
+      Tu pedido N° <strong>${shortId}</strong> está siendo entregado hoy. El repartidor se pondrá en contacto para coordinar la entrega.
+    </p>
+
+    ${order.trackingNumber ? `
+    <div style="background:#f5f5f5;padding:16px 20px;margin-bottom:24px;">
+      <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;">
+        Número de seguimiento
+      </p>
+      <p style="margin:0;font-size:14px;font-weight:700;color:#0a0a0a;">${order.trackingNumber}</p>
+    </div>` : ''}
+
+    <a href="${SITE_URL}/account" style="display:inline-block;background:#f97316;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
+      Ver mi pedido →
+    </a>
+  `)
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: order.email,
+      subject: `Tu pedido está en camino — N° ${shortId}`,
+      html,
+    })
+  } catch (err) {
+    console.error('[email] sendOutForDeliveryEmail failed:', err)
+  }
+}
+
 export async function sendOrderShippedEmail(order: OrderEmailData): Promise<void> {
   if (!process.env.RESEND_API_KEY) return
   const resend = new Resend(process.env.RESEND_API_KEY)
