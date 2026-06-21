@@ -6,8 +6,7 @@ import Link from 'next/link'
 import useCartStore from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
 import ArrowIcon from '@/components/ui/ArrowIcon'
-
-const FREE_SHIPPING_THRESHOLD = 50000
+import ShippingNotice from '@/components/ui/ShippingNotice'
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, clearCart, getTotal, getItemCount } =
@@ -23,7 +22,6 @@ export default function CartPage() {
 
   const total = getTotal()
   const itemCount = getItemCount()
-  const freeShipping = total >= FREE_SHIPPING_THRESHOLD
 
   {/* ─── Empty State ─── */}
   if (items.length === 0) {
@@ -233,15 +231,9 @@ export default function CartPage() {
               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
                 Envío
               </p>
-              {freeShipping ? (
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-gold">
-                  Gratis
-                </p>
-              ) : (
-                <p className="text-[10px] text-muted">
-                  Calculado al confirmar
-                </p>
-              )}
+              <p className="text-[10px] text-muted">
+                Calculado al confirmar
+              </p>
             </div>
 
             {/* Total */}
@@ -254,10 +246,15 @@ export default function CartPage() {
               </p>
             </div>
 
+            {/* Shipping notice */}
+            <div className="mt-6">
+              <ShippingNotice variant="cart" />
+            </div>
+
             {/* Checkout CTA */}
             <Link
               href="/checkout"
-              className="mt-6 flex w-full items-center justify-center gap-3 bg-foreground py-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-background transition-opacity hover:opacity-80"
+              className="mt-4 flex w-full items-center justify-center gap-3 bg-foreground py-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-background transition-opacity hover:opacity-80"
             >
               Ir al checkout <ArrowIcon className="shrink-0 text-gold" />
             </Link>

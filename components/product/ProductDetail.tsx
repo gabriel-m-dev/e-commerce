@@ -8,6 +8,7 @@ import { SIZES_BY_CATEGORY } from '@/lib/data/products'
 import { type DbProduct } from '@/lib/queries/products'
 import useCartStore from '@/store/cart'
 import ArrowIcon from '@/components/ui/ArrowIcon'
+import ShippingNotice from '@/components/ui/ShippingNotice'
 import { toast } from 'sonner'
 
 export default function ProductDetail({ product }: { product: DbProduct }) {
@@ -299,6 +300,11 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
           )}
         </div>
 
+        {/* Shipping notice */}
+        <div className="mt-6 w-full">
+          <ShippingNotice variant="pdp" />
+        </div>
+
         {/* CTA buttons */}
         <div className="mt-8 flex w-full flex-col gap-3 sm:flex-row">
           <button
@@ -319,22 +325,6 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
 
         {/* Trust badges */}
         <div className="mt-8 flex w-full flex-col gap-3 border-t border-border pt-6">
-          <div className="flex items-center gap-3">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-muted" aria-hidden>
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-            <span className="text-[11px] text-muted">Envío gratis a partir de $50.000</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-muted" aria-hidden>
-              <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14" />
-              <path d="M16.5 9.4 7.55 4.24M3.29 7 12 12l8.71-5" />
-              <path d="M12 22V12" />
-              <path d="M18 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM21.7 16.4l-1.5 1.3-1-1" />
-            </svg>
-            <span className="text-[11px] text-muted">Devoluciones gratis en 30 días</span>
-          </div>
           <div className="flex items-center gap-3">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-muted" aria-hidden>
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />

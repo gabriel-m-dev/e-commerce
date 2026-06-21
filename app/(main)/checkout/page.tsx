@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import ArrowIcon from '@/components/ui/ArrowIcon'
+import ShippingNotice from '@/components/ui/ShippingNotice'
 import useCartStore from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
 import type { CartItem } from '@/store/cart'
@@ -49,8 +50,6 @@ const PROVINCES = [
   'Tierra del Fuego',
   'Tucumán',
 ]
-
-const FREE_SHIPPING_THRESHOLD = 50000
 
 const INPUT_CLASS =
   'border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-foreground focus:outline-none transition-colors w-full'
@@ -115,7 +114,7 @@ export default function CheckoutPage() {
   const router = useRouter()
 
   const subtotal = getTotal()
-  const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : null
+  const shipping = null
 
   const [mounted, setMounted] = useState(false)
   useEffect(() => { setMounted(true) }, [])
@@ -418,6 +417,9 @@ export default function CheckoutPage() {
 
             {/* ─── CTA ─── */}
             <div>
+              <div className="mb-6">
+                <ShippingNotice variant="checkout" />
+              </div>
               {submitError && (
                 <p className="mb-4 text-[11px] text-destructive uppercase tracking-[0.1em] text-center">
                   {submitError}
