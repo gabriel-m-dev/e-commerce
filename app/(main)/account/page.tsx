@@ -13,19 +13,23 @@ export const metadata = {
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  PENDING: 'PENDIENTE',
-  PROCESSING: 'EN PROCESO',
-  SHIPPED: 'ENVIADO',
-  DELIVERED: 'ENTREGADO',
-  CANCELLED: 'CANCELADO',
+  PENDING:          'PENDIENTE',
+  CONFIRMED:        'CONFIRMADO',
+  PROCESSING:       'EN PROCESO',
+  SHIPPED:          'ENVIADO',
+  OUT_FOR_DELIVERY: 'EN REPARTO',
+  DELIVERED:        'ENTREGADO',
+  CANCELLED:        'CANCELADO',
 }
 
 const STATUS_BG: Record<string, string> = {
-  PENDING: 'bg-black text-white',
-  PROCESSING: 'bg-yellow-400 text-black',
-  SHIPPED: 'bg-yellow-400 text-black',
-  DELIVERED: 'bg-green-600 text-white',
-  CANCELLED: 'bg-red-600 text-white',
+  PENDING:          'bg-black text-white',
+  CONFIRMED:        'bg-blue-500 text-white',
+  PROCESSING:       'bg-yellow-400 text-black',
+  SHIPPED:          'bg-yellow-400 text-black',
+  OUT_FOR_DELIVERY: 'bg-orange-500 text-white',
+  DELIVERED:        'bg-green-600 text-white',
+  CANCELLED:        'bg-red-600 text-white',
 }
 
 function formatDate(date: Date): string {
@@ -136,7 +140,7 @@ export default async function AccountPage() {
               const firstImage = order.items[0]?.image ?? null
 
               return (
-                <div key={order.id} className="py-6 flex gap-4">
+                <Link key={order.id} href={`/account/orders/${order.id}`} className="block py-6 flex gap-4 hover:bg-surface transition-colors">
                   {/* Product thumbnail */}
                   <div className="w-16 h-16 md:w-20 md:h-20 shrink-0 bg-surface border border-border overflow-hidden">
                     {firstImage ? (
@@ -196,7 +200,7 @@ export default async function AccountPage() {
                       </span>
                     </div>
                   </div>
-                </div>
+                </Link>
               )
             })}
           </div>
