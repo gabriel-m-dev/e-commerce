@@ -128,7 +128,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
               alt={`${product.name} — vista ${i + 1}`}
               fill
               sizes="100vw"
-              className="object-cover object-center"
+              className="object-contain object-center"
               priority={i === 0}
             />
           </div>
