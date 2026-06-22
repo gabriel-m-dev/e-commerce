@@ -28,7 +28,6 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
     slug: '',
     price: '',
     comparePrice: '',
-    categorySlug: categories[0]?.slug ?? '',
     brand: 'OTROS',
     description: '',
     images: [''],
@@ -36,6 +35,13 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
     featured: false,
     active: true,
   })
+
+  const [selectedCategorySlugs, setSelectedCategorySlugs] = useState<string[]>(
+    categories[0]?.slug ? [categories[0].slug] : []
+  )
+  const [primaryCategorySlug, setPrimaryCategorySlug] = useState<string>(
+    categories[0]?.slug ?? ''
+  )
 
   const [colors, setColors] = useState<string[]>([])
   const [currentColor, setCurrentColor] = useState('#000000')
@@ -48,8 +54,28 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
 
   const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
   const SHOE_SIZES = ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46']
-  const isSneakers = form.categorySlug === 'zapatillas'
+  const isSneakers = selectedCategorySlugs.includes('zapatillas')
   const AVAILABLE_SIZES = isSneakers ? SHOE_SIZES : CLOTHING_SIZES
+
+  function toggleCategorySlug(slug: string) {
+    setSelectedCategorySlugs((prev) => {
+      if (prev.includes(slug)) {
+        const next = prev.filter((s) => s !== slug)
+        // If we deselected the primary, pick new primary from remaining
+        if (primaryCategorySlug === slug) {
+          setPrimaryCategorySlug(next[0] ?? '')
+        }
+        return next
+      } else {
+        const next = [...prev, slug]
+        // Auto-assign primary if none set yet
+        if (!primaryCategorySlug) {
+          setPrimaryCategorySlug(slug)
+        }
+        return next
+      }
+    })
+  }
 
   function toggleSize(size: string) {
     setSizes((prev) =>
@@ -101,7 +127,6 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
       slug: '',
       price: '',
       comparePrice: '',
-      categorySlug: categories[0]?.slug ?? '',
       brand: 'OTROS',
       description: '',
       images: [''],
@@ -109,6 +134,8 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
       featured: false,
       active: true,
     })
+    setSelectedCategorySlugs(categories[0]?.slug ? [categories[0].slug] : [])
+    setPrimaryCategorySlug(categories[0]?.slug ?? '')
     setColors([])
     setCurrentColor('#000000')
     setSizes([])
@@ -135,29 +162,13 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
       return
     }
 
-    try {
-      let categorySlug = form.categorySlug
-      if (form.categorySlug === '__new__') {
-        if (!newCategoryName.trim()) {
-          setError('Ingresá el nombre de la nueva categoría')
-          setLoading(false)
-          return
-        }
-        const catRes = await fetch('/api/admin/categories', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: newCategoryName.trim() }),
-        })
-        const catData = await catRes.json()
-        if (!catRes.ok) {
-          setError(catData.error ?? 'Error al crear la categoría')
-          setLoading(false)
-          return
-        }
-        categorySlug = catData.slug
-        setAllCategories((prev) => [...prev, catData])
-      }
+    if (selectedCategorySlugs.length === 0) {
+      setError('Seleccioná al menos una categoría')
+      setLoading(false)
+      return
+    }
 
+    try {
       const res = await fetch('/api/admin/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -166,7 +177,8 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
           slug: form.slug.trim(),
           price: Number(form.price),
           comparePrice: form.comparePrice ? Number(form.comparePrice) : null,
-          categorySlug,
+          categorySlugs: selectedCategorySlugs,
+          primaryCategorySlug,
           brand: form.brand,
           images,
           description: form.description.trim(),
@@ -315,35 +327,49 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
                 />
               </div>
 
-              {/* Categoría */}
+              {/* Categorías */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
-                  Categoría
+                  Categorías
                 </label>
-                <select
-                  required
-                  value={form.categorySlug}
-                  onChange={(e) => {
-                    setForm((prev) => ({ ...prev, categorySlug: e.target.value }))
-                    setSizes([])
-                  }}
-                  className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full cursor-pointer"
-                >
-                  {allCategories.map((cat) => (
-                    <option key={cat.id} value={cat.slug}>
-                      {cat.name}
-                    </option>
-                  ))}
-                  <option value="__new__">+ Nueva categoría...</option>
-                </select>
-                {form.categorySlug === '__new__' && (
-                  <input
-                    type="text"
-                    value={newCategoryName}
-                    onChange={(e) => setNewCategoryName(e.target.value)}
-                    placeholder="Nombre de la nueva categoría"
-                    className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full"
-                  />
+                <div className="flex flex-col gap-2 border border-border p-3">
+                  {allCategories.map((cat) => {
+                    const isChecked = selectedCategorySlugs.includes(cat.slug)
+                    return (
+                      <div key={cat.id} className="flex items-center justify-between gap-3">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => { toggleCategorySlug(cat.slug); setSizes([]) }}
+                            className="h-4 w-4 cursor-pointer accent-foreground"
+                          />
+                          <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground">
+                            {cat.name}
+                          </span>
+                        </label>
+                        {isChecked && (
+                          <label className="flex items-center gap-1.5 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="primaryCategory"
+                              checked={primaryCategorySlug === cat.slug}
+                              onChange={() => setPrimaryCategorySlug(cat.slug)}
+                              className="h-3.5 w-3.5 cursor-pointer accent-foreground"
+                            />
+                            <span className="text-[9px] uppercase tracking-[0.15em] text-muted">
+                              Principal
+                            </span>
+                          </label>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+                {selectedCategorySlugs.length === 0 && (
+                  <span className="text-[9px] text-destructive uppercase tracking-[0.12em]">
+                    Seleccioná al menos una categoría
+                  </span>
                 )}
               </div>
 

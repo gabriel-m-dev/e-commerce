@@ -430,7 +430,9 @@ export default function ProductsWithFilters({
     const categories = activeCategory.split(',').map((c) => c.trim())
     let list = categories.includes('Todo')
       ? products
-      : products.filter((p) => categories.includes(p.category))
+      : products.filter((p) =>
+          categories.some((cat) => p.categorySlugs.includes(cat.toLowerCase()))
+        )
 
     if (search.trim()) {
       const q = search.toLowerCase()

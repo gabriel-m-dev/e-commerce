@@ -284,6 +284,10 @@ async function main() {
         brand:       p.brand,
         colors:      [...p.colors],
         categoryId,
+        categories: {
+          deleteMany: {},
+          create: [{ categoryId, isPrimary: true }],
+        },
       },
       create: {
         name:        p.name,
@@ -297,6 +301,9 @@ async function main() {
         colors:      [...p.colors],
         active:      true,
         categoryId,
+        categories: {
+          create: [{ categoryId, isPrimary: true }],
+        },
       },
     })
     console.log(`  Product: ${upserted.name} — $${upserted.price} (${upserted.id})`)

@@ -60,19 +60,31 @@ export async function PUT(
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { name, slug, price, comparePrice, categorySlug, images, description, stock, featured, brand, active, colors, sizes } =
+  const { name, slug, price, comparePrice, categorySlugs, primaryCategorySlug, images, description, stock, featured, brand, active, colors, sizes } =
     body as Record<string, unknown>
 
   if (
     typeof name !== 'string' || !name.trim() ||
     typeof slug !== 'string' || !slug.trim() ||
     typeof price !== 'number' || price <= 0 ||
-    typeof categorySlug !== 'string' || !categorySlug.trim() ||
+    !Array.isArray(categorySlugs) || categorySlugs.length === 0 ||
     !Array.isArray(images) || images.length === 0 ||
     typeof description !== 'string' || !description.trim() ||
     typeof stock !== 'number' || stock < 0
   ) {
     return NextResponse.json({ error: 'Faltan campos requeridos o son inválidos' }, { status: 400 })
+  }
+
+  // Resolve primary: explicit or default to first element when only one category
+  const resolvedPrimarySlug: string =
+    typeof primaryCategorySlug === 'string' && primaryCategorySlug.trim()
+      ? primaryCategorySlug.trim()
+      : (categorySlugs as string[]).length === 1
+        ? (categorySlugs as string[])[0]
+        : ''
+
+  if (!resolvedPrimarySlug || !(categorySlugs as string[]).includes(resolvedPrimarySlug)) {
+    return NextResponse.json({ error: 'primaryCategorySlug debe estar incluido en categorySlugs' }, { status: 400 })
   }
 
   const VALID_BRANDS = ['NIKE', 'JORDAN', 'ADIDAS', 'OTROS']
@@ -101,10 +113,14 @@ export async function PUT(
   }
 
   try {
-    const category = await prisma.category.findUnique({ where: { slug: categorySlug } })
-    if (!category) {
-      return NextResponse.json({ error: `Categoría '${categorySlug}' no encontrada` }, { status: 400 })
+    const slugsArr = categorySlugs as string[]
+    const foundCategories = await prisma.category.findMany({ where: { slug: { in: slugsArr } } })
+    if (foundCategories.length !== slugsArr.length) {
+      const foundSlugs = foundCategories.map((c) => c.slug)
+      const missing = slugsArr.filter((s) => !foundSlugs.includes(s))
+      return NextResponse.json({ error: `Categorías no encontradas: ${missing.join(', ')}` }, { status: 400 })
     }
+    const primaryCategory = foundCategories.find((c) => c.slug === resolvedPrimarySlug)!
 
     const existing = await prisma.product.findUnique({ where: { id } })
     if (!existing) return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 })
@@ -115,6 +131,9 @@ export async function PUT(
     await Promise.allSettled(
       removedImages.map((oldUrl) => deleteStorageImageIfOwned(oldUrl))
     )
+
+    // Replace M2M categories: deleteMany then re-create
+    await prisma.productCategory.deleteMany({ where: { productId: id } })
 
     const product = await prisma.product.update({
       where: { id },
@@ -127,11 +146,17 @@ export async function PUT(
         images: images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0),
         colors: normalizedColors,
         sizes: normalizedSizes,
-        categoryId: category.id,
+        categoryId: primaryCategory.id,
         stock: Math.round(stock),
         featured: featured === true,
         active: active !== false,
         brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
+        categories: {
+          create: foundCategories.map((c) => ({
+            categoryId: c.id,
+            isPrimary: c.slug === resolvedPrimarySlug,
+          })),
+        },
       },
       include: { category: true },
     })
