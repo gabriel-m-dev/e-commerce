@@ -37,6 +37,10 @@ export async function POST(request: NextRequest) {
   const body: RequestBody = await request.json()
   const { items, buyer, shipping } = body
 
+  if (!items || items.length === 0) {
+    return Response.json({ error: 'El carrito está vacío' }, { status: 400 })
+  }
+
   // Check if user is authenticated — link order to account if so
   const supabase = await createClient()
   const { data: { user: authUser } } = await supabase.auth.getUser()
@@ -55,10 +59,6 @@ export async function POST(request: NextRequest) {
     linkedUserId = authUser.id
   }
 
-  if (!items || items.length === 0) {
-    return Response.json({ error: 'El carrito está vacío' }, { status: 400 })
-  }
-
   try {
     const productIds = items.map((item) => item.product.id)
     const dbProducts = await prisma.product.findMany({
@@ -70,7 +70,6 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: 'Producto no encontrado' }, { status: 400 })
     }
 
-    // Validate each item: product must be active and have enough stock
     for (const item of items) {
       const dbProduct = dbProducts.find((p) => p.id === item.product.id)!
       if (!dbProduct.active) {
@@ -91,14 +90,42 @@ export async function POST(request: NextRequest) {
     }
 
     const priceMap = new Map(dbProducts.map((p) => [p.id, p.price]))
-
     const subtotal = items.reduce(
       (sum, item) => sum + (priceMap.get(item.product.id) as number) * item.quantity,
       0
     )
 
-    const order = await prisma.order.create({
+    // Generate order ID upfront — MP preference created first, order persisted only on success
+    const orderId = crypto.randomUUID()
+
+    const preference = new Preference(mp)
+    const result = await preference.create({
+      body: {
+        items: items.map((item) => ({
+          id: item.product.id,
+          title: item.product.name,
+          quantity: item.quantity,
+          unit_price: priceMap.get(item.product.id) as number,
+          currency_id: 'ARS',
+        })),
+        payer: {
+          email: buyer.email,
+        },
+        back_urls: {
+          success: `${SITE_URL}/checkout/success`,
+          failure: `${SITE_URL}/checkout/failure`,
+          pending: `${SITE_URL}/checkout/pending`,
+        },
+        ...(SITE_URL !== 'http://localhost:3000' && { auto_return: 'approved' as const }),
+        notification_url: `${SITE_URL}/api/webhook/mercadopago`,
+        external_reference: orderId,
+      },
+    })
+
+    // MP succeeded — now persist the order
+    await prisma.order.create({
       data: {
+        id: orderId,
         userId: linkedUserId,
         email: buyer.email,
         status: 'PENDING',
@@ -128,41 +155,15 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    const preference = new Preference(mp)
-
-    const result = await preference.create({
-      body: {
-        items: items.map((item) => ({
-          id: item.product.id,
-          title: item.product.name,
-          quantity: item.quantity,
-          unit_price: priceMap.get(item.product.id) as number,
-          currency_id: 'ARS',
-        })),
-        payer: {
-          email: buyer.email,
-        },
-        back_urls: {
-          success: `${SITE_URL}/checkout/success`,
-          failure: `${SITE_URL}/checkout/failure`,
-          pending: `${SITE_URL}/checkout/pending`,
-        },
-        // auto_return solo funciona con URLs públicas (no localhost)
-        ...(SITE_URL !== 'http://localhost:3000' && { auto_return: 'approved' as const }),
-        notification_url: `${SITE_URL}/api/webhook/mercadopago`,
-        external_reference: order.id,
-      },
-    })
-
     return Response.json({
       preferenceId: result.id,
       initPoint: result.init_point,
-      orderId: order.id,
+      orderId,
     })
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error)
     const detail = (error as Record<string, unknown>)?.cause ?? (error as Record<string, unknown>)?.response ?? ''
-    console.error('[create-preference] MP error:', msg, JSON.stringify(detail))
+    console.error('[create-preference] error:', msg, JSON.stringify(detail))
     return Response.json(
       { error: 'Error al conectar con Mercado Pago', detail: msg },
       { status: 500 }
