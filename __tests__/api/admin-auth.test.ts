@@ -27,7 +27,10 @@ vi.mock('@/lib/prisma', () => ({
       delete: vi.fn(),
     },
     category: {
-      findUnique: vi.fn(),
+      findMany: vi.fn(),
+    },
+    productCategory: {
+      deleteMany: vi.fn(),
     },
     order: {
       findUnique: vi.fn(),
@@ -134,7 +137,8 @@ const VALID_PRODUCT_BODY = {
   slug: 'air-max-90',
   price: 12000,
   comparePrice: null,
-  categorySlug: 'zapatillas',
+  categorySlugs: ['zapatillas'],
+  primaryCategorySlug: 'zapatillas',
   images: ['https://example.com/img.jpg'],
   description: 'Classic runner',
   stock: 5,
@@ -178,15 +182,16 @@ describe('POST /api/admin/products — auth protection', () => {
 
   it('proceeds past auth when admin — returns 201 on valid body', async () => {
     mockAdmin()
-    ;(prisma.category.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
+    ;(prisma.category.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([{
       id: 'cat-1',
       slug: 'zapatillas',
       name: 'Zapatillas',
-    })
+    }])
     ;(prisma.product.create as ReturnType<typeof vi.fn>).mockResolvedValue({
       id: 'prod-new',
       ...VALID_PRODUCT_BODY,
       categoryId: 'cat-1',
+      categories: [{ category: { id: 'cat-1', slug: 'zapatillas', name: 'Zapatillas' }, isPrimary: true }],
       category: { id: 'cat-1', slug: 'zapatillas', name: 'Zapatillas' },
     })
     const req = makeRequest('POST', 'http://localhost/api/admin/products', VALID_PRODUCT_BODY)
@@ -205,7 +210,8 @@ describe('PUT /api/admin/products/[id] — auth protection', () => {
     slug: 'air-max-90',
     price: 12000,
     comparePrice: null,
-    categorySlug: 'zapatillas',
+    categorySlugs: ['zapatillas'],
+    primaryCategorySlug: 'zapatillas',
     images: ['https://example.com/img.jpg'],
     description: 'Classic runner',
     stock: 5,
@@ -236,15 +242,17 @@ describe('PUT /api/admin/products/[id] — auth protection', () => {
 
   it('proceeds past auth when admin — returns 200 on valid body', async () => {
     mockAdmin()
-    ;(prisma.category.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
+    ;(prisma.category.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([{
       id: 'cat-1',
       slug: 'zapatillas',
       name: 'Zapatillas',
-    })
+    }])
+    ;(prisma.productCategory.deleteMany as ReturnType<typeof vi.fn>).mockResolvedValue({ count: 1 })
     const existingProduct = { id: 'prod-1', brand: 'NIKE', images: [], ...VALID_PUT_BODY }
     ;(prisma.product.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(existingProduct)
     ;(prisma.product.update as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...existingProduct,
+      categories: [{ category: { id: 'cat-1', slug: 'zapatillas', name: 'Zapatillas' }, isPrimary: true }],
       category: { id: 'cat-1', slug: 'zapatillas', name: 'Zapatillas' },
     })
     const req = makeRequest('PUT', 'http://localhost/api/admin/products/prod-1', VALID_PUT_BODY)

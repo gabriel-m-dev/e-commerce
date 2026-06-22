@@ -22,7 +22,10 @@ vi.mock('@/lib/prisma', () => ({
       update: vi.fn(),
     },
     category: {
-      findUnique: vi.fn(),
+      findMany: vi.fn(),
+    },
+    productCategory: {
+      deleteMany: vi.fn(),
     },
     siteConfig: {
       findUnique: vi.fn(),
@@ -140,7 +143,8 @@ function makeValidPutBody(overrides: Record<string, unknown> = {}) {
     slug: 'air-jordan-1',
     price: 15000,
     comparePrice: null,
-    categorySlug: 'zapatillas',
+    categorySlugs: ['zapatillas'],
+    primaryCategorySlug: 'zapatillas',
     images: ['https://example.com/img.jpg'],
     description: 'Classic silhouette',
     stock: 10,
@@ -201,7 +205,7 @@ describe('DELETE /api/admin/products/[id]', () => {
     expect(jordanCall![1].productIds).toContain(OTHER_PRODUCT_ID)
   })
 
-  it('sets masPedido productId to null when it matches the deleted product', async () => {
+  it('sets masPedido productId to empty string when it matches the deleted product', async () => {
     // Arrange
     const product = makeProduct()
     ;(prisma.product.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(product)
@@ -223,7 +227,8 @@ describe('DELETE /api/admin/products/[id]', () => {
     const calls = (upsertSiteConfig as ReturnType<typeof vi.fn>).mock.calls
     const masPedidoCall = calls.find(([k]: [string]) => k === 'jordanMasPedido')
     expect(masPedidoCall).toBeDefined()
-    expect(masPedidoCall![1].productId).toBeNull()
+    // The API clears the productId by setting it to '' (empty string), not null
+    expect(masPedidoCall![1].productId).toBe('')
   })
 
   it('leaves other products untouched when only one ID is removed from a list', async () => {
@@ -255,12 +260,15 @@ describe('DELETE /api/admin/products/[id]', () => {
 
 describe('PUT /api/admin/products/[id] — brand change JORDAN → NIKE', () => {
   beforeEach(() => {
-    // Category lookup must succeed
-    ;(prisma.category.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
+    // Category lookup must succeed (now uses findMany)
+    ;(prisma.category.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([{
       id: 'cat-1',
       slug: 'zapatillas',
       name: 'Zapatillas',
-    })
+    }])
+
+    // deleteMany for M2M category replacement must succeed
+    ;(prisma.productCategory.deleteMany as ReturnType<typeof vi.fn>).mockResolvedValue({ count: 1 })
 
     // Existing product is JORDAN brand
     ;(prisma.product.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(
@@ -273,7 +281,7 @@ describe('PUT /api/admin/products/[id] — brand change JORDAN → NIKE', () => 
     )
   })
 
-  it('sets jordanMasPedido.productId to null when it references the moved product', async () => {
+  it('sets jordanMasPedido.productId to empty string when it references the moved product', async () => {
     // Arrange — jordanMasPedido points to our product
     ;(getSiteConfig as ReturnType<typeof vi.fn>).mockImplementation(async (key: string) => {
       if (key === 'jordanMasPedido') {
@@ -290,7 +298,8 @@ describe('PUT /api/admin/products/[id] — brand change JORDAN → NIKE', () => 
     const calls = (upsertSiteConfig as ReturnType<typeof vi.fn>).mock.calls
     const masPedidoCall = calls.find(([k]: [string]) => k === 'jordanMasPedido')
     expect(masPedidoCall).toBeDefined()
-    expect(masPedidoCall![1].productId).toBeNull()
+    // The API clears the productId by setting it to '' (empty string), not null
+    expect(masPedidoCall![1].productId).toBe('')
   })
 
   it('removes the product ID from brandSneakersJordan.productIds on brand change', async () => {

@@ -57,6 +57,9 @@ function makePrismaProduct(overrides: Record<string, unknown> = {}) {
     sizes: [],
     createdAt: new Date('2024-01-01'),
     category: { id: 'cat-1', name: 'Zapatillas', slug: 'zapatillas' },
+    categories: [
+      { category: { id: 'cat-1', name: 'Zapatillas', slug: 'zapatillas' }, isPrimary: true },
+    ],
     ...overrides,
   }
 }
@@ -176,7 +179,7 @@ describe('getProducts — brand + categorySlug filter', () => {
     expect(whereArg).toMatchObject({
       active: true,
       brand: 'JORDAN',
-      category: { slug: 'zapatillas' },
+      categories: { some: { category: { slug: 'zapatillas' } } },
     })
   })
 
@@ -192,6 +195,7 @@ describe('getProducts — brand + categorySlug filter', () => {
       brand: 'JORDAN', // from the fixture
       category: 'Zapatillas',
       categorySlug: 'zapatillas',
+      categorySlugs: ['zapatillas'],
     })
   })
 
