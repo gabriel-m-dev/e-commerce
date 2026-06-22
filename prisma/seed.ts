@@ -283,7 +283,6 @@ async function main() {
         stock:       p.stock,
         brand:       p.brand,
         colors:      [...p.colors],
-        categoryId,
         categories: {
           deleteMany: {},
           create: [{ categoryId, isPrimary: true }],
@@ -300,7 +299,6 @@ async function main() {
         brand:       p.brand,
         colors:      [...p.colors],
         active:      true,
-        categoryId,
         categories: {
           create: [{ categoryId, isPrimary: true }],
         },
