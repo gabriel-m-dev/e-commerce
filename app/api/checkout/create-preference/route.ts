@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { mp, Preference } from '@/lib/mercadopago'
 import { prisma } from '@/lib/prisma'
-import { SITE_URL } from '@/lib/constants'
+import { SITE_URL, SHIPPING_COST } from '@/lib/constants'
 import type { CartItem } from '@/store/cart'
 import { createClient } from '@/lib/supabase/server'
 import { checkoutLimiter } from '@/lib/ratelimit'
@@ -101,13 +101,22 @@ export async function POST(request: NextRequest) {
     const preference = new Preference(mp)
     const result = await preference.create({
       body: {
-        items: items.map((item) => ({
-          id: item.product.id,
-          title: item.product.name,
-          quantity: item.quantity,
-          unit_price: priceMap.get(item.product.id) as number,
-          currency_id: 'ARS',
-        })),
+        items: [
+          ...items.map((item) => ({
+            id: item.product.id,
+            title: item.product.name,
+            quantity: item.quantity,
+            unit_price: priceMap.get(item.product.id) as number,
+            currency_id: 'ARS',
+          })),
+          {
+            id: 'shipping',
+            title: 'Envío',
+            quantity: 1,
+            unit_price: SHIPPING_COST,
+            currency_id: 'ARS',
+          },
+        ],
         payer: {
           email: buyer.email,
         },
@@ -130,8 +139,8 @@ export async function POST(request: NextRequest) {
         email: buyer.email,
         status: 'PENDING',
         subtotal,
-        shipping: 0,
-        total: subtotal,
+        shipping: SHIPPING_COST,
+        total: subtotal + SHIPPING_COST,
         items: {
           create: items.map((item) => ({
             productId: item.product.id,

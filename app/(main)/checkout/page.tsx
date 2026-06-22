@@ -8,6 +8,7 @@ import ArrowIcon from '@/components/ui/ArrowIcon'
 import ShippingNotice from '@/components/ui/ShippingNotice'
 import useCartStore from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
+import { SHIPPING_COST } from '@/lib/constants'
 import type { CartItem } from '@/store/cart'
 
 {/* ─── Types ─── */}
@@ -114,7 +115,7 @@ export default function CheckoutPage() {
   const router = useRouter()
 
   const subtotal = getTotal()
-  const shipping = null
+  const shipping = SHIPPING_COST
 
   const [mounted, setMounted] = useState(false)
   useEffect(() => { setMounted(true) }, [])
@@ -468,7 +469,7 @@ function OrderSummary({
 }: {
   items: CartItem[]
   subtotal: number
-  shipping: number | null
+  shipping: number
 }) {
   return (
     <>
@@ -540,12 +541,22 @@ function OrderSummary({
                 {formatPrice(subtotal)}
               </span>
             </div>
+            {shipping !== null && (
+              <div className="flex justify-between items-baseline">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
+                  Envío
+                </span>
+                <span className="text-sm font-semibold text-foreground">
+                  {formatPrice(shipping)}
+                </span>
+              </div>
+            )}
             <div className="border-t border-border pt-3 flex justify-between items-baseline">
               <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
                 Total
               </span>
               <span className="text-base font-semibold text-foreground">
-                {formatPrice(subtotal)}
+                {formatPrice(subtotal + (shipping ?? 0))}
               </span>
             </div>
           </div>
