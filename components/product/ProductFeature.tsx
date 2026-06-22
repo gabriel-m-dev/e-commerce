@@ -75,9 +75,9 @@ export default function ProductFeature({ product: productProp }: { product?: DbP
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
 
           {/* Left — image gallery */}
-          <div className="flex gap-3">
+          <div className="flex flex-col-reverse gap-3 lg:flex-row">
             {/* Thumbnails */}
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-row gap-2.5 lg:flex-col">
               {thumbnails.map((src, i) => (
                 <button
                   key={i}
