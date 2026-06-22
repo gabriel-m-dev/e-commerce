@@ -27,7 +27,7 @@ export type DbProduct = {
   colors: string[]
   sizes: string[]
   createdAt: string
-  shippingMethodId: string | null
+  shippingMethodIds: string[]
 }
 
 // ─── Prisma include shape (reused across all queries) ────────────────────────
@@ -37,8 +37,8 @@ const productInclude = {
     include: { category: true },
     orderBy: { isPrimary: 'desc' as const },
   },
-  shippingMethod: {
-    select: { id: true, name: true, price: true },
+  shippingMethods: {
+    select: { shippingMethodId: true },
   },
 } as const
 
@@ -72,7 +72,7 @@ function toDbProduct(p: any): DbProduct {
     colors: (p.colors as string[]) ?? [],
     sizes: (p.sizes as string[]) ?? [],
     createdAt: (p.createdAt as Date).toISOString(),
-    shippingMethodId: p.shippingMethodId as string | null,
+    shippingMethodIds: (p.shippingMethods ?? []).map((ps: { shippingMethodId: string }) => ps.shippingMethodId),
   }
 }
 
@@ -98,7 +98,7 @@ function mockToDb(p: MockProduct): DbProduct {
     sizes: [],
     active: true,
     createdAt: new Date().toISOString(),
-    shippingMethodId: null,
+    shippingMethodIds: [],
   }
 }
 

@@ -60,7 +60,7 @@ export async function PUT(
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { name, slug, price, comparePrice, categorySlugs, primaryCategorySlug, images, description, stock, featured, brand, active, colors, sizes, shippingMethodId } =
+  const { name, slug, price, comparePrice, categorySlugs, primaryCategorySlug, images, description, stock, featured, brand, active, colors, sizes, shippingMethodIds } =
     body as Record<string, unknown>
 
   if (
@@ -150,7 +150,6 @@ export async function PUT(
         featured: featured === true,
         active: active !== false,
         brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
-        shippingMethodId: (typeof shippingMethodId === 'string' && shippingMethodId) ? shippingMethodId : null,
         categories: {
           create: foundCategories.map((c) => ({
             categoryId: c.id,
@@ -160,6 +159,15 @@ export async function PUT(
       },
       include: { categories: { include: { category: true }, orderBy: { isPrimary: 'desc' as const } } },
     })
+
+    // Sync shipping method assignments atomically (delete-then-recreate)
+    const smIds = Array.isArray(shippingMethodIds) ? (shippingMethodIds as string[]).filter(Boolean) : []
+    await prisma.$transaction([
+      prisma.productShippingMethod.deleteMany({ where: { productId: id } }),
+      prisma.productShippingMethod.createMany({
+        data: smIds.map((smId) => ({ productId: id, shippingMethodId: smId })),
+      }),
+    ])
 
     // If brand changed, remove product ID from old brand's sneakersConfig, newArrivals, and masPedido
     const oldBrand = existing.brand as string | null
@@ -220,7 +228,15 @@ export async function PUT(
       }
     }
 
-    return NextResponse.json({ product }, { status: 200 })
+    const fullProduct = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        categories: { include: { category: true }, orderBy: { isPrimary: 'desc' as const } },
+        shippingMethods: { select: { shippingMethodId: true } },
+      },
+    })
+
+    return NextResponse.json({ product: fullProduct }, { status: 200 })
   } catch (err: unknown) {
     if (err instanceof Error && err.message.includes('Unique constraint')) {
       return NextResponse.json({ error: 'Ya existe un producto con ese slug' }, { status: 400 })

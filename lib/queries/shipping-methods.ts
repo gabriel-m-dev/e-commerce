@@ -60,24 +60,26 @@ export async function updateShippingMethod(
 
 /**
  * Returns shipping methods filtered by the products in the cart.
- * Fallback rule: if ids is empty OR any product has shippingMethodId = null,
- * return ALL active methods. Only when every product has a non-null assignment
- * return the distinct set of assigned active methods.
+ * Fallback rule: if ids is empty OR any product has zero assigned methods,
+ * return ALL active methods. Only when every product has at least one assignment
+ * return the distinct UNION of assigned active methods.
  */
 export async function getShippingMethodsByProductIds(
   ids: string[]
 ): Promise<ShippingMethodRow[]> {
   if (!ids.length) return getActiveShippingMethods()
 
-  const products = await prisma.product.findMany({
-    where: { id: { in: ids } },
-    select: { shippingMethodId: true },
+  const rows = await prisma.productShippingMethod.findMany({
+    where: { productId: { in: ids } },
+    select: { productId: true, shippingMethodId: true },
   })
 
-  const hasUnassigned = products.some((p) => p.shippingMethodId === null)
+  // Check if any product has zero assigned methods
+  const productsWithMethods = new Set(rows.map((r) => r.productId))
+  const hasUnassigned = ids.some((id) => !productsWithMethods.has(id))
   if (hasUnassigned) return getActiveShippingMethods()
 
-  const methodIds = [...new Set(products.map((p) => p.shippingMethodId!))]
+  const methodIds = [...new Set(rows.map((r) => r.shippingMethodId))]
   return prisma.shippingMethod.findMany({
     where: { id: { in: methodIds }, active: true },
     orderBy: { price: 'asc' },

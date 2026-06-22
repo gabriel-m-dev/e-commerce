@@ -31,7 +31,7 @@ const DEFAULT_PRODUCT: DbProduct = {
   colors: [],
   sizes: [],
   createdAt: new Date().toISOString(),
-  shippingMethodId: null,
+  shippingMethodIds: [],
 }
 
 export default function ProductFeature({ product: productProp }: { product?: DbProduct | null }) {

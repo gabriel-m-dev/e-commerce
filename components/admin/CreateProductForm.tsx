@@ -25,6 +25,8 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false)
   const [uploadingIndices, setUploadingIndices] = useState<Set<number>>(new Set())
 
+  const [shippingMethodIds, setShippingMethodIds] = useState<string[]>([])
+
   const [form, setForm] = useState({
     name: '',
     slug: '',
@@ -36,7 +38,6 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
     stock: '0',
     featured: false,
     active: true,
-    shippingMethodId: '',
   })
 
   const [selectedCategorySlugs, setSelectedCategorySlugs] = useState<string[]>(
@@ -83,6 +84,12 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
   function toggleSize(size: string) {
     setSizes((prev) =>
       prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
+    )
+  }
+
+  function toggleShippingMethod(id: string) {
+    setShippingMethodIds((prev) =>
+      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
     )
   }
 
@@ -136,8 +143,8 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
       stock: '0',
       featured: false,
       active: true,
-      shippingMethodId: '',
     })
+    setShippingMethodIds([])
     setSelectedCategorySlugs(categories[0]?.slug ? [categories[0].slug] : [])
     setPrimaryCategorySlug(categories[0]?.slug ?? '')
     setColors([])
@@ -191,7 +198,7 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
           active: form.active,
           colors,
           sizes,
-          shippingMethodId: form.shippingMethodId || null,
+          shippingMethodIds,
         }),
       })
 
@@ -395,23 +402,31 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
                 </select>
               </div>
 
-              {/* Método de envío */}
+              {/* Métodos de envío */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
-                  Método de envío
+                  Métodos de envío
                 </label>
-                <select
-                  value={form.shippingMethodId}
-                  onChange={(e) => setForm((prev) => ({ ...prev, shippingMethodId: e.target.value }))}
-                  className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full cursor-pointer"
-                >
-                  <option value="">Sin método asignado</option>
-                  {shippingMethods.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.name} — {formatPrice(m.price)}
-                    </option>
-                  ))}
-                </select>
+                <div className="border border-border p-3 space-y-2 max-h-40 overflow-y-auto">
+                  {shippingMethods.length === 0 ? (
+                    <p className="text-[12px] text-muted">No hay métodos de envío creados</p>
+                  ) : (
+                    shippingMethods.map((m) => (
+                      <label key={m.id} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          value={m.id}
+                          checked={shippingMethodIds.includes(m.id)}
+                          onChange={() => toggleShippingMethod(m.id)}
+                          className="accent-[#c9a96e]"
+                        />
+                        <span className="text-[12px] uppercase tracking-wide">
+                          {m.name} — {formatPrice(m.price)}
+                        </span>
+                      </label>
+                    ))
+                  )}
+                </div>
               </div>
 
               {/* Precio */}

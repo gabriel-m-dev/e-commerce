@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 3. Validar campos requeridos
-  const { name, slug, price, comparePrice, categorySlugs, primaryCategorySlug, images, description, stock, featured, brand, active, colors, sizes, shippingMethodId } = body as Record<string, unknown>
+  const { name, slug, price, comparePrice, categorySlugs, primaryCategorySlug, images, description, stock, featured, brand, active, colors, sizes, shippingMethodIds } = body as Record<string, unknown>
 
   if (
     typeof name !== 'string' || !name.trim() ||
@@ -80,32 +80,47 @@ export async function POST(request: NextRequest) {
     }
     const primaryCategory = foundCategories.find((c) => c.slug === resolvedPrimarySlug)!
 
-    const product = await prisma.product.create({
-      data: {
-        name: name.trim(),
-        slug: slug.trim(),
-        description: description.trim(),
-        price: Math.round(price),
-        comparePrice: comparePrice != null ? Math.round(Number(comparePrice)) : null,
-        images: images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0),
-        colors: normalizedColors,
-        sizes: normalizedSizes,
-        stock: Math.round(stock),
-        featured: featured === true,
-        active: active !== false,
-        brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
-        shippingMethodId: (typeof shippingMethodId === 'string' && shippingMethodId) ? shippingMethodId : null,
-        categories: {
-          create: foundCategories.map((c) => ({
-            categoryId: c.id,
-            isPrimary: c.slug === resolvedPrimarySlug,
-          })),
+    const smIds = Array.isArray(shippingMethodIds) ? (shippingMethodIds as string[]).filter(Boolean) : []
+    let createdProduct: { id: string } | undefined
+    await prisma.$transaction(async (tx) => {
+      createdProduct = await tx.product.create({
+        data: {
+          name: name.trim(),
+          slug: slug.trim(),
+          description: description.trim(),
+          price: Math.round(price),
+          comparePrice: comparePrice != null ? Math.round(Number(comparePrice)) : null,
+          images: images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0),
+          colors: normalizedColors,
+          sizes: normalizedSizes,
+          stock: Math.round(stock),
+          featured: featured === true,
+          active: active !== false,
+          brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
+          categories: {
+            create: foundCategories.map((c) => ({
+              categoryId: c.id,
+              isPrimary: c.slug === resolvedPrimarySlug,
+            })),
+          },
         },
-      },
-      include: { categories: { include: { category: true }, orderBy: { isPrimary: 'desc' as const } } },
+      })
+      if (smIds.length > 0) {
+        await tx.productShippingMethod.createMany({
+          data: smIds.map((smId) => ({ productId: createdProduct!.id, shippingMethodId: smId })),
+        })
+      }
     })
 
-    return NextResponse.json({ product }, { status: 201 })
+    const fullProduct = await prisma.product.findUnique({
+      where: { id: createdProduct!.id },
+      include: {
+        categories: { include: { category: true }, orderBy: { isPrimary: 'desc' as const } },
+        shippingMethods: { select: { shippingMethodId: true } },
+      },
+    })
+
+    return NextResponse.json({ product: fullProduct }, { status: 201 })
   } catch (err: unknown) {
     if (err instanceof Error && err.message.includes('Unique constraint')) {
       return NextResponse.json({ error: 'Ya existe un producto con ese slug' }, { status: 400 })

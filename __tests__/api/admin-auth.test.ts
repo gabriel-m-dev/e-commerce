@@ -32,6 +32,10 @@ vi.mock('@/lib/prisma', () => ({
     productCategory: {
       deleteMany: vi.fn(),
     },
+    productShippingMethod: {
+      createMany: vi.fn().mockResolvedValue({ count: 0 }),
+      deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
+    },
     order: {
       findUnique: vi.fn(),
       update: vi.fn(),
@@ -40,7 +44,10 @@ vi.mock('@/lib/prisma', () => ({
       findUnique: vi.fn(),
       upsert: vi.fn(),
     },
-    $transaction: vi.fn(),
+    $transaction: vi.fn().mockImplementation(async (ops: unknown) => {
+      if (Array.isArray(ops)) return Promise.all(ops)
+      return ops
+    }),
   },
 }))
 

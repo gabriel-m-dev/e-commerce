@@ -34,31 +34,39 @@ model Category {
 }
 
 model Product {
-  id               String            @id @default(cuid())
+  id               String                  @id @default(cuid())
   name             String
-  slug             String            @unique
+  slug             String                  @unique
   description      String
   // Price stored in ARS cents (e.g. 24900 = $249.00 ARS)
   price            Int
   comparePrice     Int?
   images           String[]
-  colors           String[]          @default([])
-  sizes            String[]          @default([])
+  colors           String[]                @default([])
+  sizes            String[]                @default([])
   categories       ProductCategory[]
-  stock            Int               @default(0)
-  featured         Boolean           @default(false)
+  stock            Int                     @default(0)
+  featured         Boolean                 @default(false)
   featuredOrder    Int?
-  active           Boolean           @default(true)
-  brand            Brand             @default(OTROS)
-  shippingMethodId String?
-  shippingMethod   ShippingMethod?   @relation(fields: [shippingMethodId], references: [id], onDelete: SetNull)
+  active           Boolean                 @default(true)
+  brand            Brand                   @default(OTROS)
+  shippingMethods  ProductShippingMethod[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
 
   @@index([featured, active])
   @@index([brand])
+}
+
+model ProductShippingMethod {
+  productId        String
+  shippingMethodId String
+  product          Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  shippingMethod   ShippingMethod @relation(fields: [shippingMethodId], references: [id], onDelete: Cascade)
+
+  @@id([productId, shippingMethodId])
 }
 
 model ProductCategory {
@@ -91,14 +99,14 @@ model CartItem {
 // ─── Shipping ─────────────────────────────────────────────────────────────────
 
 model ShippingMethod {
-  id        String    @id @default(cuid())
+  id        String                  @id @default(cuid())
   name      String
-  price     Int                          // ARS cents
-  active    Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  price     Int                     // ARS cents
+  active    Boolean                 @default(true)
+  createdAt DateTime                @default(now())
+  updatedAt DateTime                @updatedAt
   orders    Order[]
-  products  Product[]
+  products  ProductShippingMethod[]
 }
 
 // ─── Orders ───────────────────────────────────────────────────────────────────

@@ -39,7 +39,7 @@ async function getFeaturedForAdmin(): Promise<DbProduct[]> {
         colors: p.colors ?? [],
         sizes: p.sizes ?? [],
         createdAt: p.createdAt.toISOString(),
-        shippingMethodId: p.shippingMethodId ?? null,
+        shippingMethodIds: [],
       }
     })
   } catch {
