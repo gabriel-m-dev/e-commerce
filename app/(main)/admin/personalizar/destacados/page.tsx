@@ -10,7 +10,6 @@ async function getFeaturedForAdmin(): Promise<DbProduct[]> {
     const results = await prisma.product.findMany({
       where: { featured: true },
       include: {
-        category: true,
         categories: {
           include: { category: true },
           orderBy: { isPrimary: 'desc' },
@@ -19,7 +18,7 @@ async function getFeaturedForAdmin(): Promise<DbProduct[]> {
       orderBy: [{ featuredOrder: 'asc' }, { createdAt: 'desc' }],
     })
     return results.map((p) => {
-      const primaryCategory = p.categories[0]?.category ?? p.category
+      const primaryCategory = p.categories[0]?.category
       return {
         id: p.id,
         name: p.name,

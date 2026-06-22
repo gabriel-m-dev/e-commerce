@@ -32,7 +32,6 @@ export type DbProduct = {
 // ─── Prisma include shape (reused across all queries) ────────────────────────
 
 const productInclude = {
-  category: true,
   categories: {
     include: { category: true },
     orderBy: { isPrimary: 'desc' as const },
@@ -43,11 +42,7 @@ const productInclude = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toDbProduct(p: any): DbProduct {
-  // Primary category: first entry after orderBy isPrimary desc.
-  // Fall back to the legacy category relation when join table rows are absent
-  // (e.g. products created before the migration).
-  const primaryRow = p.categories?.[0]
-  const primaryCategory = primaryRow?.category ?? p.category
+  const primaryCategory = p.categories?.[0]?.category
 
   return {
     id: p.id as string,
