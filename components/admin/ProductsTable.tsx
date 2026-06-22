@@ -5,14 +5,16 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { type DbProduct } from '@/lib/queries/products'
 import { formatPrice } from '@/lib/utils'
+import type { ShippingMethodRow } from '@/lib/queries/shipping-methods'
 import EditProductForm from './EditProductForm'
 
 interface ProductsTableProps {
   products: DbProduct[]
   categories: { id: string; name: string; slug: string }[]
+  shippingMethods: ShippingMethodRow[]
 }
 
-export default function ProductsTable({ products, categories }: ProductsTableProps) {
+export default function ProductsTable({ products, categories, shippingMethods }: ProductsTableProps) {
   const router = useRouter()
   const [editingProduct, setEditingProduct] = useState<DbProduct | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -127,6 +129,7 @@ export default function ProductsTable({ products, categories }: ProductsTablePro
         <EditProductForm
           product={editingProduct}
           categories={categories}
+          shippingMethods={shippingMethods}
           onSuccess={() => { setEditingProduct(null); router.refresh() }}
           onClose={() => setEditingProduct(null)}
         />

@@ -16,6 +16,7 @@ vi.mock('@/lib/prisma', () => {
   const count = vi.fn()
   const update = vi.fn()
   const del = vi.fn()
+  const productFindMany = vi.fn()
   return {
     prisma: {
       shippingMethod: {
@@ -27,17 +28,26 @@ vi.mock('@/lib/prisma', () => {
       order: {
         count,
       },
+      product: {
+        findMany: productFindMany,
+      },
     },
   }
 })
 
 import { prisma } from '@/lib/prisma'
-import { getActiveShippingMethods, deleteShippingMethod } from '@/lib/queries/shipping-methods'
+import {
+  getActiveShippingMethods,
+  getShippingMethodsByProductIds,
+  deleteShippingMethod,
+} from '@/lib/queries/shipping-methods'
 
-const mockFindMany = prisma.shippingMethod.findMany as ReturnType<typeof vi.fn>
-const mockUpdate   = prisma.shippingMethod.update as ReturnType<typeof vi.fn>
-const mockDelete   = prisma.shippingMethod.delete as ReturnType<typeof vi.fn>
-const mockCount    = prisma.order.count as ReturnType<typeof vi.fn>
+const mockFindMany        = prisma.shippingMethod.findMany as ReturnType<typeof vi.fn>
+const mockUpdate          = prisma.shippingMethod.update as ReturnType<typeof vi.fn>
+const mockDelete          = prisma.shippingMethod.delete as ReturnType<typeof vi.fn>
+const mockCount           = prisma.order.count as ReturnType<typeof vi.fn>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockProductFindMany = (prisma as any).product.findMany as ReturnType<typeof vi.fn>
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -73,6 +83,68 @@ describe('getActiveShippingMethods', () => {
     mockFindMany.mockResolvedValue([])
     const result = await getActiveShippingMethods()
     expect(result).toEqual([])
+  })
+})
+
+// ===========================================================================
+// getShippingMethodsByProductIds
+// ===========================================================================
+
+describe('getShippingMethodsByProductIds', () => {
+  it('returns all active methods when ids array is empty (fallback)', async () => {
+    const allMethods = [
+      { id: 'a', name: 'Económico', price: 10000, active: true, createdAt: new Date() },
+    ]
+    mockFindMany.mockResolvedValue(allMethods)
+
+    const result = await getShippingMethodsByProductIds([])
+
+    // Should call getActiveShippingMethods (shippingMethod.findMany with active: true)
+    expect(mockFindMany).toHaveBeenCalledOnce()
+    expect(mockFindMany.mock.calls[0][0].where).toEqual({ active: true })
+    expect(result).toEqual(allMethods)
+    // Should NOT query products
+    expect(mockProductFindMany).not.toHaveBeenCalled()
+  })
+
+  it('returns all active methods when any product has shippingMethodId = null (fallback)', async () => {
+    const allMethods = [
+      { id: 'a', name: 'Económico', price: 10000, active: true, createdAt: new Date() },
+      { id: 'b', name: 'Express',   price: 25000, active: true, createdAt: new Date() },
+    ]
+    mockProductFindMany.mockResolvedValue([
+      { shippingMethodId: 'a' },
+      { shippingMethodId: null },   // triggers fallback
+    ])
+    mockFindMany.mockResolvedValue(allMethods)
+
+    const result = await getShippingMethodsByProductIds(['p1', 'p2'])
+
+    expect(mockProductFindMany).toHaveBeenCalledOnce()
+    expect(mockFindMany).toHaveBeenCalledOnce()
+    // Must use getActiveShippingMethods (active: true filter)
+    expect(mockFindMany.mock.calls[0][0].where).toEqual({ active: true })
+    expect(result).toEqual(allMethods)
+  })
+
+  it('returns only filtered distinct methods when all products have assigned ids', async () => {
+    const filteredMethods = [
+      { id: 'a', name: 'Económico', price: 10000, active: true, createdAt: new Date() },
+    ]
+    mockProductFindMany.mockResolvedValue([
+      { shippingMethodId: 'a' },
+      { shippingMethodId: 'a' }, // duplicate — should deduplicate
+    ])
+    mockFindMany.mockResolvedValue(filteredMethods)
+
+    const result = await getShippingMethodsByProductIds(['p1', 'p2'])
+
+    expect(mockProductFindMany).toHaveBeenCalledOnce()
+    expect(mockFindMany).toHaveBeenCalledOnce()
+    // Must query by distinct method ids with active: true
+    const callArgs = mockFindMany.mock.calls[0][0]
+    expect(callArgs.where).toMatchObject({ id: { in: ['a'] }, active: true })
+    expect(result).toEqual(filteredMethods)
   })
 })
 

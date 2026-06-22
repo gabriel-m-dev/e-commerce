@@ -34,26 +34,28 @@ model Category {
 }
 
 model Product {
-  id           String            @id @default(cuid())
-  name         String
-  slug         String            @unique
-  description  String
+  id               String            @id @default(cuid())
+  name             String
+  slug             String            @unique
+  description      String
   // Price stored in ARS cents (e.g. 24900 = $249.00 ARS)
-  price        Int
-  comparePrice Int?
-  images       String[]
-  colors       String[]          @default([])
-  sizes        String[]          @default([])
-  categories   ProductCategory[]
-  stock        Int               @default(0)
-  featured      Boolean          @default(false)
-  featuredOrder Int?
-  active        Boolean          @default(true)
-  brand         Brand            @default(OTROS)
-  cartItems    CartItem[]
-  orderItems   OrderItem[]
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  price            Int
+  comparePrice     Int?
+  images           String[]
+  colors           String[]          @default([])
+  sizes            String[]          @default([])
+  categories       ProductCategory[]
+  stock            Int               @default(0)
+  featured         Boolean           @default(false)
+  featuredOrder    Int?
+  active           Boolean           @default(true)
+  brand            Brand             @default(OTROS)
+  shippingMethodId String?
+  shippingMethod   ShippingMethod?   @relation(fields: [shippingMethodId], references: [id], onDelete: SetNull)
+  cartItems        CartItem[]
+  orderItems       OrderItem[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
   @@index([featured, active])
   @@index([brand])
@@ -89,13 +91,14 @@ model CartItem {
 // ─── Shipping ─────────────────────────────────────────────────────────────────
 
 model ShippingMethod {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  price     Int                         // ARS cents
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  price     Int                          // ARS cents
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   orders    Order[]
+  products  Product[]
 }
 
 // ─── Orders ───────────────────────────────────────────────────────────────────

@@ -59,6 +59,33 @@ export async function updateShippingMethod(
 }
 
 /**
+ * Returns shipping methods filtered by the products in the cart.
+ * Fallback rule: if ids is empty OR any product has shippingMethodId = null,
+ * return ALL active methods. Only when every product has a non-null assignment
+ * return the distinct set of assigned active methods.
+ */
+export async function getShippingMethodsByProductIds(
+  ids: string[]
+): Promise<ShippingMethodRow[]> {
+  if (!ids.length) return getActiveShippingMethods()
+
+  const products = await prisma.product.findMany({
+    where: { id: { in: ids } },
+    select: { shippingMethodId: true },
+  })
+
+  const hasUnassigned = products.some((p) => p.shippingMethodId === null)
+  if (hasUnassigned) return getActiveShippingMethods()
+
+  const methodIds = [...new Set(products.map((p) => p.shippingMethodId!))]
+  return prisma.shippingMethod.findMany({
+    where: { id: { in: methodIds }, active: true },
+    orderBy: { price: 'asc' },
+    select: { id: true, name: true, price: true, active: true, createdAt: true },
+  })
+}
+
+/**
  * Delete strategy:
  * - Hard-delete when no Orders reference the method
  * - Soft-delete (active=false) when at least one Order references it

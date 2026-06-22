@@ -134,14 +134,18 @@ export default function CheckoutPage() {
   const [selectedMethodId, setSelectedMethodId] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch('/api/shipping-methods')
+    const productIds = items.map((i) => i.product.id).filter(Boolean)
+    const url = productIds.length
+      ? `/api/shipping-methods?productIds=${productIds.join(',')}`
+      : '/api/shipping-methods'
+    fetch(url)
       .then((r) => r.json())
       .then((data: ShippingMethod[]) => {
         setShippingMethods(Array.isArray(data) ? data : [])
       })
       .catch(() => setShippingMethods([]))
       .finally(() => setMethodsLoading(false))
-  }, [])
+  }, [items])
 
   const selectedMethod = shippingMethods.find((m) => m.id === selectedMethodId) ?? null
   const shipping = selectedMethod?.price ?? null

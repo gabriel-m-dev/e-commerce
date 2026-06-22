@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
-import { formatSlug } from '@/lib/utils'
+import { formatSlug, formatPrice } from '@/lib/utils'
+import type { ShippingMethodRow } from '@/lib/queries/shipping-methods'
 
 interface Category {
   id: string
@@ -13,9 +14,10 @@ interface Category {
 
 interface CreateProductFormProps {
   categories: Category[]
+  shippingMethods: ShippingMethodRow[]
 }
 
-export default function CreateProductForm({ categories }: CreateProductFormProps) {
+export default function CreateProductForm({ categories, shippingMethods }: CreateProductFormProps) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -34,6 +36,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
     stock: '0',
     featured: false,
     active: true,
+    shippingMethodId: '',
   })
 
   const [selectedCategorySlugs, setSelectedCategorySlugs] = useState<string[]>(
@@ -133,6 +136,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
       stock: '0',
       featured: false,
       active: true,
+      shippingMethodId: '',
     })
     setSelectedCategorySlugs(categories[0]?.slug ? [categories[0].slug] : [])
     setPrimaryCategorySlug(categories[0]?.slug ?? '')
@@ -187,6 +191,7 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
           active: form.active,
           colors,
           sizes,
+          shippingMethodId: form.shippingMethodId || null,
         }),
       })
 
@@ -387,6 +392,25 @@ export default function CreateProductForm({ categories }: CreateProductFormProps
                   <option value="NIKE">Nike</option>
                   <option value="JORDAN">Jordan</option>
                   <option value="ADIDAS">Adidas</option>
+                </select>
+              </div>
+
+              {/* Método de envío */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+                  Método de envío
+                </label>
+                <select
+                  value={form.shippingMethodId}
+                  onChange={(e) => setForm((prev) => ({ ...prev, shippingMethodId: e.target.value }))}
+                  className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full cursor-pointer"
+                >
+                  <option value="">Sin método asignado</option>
+                  {shippingMethods.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name} — {formatPrice(m.price)}
+                    </option>
+                  ))}
                 </select>
               </div>
 

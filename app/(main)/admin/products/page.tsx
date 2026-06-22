@@ -1,11 +1,16 @@
 import { getProducts, getCategories } from '@/lib/queries/products'
+import { getActiveShippingMethods } from '@/lib/queries/shipping-methods'
 import CreateProductForm from '@/components/admin/CreateProductForm'
 import ProductsTable from '@/components/admin/ProductsTable'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AdminProductsPage() {
-  const [products, categories] = await Promise.all([getProducts(), getCategories()])
+  const [products, categories, shippingMethods] = await Promise.all([
+    getProducts(),
+    getCategories(),
+    getActiveShippingMethods(),
+  ])
 
   return (
     <div className="space-y-6">
@@ -18,10 +23,10 @@ export default async function AdminProductsPage() {
             {products.length} productos en total
           </p>
         </div>
-        <CreateProductForm categories={categories} />
+        <CreateProductForm categories={categories} shippingMethods={shippingMethods} />
       </div>
 
-      <ProductsTable products={products} categories={categories} />
+      <ProductsTable products={products} categories={categories} shippingMethods={shippingMethods} />
     </div>
   )
 }

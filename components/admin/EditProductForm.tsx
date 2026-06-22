@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { type DbProduct } from '@/lib/queries/products'
-import { formatSlug } from '@/lib/utils'
+import { formatSlug, formatPrice } from '@/lib/utils'
+import type { ShippingMethodRow } from '@/lib/queries/shipping-methods'
 
 interface EditProductFormProps {
   product: DbProduct
   categories: { id: string; name: string; slug: string }[]
+  shippingMethods: ShippingMethodRow[]
   onSuccess: () => void
   onClose: () => void
 }
@@ -14,6 +16,7 @@ interface EditProductFormProps {
 export default function EditProductForm({
   product,
   categories,
+  shippingMethods,
   onSuccess,
   onClose,
 }: EditProductFormProps) {
@@ -33,6 +36,7 @@ export default function EditProductForm({
     stock: product.stock.toString(),
     featured: product.featured,
     active: product.active,
+    shippingMethodId: product.shippingMethodId ?? '',
   })
 
   const [selectedCategorySlugs, setSelectedCategorySlugs] = useState<string[]>(
@@ -214,6 +218,7 @@ export default function EditProductForm({
           active: form.active,
           colors,
           sizes,
+          shippingMethodId: form.shippingMethodId || null,
         }),
       })
 
@@ -324,6 +329,23 @@ export default function EditProductForm({
                 <option value="NIKE">Nike</option>
                 <option value="JORDAN">Jordan</option>
                 <option value="ADIDAS">Adidas</option>
+              </select>
+            </div>
+
+            {/* Método de envío */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Método de envío</label>
+              <select
+                value={form.shippingMethodId}
+                onChange={(e) => setForm((prev) => ({ ...prev, shippingMethodId: e.target.value }))}
+                className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full cursor-pointer"
+              >
+                <option value="">Sin método asignado</option>
+                {shippingMethods.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name} — {formatPrice(m.price)}
+                  </option>
+                ))}
               </select>
             </div>
 

@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 3. Validar campos requeridos
-  const { name, slug, price, comparePrice, categorySlugs, primaryCategorySlug, images, description, stock, featured, brand, active, colors, sizes } = body as Record<string, unknown>
+  const { name, slug, price, comparePrice, categorySlugs, primaryCategorySlug, images, description, stock, featured, brand, active, colors, sizes, shippingMethodId } = body as Record<string, unknown>
 
   if (
     typeof name !== 'string' || !name.trim() ||
@@ -94,6 +94,7 @@ export async function POST(request: NextRequest) {
         featured: featured === true,
         active: active !== false,
         brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
+        shippingMethodId: (typeof shippingMethodId === 'string' && shippingMethodId) ? shippingMethodId : null,
         categories: {
           create: foundCategories.map((c) => ({
             categoryId: c.id,
