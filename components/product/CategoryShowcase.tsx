@@ -22,7 +22,7 @@ export default function CategoryShowcase({ cards: cardsProp }: { cards?: Categor
             alt={card.title}
             fill
             sizes="(max-width: 1024px) 100vw, 33vw"
-            className="object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105"
+            className="object-cover md:object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-foreground/45 transition-colors duration-500 group-hover:bg-foreground/60" />
           {i < 2 && (
