@@ -146,7 +146,6 @@ export async function PUT(
         images: images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0),
         colors: normalizedColors,
         sizes: normalizedSizes,
-        categoryId: primaryCategory.id,
         stock: Math.round(stock),
         featured: featured === true,
         active: active !== false,
