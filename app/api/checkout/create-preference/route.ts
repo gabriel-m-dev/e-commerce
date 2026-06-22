@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { mp, Preference } from '@/lib/mercadopago'
 import { prisma } from '@/lib/prisma'
-import { SITE_URL, SHIPPING_COST } from '@/lib/constants'
+import { SITE_URL } from '@/lib/constants'
 import type { CartItem } from '@/store/cart'
 import { createClient } from '@/lib/supabase/server'
 import { checkoutLimiter } from '@/lib/ratelimit'
@@ -23,6 +23,7 @@ type RequestBody = {
   items: CartItem[]
   buyer: Buyer
   shipping: ShippingData
+  shippingMethodId: string
 }
 
 export async function POST(request: NextRequest) {
@@ -35,10 +36,14 @@ export async function POST(request: NextRequest) {
   }
 
   const body: RequestBody = await request.json()
-  const { items, buyer, shipping } = body
+  const { items, buyer, shipping, shippingMethodId } = body
 
   if (!items || items.length === 0) {
     return Response.json({ error: 'El carrito está vacío' }, { status: 400 })
+  }
+
+  if (!shippingMethodId || typeof shippingMethodId !== 'string') {
+    return Response.json({ error: 'Seleccioná un método de envío' }, { status: 400 })
   }
 
   // Check if user is authenticated — link order to account if so
@@ -95,6 +100,16 @@ export async function POST(request: NextRequest) {
       0
     )
 
+    // Resolve shipping cost from DB — never trust client-sent price
+    const shippingMethod = await prisma.shippingMethod.findUnique({
+      where: { id: shippingMethodId },
+      select: { id: true, name: true, price: true, active: true },
+    })
+    if (!shippingMethod || !shippingMethod.active) {
+      return Response.json({ error: 'Método de envío no disponible' }, { status: 400 })
+    }
+    const shippingCost = shippingMethod.price
+
     // Generate order ID upfront — MP preference created first, order persisted only on success
     const orderId = crypto.randomUUID()
 
@@ -111,9 +126,9 @@ export async function POST(request: NextRequest) {
           })),
           {
             id: 'shipping',
-            title: 'Envío',
+            title: shippingMethod.name,
             quantity: 1,
-            unit_price: SHIPPING_COST,
+            unit_price: shippingCost,
             currency_id: 'ARS',
           },
         ],
@@ -139,8 +154,9 @@ export async function POST(request: NextRequest) {
         email: buyer.email,
         status: 'PENDING',
         subtotal,
-        shipping: SHIPPING_COST,
-        total: subtotal + SHIPPING_COST,
+        shipping: shippingCost,
+        total: subtotal + shippingCost,
+        shippingMethodId: shippingMethod.id,
         items: {
           create: items.map((item) => ({
             productId: item.product.id,

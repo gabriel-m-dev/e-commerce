@@ -8,8 +8,15 @@ import ArrowIcon from '@/components/ui/ArrowIcon'
 import ShippingNotice from '@/components/ui/ShippingNotice'
 import useCartStore from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
-import { SHIPPING_COST } from '@/lib/constants'
 import type { CartItem } from '@/store/cart'
+
+type ShippingMethod = {
+  id: string
+  name: string
+  price: number
+  active: boolean
+  createdAt: string
+}
 
 {/* ─── Types ─── */}
 
@@ -115,13 +122,29 @@ export default function CheckoutPage() {
   const router = useRouter()
 
   const subtotal = getTotal()
-  const shipping = SHIPPING_COST
 
   const [mounted, setMounted] = useState(false)
   useEffect(() => { setMounted(true) }, [])
   useEffect(() => {
     if (mounted && items.length === 0) router.replace('/cart')
   }, [mounted, items, router])
+
+  const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>([])
+  const [methodsLoading, setMethodsLoading] = useState(true)
+  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/shipping-methods')
+      .then((r) => r.json())
+      .then((data: ShippingMethod[]) => {
+        setShippingMethods(Array.isArray(data) ? data : [])
+      })
+      .catch(() => setShippingMethods([]))
+      .finally(() => setMethodsLoading(false))
+  }, [])
+
+  const selectedMethod = shippingMethods.find((m) => m.id === selectedMethodId) ?? null
+  const shipping = selectedMethod?.price ?? null
 
   const [fields, setFields] = useState<FormFields>({
     email: '',
@@ -155,6 +178,11 @@ export default function CheckoutPage() {
       return
     }
 
+    if (!selectedMethodId) {
+      setSubmitError('Seleccioná un método de envío para continuar.')
+      return
+    }
+
     setLoading(true)
     setSubmitError(null)
 
@@ -175,6 +203,7 @@ export default function CheckoutPage() {
             province: fields.province,
             postalCode: fields.postalCode,
           },
+          shippingMethodId: selectedMethodId,
         }),
       })
 
@@ -355,9 +384,58 @@ export default function CheckoutPage() {
               </div>
             </section>
 
-            {/* ─── 03 Pago ─── */}
+            {/* ─── 03 Método de envío ─── */}
             <section className="mb-12">
-              <SectionHeader number="03" title="Pago" />
+              <SectionHeader number="03" title="Método de envío" />
+              {methodsLoading ? (
+                <div className="border border-border p-6 bg-surface">
+                  <p className="text-[11px] text-muted uppercase tracking-[0.15em]">
+                    Cargando métodos de envío...
+                  </p>
+                </div>
+              ) : shippingMethods.length === 0 ? (
+                <div className="border border-border p-6 bg-surface">
+                  <p className="text-[11px] text-muted uppercase tracking-[0.15em]">
+                    No hay métodos de envío disponibles.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {shippingMethods.map((method) => (
+                    <label
+                      key={method.id}
+                      className={[
+                        'flex items-center justify-between border px-5 py-4 cursor-pointer transition-colors',
+                        selectedMethodId === method.id
+                          ? 'border-foreground bg-surface'
+                          : 'border-border hover:border-foreground/40',
+                      ].join(' ')}
+                    >
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="radio"
+                          name="shippingMethod"
+                          value={method.id}
+                          checked={selectedMethodId === method.id}
+                          onChange={() => setSelectedMethodId(method.id)}
+                          className="accent-foreground w-4 h-4"
+                        />
+                        <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground">
+                          {method.name}
+                        </span>
+                      </div>
+                      <span className="text-sm font-semibold text-foreground">
+                        {formatPrice(method.price)}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {/* ─── 04 Pago ─── */}
+            <section className="mb-12">
+              <SectionHeader number="04" title="Pago" />
               <div className="border border-border p-6 bg-surface">
                 <div className="flex items-start gap-4 mb-5">
                   {/* MP logo simplified */}
@@ -428,7 +506,7 @@ export default function CheckoutPage() {
               )}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || methodsLoading || !selectedMethodId}
                 className="w-full flex items-center justify-center gap-3 bg-foreground text-background px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.22em] transition-opacity hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Procesando...' : 'Confirmar pedido'}
@@ -469,7 +547,7 @@ function OrderSummary({
 }: {
   items: CartItem[]
   subtotal: number
-  shipping: number
+  shipping: number | null
 }) {
   return (
     <>

@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { label: 'Dashboard',      href: '/admin'            },
   { label: 'Productos',      href: '/admin/products'   },
   { label: 'Categorías',     href: '/admin/categories' },
+  { label: 'Envíos',         href: '/admin/shipping'   },
   { label: 'Personalizar web', href: '/admin/personalizar' },
   { label: 'Órdenes',        href: '/admin/orders'     },
 ]

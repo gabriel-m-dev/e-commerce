@@ -46,7 +46,5 @@ export const NAV_LINKS: NavLink[] = [
   { label: 'Contacto', href: '/contact' },
 ]
 
-export const SHIPPING_COST = 16000
-
 export const FEATURED_PRODUCTS_LIMIT = 4
 export const PRODUCTS_PER_PAGE = 12

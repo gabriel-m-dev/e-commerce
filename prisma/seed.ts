@@ -353,6 +353,17 @@ async function main() {
   })
   console.log('  SiteConfig: categoryCards')
 
+  // ─── Shipping Methods ──────────────────────────────────────────────────────
+
+  console.log('Seeding shipping methods...')
+
+  await prisma.shippingMethod.upsert({
+    where: { id: 'shipping-standard' },
+    update: { name: 'Envío estándar', price: 16000, active: true },
+    create: { id: 'shipping-standard', name: 'Envío estándar', price: 16000, active: true },
+  })
+  console.log('  ShippingMethod: Envío estándar ($16,000 ARS)')
+
   console.log('Seed complete.')
 }
 
