@@ -97,7 +97,8 @@ export default function EditProductForm({
     const { createClient } = await import('@/lib/supabase/client')
     const supabase = createClient()
     const ext = file.name.split('.').pop() ?? 'jpg'
-    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const slug = form.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+    const path = `products/${form.brand}/${slug}/${Date.now()}.${ext}`
     const { data, error } = await supabase.storage
       .from('products')
       .upload(path, file, { cacheControl: '3600', upsert: false })
