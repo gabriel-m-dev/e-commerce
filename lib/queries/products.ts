@@ -43,6 +43,8 @@ const productInclude = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toDbProduct(p: any): DbProduct {
   const primaryCategory = p.categories?.[0]?.category
+  const categoryName = primaryCategory?.name ?? ''
+  const categorySlug = primaryCategory?.slug ?? ''
 
   return {
     id: p.id as string,
@@ -50,8 +52,8 @@ function toDbProduct(p: any): DbProduct {
     slug: p.slug as string,
     price: Number(p.price),
     comparePrice: p.comparePrice != null ? Number(p.comparePrice) : null,
-    category: primaryCategory.name as string,
-    categorySlug: primaryCategory.slug as string,
+    category: categoryName as string,
+    categorySlug: categorySlug as string,
     categorySlugs: (p.categories ?? []).map(
       (r: { category: { slug: string } }) => r.category.slug
     ),
