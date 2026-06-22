@@ -251,107 +251,119 @@ const products = [
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log('Seeding categories...')
-
-  // Upsert categories
   const categoryMap = new Map<string, string>()
 
-  for (const cat of categories) {
-    const upserted = await prisma.category.upsert({
-      where:  { slug: cat.slug },
-      update: { name: cat.name },
-      create: { name: cat.name, slug: cat.slug },
-    })
-    categoryMap.set(cat.slug, upserted.id)
-    console.log(`  Category: ${upserted.name} (${upserted.id})`)
+  if (await prisma.category.count() === 0) {
+    console.log('Seeding categories...')
+    for (const cat of categories) {
+      const upserted = await prisma.category.upsert({
+        where:  { slug: cat.slug },
+        update: { name: cat.name },
+        create: { name: cat.name, slug: cat.slug },
+      })
+      categoryMap.set(cat.slug, upserted.id)
+      console.log(`  Category: ${upserted.name} (${upserted.id})`)
+    }
+  } else {
+    console.log(`Skipping categories — already exist`)
+    const existing = await prisma.category.findMany({ select: { id: true, slug: true } })
+    for (const cat of existing) categoryMap.set(cat.slug, cat.id)
   }
 
-  console.log('Seeding products...')
+  const productCount = await prisma.product.count()
+  if (productCount === 0) {
+    console.log('Seeding products...')
+    for (const p of products) {
+      const categoryId = categoryMap.get(p.categorySlug)
+      if (!categoryId) throw new Error(`Category not found for slug: ${p.categorySlug}`)
 
-  for (const p of products) {
-    const categoryId = categoryMap.get(p.categorySlug)
-    if (!categoryId) throw new Error(`Category not found for slug: ${p.categorySlug}`)
-
-    const upserted = await prisma.product.upsert({
-      where:  { slug: p.slug },
-      update: {
-        name:        p.name,
-        price:       p.price,
-        images:      [...p.images],
-        description: p.description,
-        featured:    p.featured,
-        stock:       p.stock,
-        brand:       p.brand,
-        colors:      [...p.colors],
-        categories: {
-          deleteMany: {},
-          create: [{ categoryId, isPrimary: true }],
+      const upserted = await prisma.product.upsert({
+        where:  { slug: p.slug },
+        update: {
+          name:        p.name,
+          price:       p.price,
+          images:      [...p.images],
+          description: p.description,
+          featured:    p.featured,
+          stock:       p.stock,
+          brand:       p.brand,
+          colors:      [...p.colors],
+          categories: {
+            deleteMany: {},
+            create: [{ categoryId, isPrimary: true }],
+          },
         },
-      },
-      create: {
-        name:        p.name,
-        slug:        p.slug,
-        price:       p.price,
-        images:      [...p.images],
-        description: p.description,
-        featured:    p.featured,
-        stock:       p.stock,
-        brand:       p.brand,
-        colors:      [...p.colors],
-        active:      true,
-        categories: {
-          create: [{ categoryId, isPrimary: true }],
+        create: {
+          name:        p.name,
+          slug:        p.slug,
+          price:       p.price,
+          images:      [...p.images],
+          description: p.description,
+          featured:    p.featured,
+          stock:       p.stock,
+          brand:       p.brand,
+          colors:      [...p.colors],
+          active:      true,
+          categories: {
+            create: [{ categoryId, isPrimary: true }],
+          },
         },
-      },
-    })
-    console.log(`  Product: ${upserted.name} — $${upserted.price} (${upserted.id})`)
+      })
+      console.log(`  Product: ${upserted.name} — $${upserted.price} (${upserted.id})`)
+    }
+  } else {
+    console.log(`Skipping products — ${productCount} already exist`)
   }
 
   // ─── SiteConfig defaults ──────────────────────────────────────────────────
 
-  console.log('Seeding site config...')
+  if (await prisma.siteConfig.count() === 0) {
+    console.log('Seeding site config...')
 
-  const luxeAir = await prisma.product.findUnique({ where: { slug: 'luxe-air' } })
+    const luxeAir = await prisma.product.findUnique({ where: { slug: 'luxe-air' } })
 
-  const heroDefault = {
-    slides: [
-      { image: '/hero/1.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
-      { image: '/hero/2.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
-      { image: '/hero/3.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
-      { image: '/hero/4.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
-    ],
-  }
+    const heroDefault = {
+      slides: [
+        { image: '/hero/1.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
+        { image: '/hero/2.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
+        { image: '/hero/3.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
+        { image: '/hero/4.webp', label: 'Nueva Colección', title: 'Diseño que se siente.', subtitle: 'Calidad que se nota.', ctaText: 'Comprar ahora', ctaLink: '/products' },
+      ],
+    }
 
-  const categoryCardsDefault = {
-    cards: [
-      { image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85', label: 'Nueva colección', title: 'Zapatillas', subtitle: '5 modelos', link: '/products?category=Zapatillas' },
-      { image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=900&auto=format&fit=crop&q=85', label: 'Temporada actual', title: 'Ropa', subtitle: 'Buzos · Remeras · Pantalones', link: '/products?category=Buzos,Pantalones,Remeras' },
-      { image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=900&auto=format&fit=crop&q=85', label: 'Esenciales', title: 'Accesorios', subtitle: 'Gorras · Mochilas', link: '/products?category=Gorras,Mochilas' },
-    ],
-  }
+    const categoryCardsDefault = {
+      cards: [
+        { image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85', label: 'Nueva colección', title: 'Zapatillas', subtitle: '5 modelos', link: '/products?category=Zapatillas' },
+        { image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=900&auto=format&fit=crop&q=85', label: 'Temporada actual', title: 'Ropa', subtitle: 'Buzos · Remeras · Pantalones', link: '/products?category=Buzos,Pantalones,Remeras' },
+        { image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=900&auto=format&fit=crop&q=85', label: 'Esenciales', title: 'Accesorios', subtitle: 'Gorras · Mochilas', link: '/products?category=Gorras,Mochilas' },
+      ],
+    }
 
-  await prisma.siteConfig.upsert({
-    where: { key: 'hero' },
-    update: { value: heroDefault },
-    create: { key: 'hero', value: heroDefault },
-  })
-  console.log('  SiteConfig: hero')
-
-  if (luxeAir) {
     await prisma.siteConfig.upsert({
-      where: { key: 'productFeature' },
-      update: { value: { productId: luxeAir.id } },
-      create: { key: 'productFeature', value: { productId: luxeAir.id } },
+      where: { key: 'hero' },
+      update: { value: heroDefault },
+      create: { key: 'hero', value: heroDefault },
     })
-    console.log(`  SiteConfig: productFeature (${luxeAir.id})`)
-  }
+    console.log('  SiteConfig: hero')
 
-  await prisma.siteConfig.upsert({
-    where: { key: 'categoryCards' },
-    update: { value: categoryCardsDefault },
-    create: { key: 'categoryCards', value: categoryCardsDefault },
-  })
-  console.log('  SiteConfig: categoryCards')
+    if (luxeAir) {
+      await prisma.siteConfig.upsert({
+        where: { key: 'productFeature' },
+        update: { value: { productId: luxeAir.id } },
+        create: { key: 'productFeature', value: { productId: luxeAir.id } },
+      })
+      console.log(`  SiteConfig: productFeature (${luxeAir.id})`)
+    }
+
+    await prisma.siteConfig.upsert({
+      where: { key: 'categoryCards' },
+      update: { value: categoryCardsDefault },
+      create: { key: 'categoryCards', value: categoryCardsDefault },
+    })
+    console.log('  SiteConfig: categoryCards')
+  } else {
+    console.log(`Skipping site config — already exists`)
+  }
 
   // ─── Shipping Methods ──────────────────────────────────────────────────────
 
