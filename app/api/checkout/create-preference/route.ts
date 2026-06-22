@@ -160,9 +160,11 @@ export async function POST(request: NextRequest) {
       orderId: order.id,
     })
   } catch (error) {
-    console.error('[create-preference] Error al crear preferencia MP:', error)
+    const msg = error instanceof Error ? error.message : String(error)
+    const detail = (error as Record<string, unknown>)?.cause ?? (error as Record<string, unknown>)?.response ?? ''
+    console.error('[create-preference] MP error:', msg, JSON.stringify(detail))
     return Response.json(
-      { error: 'Error al conectar con Mercado Pago' },
+      { error: 'Error al conectar con Mercado Pago', detail: msg },
       { status: 500 }
     )
   }
