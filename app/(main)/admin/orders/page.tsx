@@ -7,6 +7,7 @@ import OrderStatusSelect from '@/components/admin/OrderStatusSelect'
 import TrackingNumberInput from '@/components/admin/TrackingNumberInput'
 import OrdersFilter from '@/components/admin/OrdersFilter'
 import OrdersPagination from '@/components/admin/OrdersPagination'
+import DeleteOrderButton from '@/components/admin/DeleteOrderButton'
 import type { OrderStatus } from '@/lib/queries/orders'
 
 export const dynamic = 'force-dynamic'
@@ -159,12 +160,15 @@ export default async function AdminOrdersPage({
                       {formatDate(order.createdAt)}
                     </td>
                     <td className="px-6 py-3">
-                      <Link
-                        href={`/admin/orders/${order.id}${statusParam || q ? `?${new URLSearchParams({ ...(statusParam ? { status: statusParam } : {}), ...(q ? { q } : {}) }).toString()}` : ''}`}
-                        className="text-[10px] uppercase tracking-[0.12em] text-muted hover:text-foreground transition-colors"
-                      >
-                        Ver
-                      </Link>
+                      <div className="flex items-center gap-3">
+                        <Link
+                          href={`/admin/orders/${order.id}${statusParam || q ? `?${new URLSearchParams({ ...(statusParam ? { status: statusParam } : {}), ...(q ? { q } : {}) }).toString()}` : ''}`}
+                          className="text-[10px] uppercase tracking-[0.12em] text-muted hover:text-foreground transition-colors"
+                        >
+                          Ver
+                        </Link>
+                        <DeleteOrderButton orderId={order.id} status={order.status} />
+                      </div>
                     </td>
                   </tr>
                 ))

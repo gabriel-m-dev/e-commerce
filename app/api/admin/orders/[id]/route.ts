@@ -117,3 +117,34 @@ export async function PATCH(
     return NextResponse.json({ error: 'Error al actualizar la orden' }, { status: 503 })
   }
 }
+
+const DELETABLE_STATUSES: OrderStatus[] = ['PENDING', 'CANCELLED']
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user || user.app_metadata?.role !== 'admin') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const order = await prisma.order.findUnique({ where: { id }, select: { id: true, status: true } })
+  if (!order) return NextResponse.json({ error: 'Orden no encontrada' }, { status: 404 })
+
+  if (!DELETABLE_STATUSES.includes(order.status as OrderStatus)) {
+    return NextResponse.json(
+      { error: `No se puede eliminar una orden con estado ${order.status}` },
+      { status: 422 }
+    )
+  }
+
+  try {
+    await prisma.order.delete({ where: { id } })
+    return NextResponse.json({ success: true }, { status: 200 })
+  } catch (err: unknown) {
+    console.error('[DELETE /api/admin/orders/[id]]', err)
+    return NextResponse.json({ error: 'Error al eliminar la orden' }, { status: 503 })
+  }
+}
