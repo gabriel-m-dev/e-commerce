@@ -29,7 +29,6 @@ model Category {
   description      String?
   image            String?
   group            CategoryGroup     @default(NONE)
-  products         Product[]
   productCategories ProductCategory[]
   createdAt        DateTime          @default(now())
 }
@@ -45,8 +44,6 @@ model Product {
   images       String[]
   colors       String[]          @default([])
   sizes        String[]          @default([])
-  categoryId   String
-  category     Category          @relation(fields: [categoryId], references: [id])
   categories   ProductCategory[]
   stock        Int               @default(0)
   featured      Boolean          @default(false)
@@ -58,7 +55,6 @@ model Product {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
-  @@index([categoryId])
   @@index([featured, active])
   @@index([brand])
 }
