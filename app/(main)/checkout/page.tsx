@@ -540,18 +540,6 @@ function OrderSummary({
                 {formatPrice(subtotal)}
               </span>
             </div>
-            <div className="flex justify-between items-baseline">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-                Envío
-              </span>
-              <span className="text-sm font-semibold text-foreground">
-                {shipping === 0 ? (
-                  <span className="text-gold">Gratis</span>
-                ) : (
-                  'Calculado al confirmar'
-                )}
-              </span>
-            </div>
             <div className="border-t border-border pt-3 flex justify-between items-baseline">
               <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
                 Total

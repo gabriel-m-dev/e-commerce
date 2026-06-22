@@ -201,12 +201,6 @@ export default async function AdminOrderDetailPage({
               <span className="text-muted uppercase tracking-[0.1em]">Subtotal</span>
               <span className="text-foreground">{formatPrice(subtotal)}</span>
             </div>
-            <div className="flex justify-between text-[11px]">
-              <span className="text-muted uppercase tracking-[0.1em]">Envio</span>
-              <span className="text-foreground">
-                {shipping === 0 ? 'Gratis' : formatPrice(shipping)}
-              </span>
-            </div>
             <div className="border-t border-border pt-2 flex justify-between text-[12px]">
               <span className="font-black uppercase tracking-[0.14em] text-foreground">Total</span>
               <span className="font-black text-foreground">{formatPrice(total)}</span>

@@ -127,12 +127,6 @@ export default async function CustomerOrderDetailPage({
           <span className="text-muted uppercase tracking-[0.1em]">Subtotal</span>
           <span className="text-foreground">{formatPrice(order.subtotal)}</span>
         </div>
-        <div className="flex justify-between text-[11px]">
-          <span className="text-muted uppercase tracking-[0.1em]">Envio</span>
-          <span className="text-foreground">
-            {order.shipping === 0 ? 'Gratis' : formatPrice(order.shipping)}
-          </span>
-        </div>
         <div className="border-t border-border pt-2 flex justify-between text-[12px]">
           <span className="font-black uppercase tracking-[0.14em] text-foreground">Total</span>
           <span className="font-black text-foreground">{formatPrice(order.total)}</span>
