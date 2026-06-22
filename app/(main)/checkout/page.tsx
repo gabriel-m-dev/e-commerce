@@ -13,6 +13,7 @@ import type { CartItem } from '@/store/cart'
 type ShippingMethod = {
   id: string
   name: string
+  description: string | null
   price: number
   active: boolean
   createdAt: string
@@ -409,7 +410,7 @@ export default function CheckoutPage() {
                     <label
                       key={method.id}
                       className={[
-                        'flex items-center justify-between border px-5 py-4 cursor-pointer transition-colors',
+                        'flex items-start justify-between border px-5 py-4 cursor-pointer transition-colors',
                         selectedMethodId === method.id
                           ? 'border-foreground bg-surface'
                           : 'border-border hover:border-foreground/40',
@@ -422,11 +423,16 @@ export default function CheckoutPage() {
                           value={method.id}
                           checked={selectedMethodId === method.id}
                           onChange={() => setSelectedMethodId(method.id)}
-                          className="accent-foreground w-4 h-4"
+                          className="accent-foreground w-4 h-4 shrink-0"
                         />
-                        <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground">
-                          {method.name}
-                        </span>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground">
+                            {method.name}
+                          </span>
+                          {method.description && (
+                            <span className="text-[11px] text-muted leading-tight">{method.description}</span>
+                          )}
+                        </div>
                       </div>
                       <span className="text-sm font-semibold text-foreground">
                         {formatPrice(method.price)}

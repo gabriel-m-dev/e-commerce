@@ -376,6 +376,42 @@ async function main() {
   })
   console.log('  ShippingMethod: Envío estándar ($16,000 ARS)')
 
+  await prisma.shippingMethod.upsert({
+    where: { id: 'shipping-ems-argentina' },
+    update: {
+      name: 'Argentina EMS',
+      price: 25000,
+      description: 'EMS 20-50 días. Valor aduanero menor a $50. Primeros 0.5kg incluidos. >0.5kg, +$1/0.1kg adicional.',
+      active: true,
+    },
+    create: {
+      id: 'shipping-ems-argentina',
+      name: 'Argentina EMS',
+      price: 25000,
+      description: 'EMS 20-50 días. Valor aduanero menor a $50. Primeros 0.5kg incluidos. >0.5kg, +$1/0.1kg adicional.',
+      active: true,
+    },
+  })
+  console.log('  ShippingMethod: Argentina EMS ($25,000 ARS)')
+
+  await prisma.shippingMethod.upsert({
+    where: { id: 'shipping-postnl-argentina' },
+    update: {
+      name: 'POST NL-Argentina',
+      price: 14000,
+      description: 'POST NL (paquetes menos de 2kg). 20-50 días. Primeros 0.25kg incluidos. >0.25kg, +$2/0.1kg adicional.',
+      active: true,
+    },
+    create: {
+      id: 'shipping-postnl-argentina',
+      name: 'POST NL-Argentina',
+      price: 14000,
+      description: 'POST NL (paquetes menos de 2kg). 20-50 días. Primeros 0.25kg incluidos. >0.25kg, +$2/0.1kg adicional.',
+      active: true,
+    },
+  })
+  console.log('  ShippingMethod: POST NL-Argentina ($14,000 ARS)')
+
   console.log('Seed complete.')
 }
 

@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
-  const { name, price } = body as Record<string, unknown>
+  const { name, price, description } = body as Record<string, unknown>
 
   if (typeof name !== 'string' || !name.trim()) {
     return NextResponse.json({ error: 'El campo name es requerido' }, { status: 400 })
@@ -67,7 +67,11 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const method = await createShippingMethod({ name: name.trim(), price: parsedPrice })
+    const method = await createShippingMethod({
+      name: name.trim(),
+      price: parsedPrice,
+      description: typeof description === 'string' ? description.trim() || null : null,
+    })
     return NextResponse.json(method, { status: 201 })
   } catch (err) {
     console.error('[POST /api/admin/shipping-methods]', err)

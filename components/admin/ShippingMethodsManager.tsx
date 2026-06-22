@@ -14,6 +14,7 @@ const LABEL_CLASS =
 type EditState = {
   id: string
   name: string
+  description: string
   price: string
   active: boolean
 }
@@ -28,6 +29,7 @@ export default function ShippingMethodsManager({
 
   // Create form state
   const [newName, setNewName] = useState('')
+  const [newDescription, setNewDescription] = useState('')
   const [newPrice, setNewPrice] = useState('')
   const [creating, setCreating] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
@@ -58,7 +60,7 @@ export default function ShippingMethodsManager({
       const res = await fetch('/api/admin/shipping-methods', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName.trim(), price: parsedPrice }),
+        body: JSON.stringify({ name: newName.trim(), price: parsedPrice, description: newDescription.trim() || null }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -67,6 +69,7 @@ export default function ShippingMethodsManager({
       }
       setMethods((prev) => [...prev, data].sort((a, b) => a.price - b.price))
       setNewName('')
+      setNewDescription('')
       setNewPrice('')
       router.refresh()
     } finally {
@@ -78,6 +81,7 @@ export default function ShippingMethodsManager({
     setEditing({
       id: method.id,
       name: method.name,
+      description: method.description ?? '',
       price: String(method.price),
       active: method.active,
     })
@@ -111,6 +115,7 @@ export default function ShippingMethodsManager({
           name: editing.name.trim(),
           price: parsedPrice,
           active: editing.active,
+          description: editing.description.trim() || null,
         }),
       })
       const data = await res.json()
@@ -173,6 +178,17 @@ export default function ShippingMethodsManager({
               placeholder="Ej: Correo Argentino"
               disabled={creating}
               className={`${INPUT_CLASS} min-w-[200px]`}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className={LABEL_CLASS}>Descripción</label>
+            <textarea
+              value={newDescription}
+              onChange={(e) => setNewDescription(e.target.value)}
+              placeholder="Detalles del método de envío..."
+              disabled={creating}
+              rows={3}
+              className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full resize-none min-w-[280px]"
             />
           </div>
           <div className="flex flex-col">
@@ -267,6 +283,20 @@ export default function ShippingMethodsManager({
                               }
                               disabled={saving}
                               className={`${INPUT_CLASS} min-w-[200px]`}
+                            />
+                          </div>
+                          <div className="flex flex-col">
+                            <label className={LABEL_CLASS}>Descripción</label>
+                            <textarea
+                              value={editing.description}
+                              onChange={(e) =>
+                                setEditing((prev) =>
+                                  prev ? { ...prev, description: e.target.value } : prev
+                                )
+                              }
+                              disabled={saving}
+                              rows={3}
+                              className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full resize-none min-w-[280px]"
                             />
                           </div>
                           <div className="flex flex-col">

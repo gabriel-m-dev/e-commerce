@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 export type ShippingMethodRow = {
   id: string
   name: string
+  description: string | null
   price: number
   active: boolean
   createdAt: Date
@@ -12,7 +13,7 @@ export type ShippingMethodRow = {
 export async function getAllShippingMethods(): Promise<ShippingMethodRow[]> {
   return prisma.shippingMethod.findMany({
     orderBy: { price: 'asc' },
-    select: { id: true, name: true, price: true, active: true, createdAt: true },
+    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
   })
 }
 
@@ -21,7 +22,7 @@ export async function getActiveShippingMethods(): Promise<ShippingMethodRow[]> {
   return prisma.shippingMethod.findMany({
     where: { active: true },
     orderBy: { price: 'asc' },
-    select: { id: true, name: true, price: true, active: true, createdAt: true },
+    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
   })
 }
 
@@ -31,7 +32,7 @@ export async function getShippingMethodById(
 ): Promise<ShippingMethodRow | null> {
   return prisma.shippingMethod.findUnique({
     where: { id },
-    select: { id: true, name: true, price: true, active: true, createdAt: true },
+    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
   })
 }
 
@@ -39,22 +40,23 @@ export async function getShippingMethodById(
 export async function createShippingMethod(data: {
   name: string
   price: number
+  description?: string | null
 }): Promise<ShippingMethodRow> {
   return prisma.shippingMethod.create({
-    data: { name: data.name, price: data.price },
-    select: { id: true, name: true, price: true, active: true, createdAt: true },
+    data: { name: data.name, price: data.price, description: data.description },
+    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
   })
 }
 
 /** Update an existing shipping method (partial) */
 export async function updateShippingMethod(
   id: string,
-  data: Partial<{ name: string; price: number; active: boolean }>
+  data: Partial<{ name: string; description: string | null; price: number; active: boolean }>
 ): Promise<ShippingMethodRow> {
   return prisma.shippingMethod.update({
     where: { id },
     data,
-    select: { id: true, name: true, price: true, active: true, createdAt: true },
+    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
   })
 }
 
@@ -83,7 +85,7 @@ export async function getShippingMethodsByProductIds(
   return prisma.shippingMethod.findMany({
     where: { id: { in: methodIds }, active: true },
     orderBy: { price: 'asc' },
-    select: { id: true, name: true, price: true, active: true, createdAt: true },
+    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
   })
 }
 

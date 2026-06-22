@@ -29,8 +29,8 @@ export async function PUT(
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
-  const { name, price, active } = body as Record<string, unknown>
-  const updates: Partial<{ name: string; price: number; active: boolean }> = {}
+  const { name, price, active, description } = body as Record<string, unknown>
+  const updates: Partial<{ name: string; description: string | null; price: number; active: boolean }> = {}
 
   if (name !== undefined) {
     if (typeof name !== 'string' || !name.trim()) {
@@ -55,6 +55,10 @@ export async function PUT(
       return NextResponse.json({ error: 'El campo active debe ser boolean' }, { status: 400 })
     }
     updates.active = active
+  }
+
+  if (description !== undefined) {
+    updates.description = typeof description === 'string' ? description.trim() || null : null
   }
 
   if (Object.keys(updates).length === 0) {

@@ -99,10 +99,11 @@ model CartItem {
 // ─── Shipping ─────────────────────────────────────────────────────────────────
 
 model ShippingMethod {
-  id        String                  @id @default(cuid())
-  name      String
-  price     Int                     // ARS cents
-  active    Boolean                 @default(true)
+  id          String                  @id @default(cuid())
+  name        String
+  description String?
+  price       Int                     // ARS cents
+  active      Boolean                 @default(true)
   createdAt DateTime                @default(now())
   updatedAt DateTime                @updatedAt
   orders    Order[]
