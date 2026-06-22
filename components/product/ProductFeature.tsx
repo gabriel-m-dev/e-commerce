@@ -17,6 +17,7 @@ const DEFAULT_PRODUCT: DbProduct = {
   comparePrice: null,
   category: 'Zapatillas',
   categorySlug: 'zapatillas',
+  categorySlugs: ['zapatillas'],
   image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=85',
   images: MOCK_PRODUCTS.find(p => p.slug === 'luxe-air')?.images ?? [
     'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop&q=85',

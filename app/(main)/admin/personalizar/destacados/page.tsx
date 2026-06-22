@@ -9,29 +9,39 @@ async function getFeaturedForAdmin(): Promise<DbProduct[]> {
   try {
     const results = await prisma.product.findMany({
       where: { featured: true },
-      include: { category: true },
+      include: {
+        category: true,
+        categories: {
+          include: { category: true },
+          orderBy: { isPrimary: 'desc' },
+        },
+      },
       orderBy: [{ featuredOrder: 'asc' }, { createdAt: 'desc' }],
     })
-    return results.map((p) => ({
-      id: p.id,
-      name: p.name,
-      slug: p.slug,
-      price: Number(p.price),
-      comparePrice: p.comparePrice != null ? Number(p.comparePrice) : null,
-      category: p.category.name,
-      categorySlug: p.category.slug,
-      image: p.images[0] ?? '',
-      images: p.images,
-      description: p.description,
-      featured: p.featured,
-      featuredOrder: p.featuredOrder ?? null,
-      active: p.active,
-      stock: Number(p.stock),
-      brand: p.brand,
-      colors: p.colors ?? [],
-      sizes: p.sizes ?? [],
-      createdAt: p.createdAt.toISOString(),
-    }))
+    return results.map((p) => {
+      const primaryCategory = p.categories[0]?.category ?? p.category
+      return {
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        price: Number(p.price),
+        comparePrice: p.comparePrice != null ? Number(p.comparePrice) : null,
+        category: primaryCategory.name,
+        categorySlug: primaryCategory.slug,
+        categorySlugs: p.categories.map((r) => r.category.slug),
+        image: p.images[0] ?? '',
+        images: p.images,
+        description: p.description,
+        featured: p.featured,
+        featuredOrder: p.featuredOrder ?? null,
+        active: p.active,
+        stock: Number(p.stock),
+        brand: p.brand,
+        colors: p.colors ?? [],
+        sizes: p.sizes ?? [],
+        createdAt: p.createdAt.toISOString(),
+      }
+    })
   } catch {
     return []
   }

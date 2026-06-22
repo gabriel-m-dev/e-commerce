@@ -1,28 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { MOCK_PRODUCTS, type MockProduct } from '@/lib/data/products'
 
-function mockToDb(p: MockProduct): DbProduct {
-  return {
-    id: p.id,
-    name: p.name,
-    slug: p.slug,
-    price: p.price,
-    comparePrice: null,
-    category: p.category,
-    categorySlug: p.category.toLowerCase(),
-    image: p.image,
-    images: p.images,
-    description: p.description,
-    featured: p.featured ?? false,
-    featuredOrder: null,
-    stock: 99,
-    brand: 'OTROS',
-    colors: [],
-    sizes: [],
-    active: true,
-    createdAt: new Date().toISOString(),
-  }
-}
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export type DbProduct = {
   id: string
@@ -30,9 +9,12 @@ export type DbProduct = {
   slug: string
   price: number
   comparePrice: number | null
-  /** Category name as a plain string (e.g. "Zapatillas") */
+  /** Primary category name (e.g. "Zapatillas") — backward compat */
   category: string
+  /** Primary category slug — backward compat */
   categorySlug: string
+  /** All category names (primary first) */
+  categorySlugs: string[]
   /** First image — used as the primary thumbnail */
   image: string
   images: string[]
@@ -47,16 +29,37 @@ export type DbProduct = {
   createdAt: string
 }
 
+// ─── Prisma include shape (reused across all queries) ────────────────────────
+
+const productInclude = {
+  category: true,
+  categories: {
+    include: { category: true },
+    orderBy: { isPrimary: 'desc' as const },
+  },
+} as const
+
+// ─── Mappers ─────────────────────────────────────────────────────────────────
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toDbProduct(p: any): DbProduct {
+  // Primary category: first entry after orderBy isPrimary desc.
+  // Fall back to the legacy category relation when join table rows are absent
+  // (e.g. products created before the migration).
+  const primaryRow = p.categories?.[0]
+  const primaryCategory = primaryRow?.category ?? p.category
+
   return {
     id: p.id as string,
     name: p.name as string,
     slug: p.slug as string,
     price: Number(p.price),
     comparePrice: p.comparePrice != null ? Number(p.comparePrice) : null,
-    category: p.category.name as string,
-    categorySlug: p.category.slug as string,
+    category: primaryCategory.name as string,
+    categorySlug: primaryCategory.slug as string,
+    categorySlugs: (p.categories ?? []).map(
+      (r: { category: { slug: string } }) => r.category.slug
+    ),
     image: (p.images as string[])[0] ?? '',
     images: p.images as string[],
     description: p.description as string,
@@ -70,6 +73,33 @@ function toDbProduct(p: any): DbProduct {
     createdAt: (p.createdAt as Date).toISOString(),
   }
 }
+
+function mockToDb(p: MockProduct): DbProduct {
+  const mockCategorySlug = p.category.toLowerCase()
+  return {
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    price: p.price,
+    comparePrice: null,
+    category: p.category,
+    categorySlug: mockCategorySlug,
+    categorySlugs: [mockCategorySlug],
+    image: p.image,
+    images: p.images,
+    description: p.description,
+    featured: p.featured ?? false,
+    featuredOrder: null,
+    stock: 99,
+    brand: 'OTROS',
+    colors: [],
+    sizes: [],
+    active: true,
+    createdAt: new Date().toISOString(),
+  }
+}
+
+// ─── Queries ──────────────────────────────────────────────────────────────────
 
 export async function getProducts(options?: {
   categorySlug?: string
@@ -89,13 +119,15 @@ export async function getProducts(options?: {
     const results = await prisma.product.findMany({
       where: {
         active: true,
-        ...(categorySlug ? { category: { slug: categorySlug } } : {}),
+        ...(categorySlug
+          ? { categories: { some: { category: { slug: categorySlug } } } }
+          : {}),
         ...(search
           ? { name: { contains: search, mode: 'insensitive' as const } }
           : {}),
         ...(brand ? { brand: brand as import('../generated/prisma/client').Brand } : {}),
       },
-      include: { category: true },
+      include: productInclude,
       orderBy,
     })
     return results.map(toDbProduct)
@@ -109,7 +141,7 @@ export async function getFeaturedProducts(limit = 10): Promise<DbProduct[]> {
   try {
     const results = await prisma.product.findMany({
       where: { featured: true, active: true },
-      include: { category: true },
+      include: productInclude,
       take: limit,
       orderBy: [{ featuredOrder: 'asc' }, { createdAt: 'desc' }],
     })
@@ -124,7 +156,7 @@ export async function getProductBySlug(slug: string): Promise<DbProduct | null> 
   try {
     const product = await prisma.product.findUnique({
       where: { slug },
-      include: { category: true },
+      include: productInclude,
     })
     if (!product) return null
     return toDbProduct(product)
@@ -139,7 +171,7 @@ export async function getSaleProducts(): Promise<DbProduct[]> {
   try {
     const results = await prisma.product.findMany({
       where: { active: true, comparePrice: { not: null } },
-      include: { category: true },
+      include: productInclude,
       orderBy: { createdAt: 'desc' },
     })
     // Filter en JS porque Prisma no soporta comparación de dos campos nativamente
@@ -156,7 +188,7 @@ export async function getNewProducts(limit = 20, brand?: string, customIds?: str
       const brandFilter = brand ? { brand: brand as import('../generated/prisma/client').Brand } : {}
       const results = await prisma.product.findMany({
         where: { id: { in: customIds }, active: true, ...brandFilter },
-        include: { category: true },
+        include: productInclude,
       })
       const mapped = results.map(toDbProduct)
       return customIds.map((id) => mapped.find((p) => p.id === id)).filter(Boolean) as DbProduct[]
@@ -172,14 +204,14 @@ export async function getNewProducts(limit = 20, brand?: string, customIds?: str
   try {
     const results = await prisma.product.findMany({
       where: { active: true, createdAt: { gte: since }, ...brandFilter },
-      include: { category: true },
+      include: productInclude,
       orderBy: { createdAt: 'desc' },
       take: limit,
     })
     if (results.length === 0) {
       const fallback = await prisma.product.findMany({
         where: { active: true, ...brandFilter },
-        include: { category: true },
+        include: productInclude,
         orderBy: { createdAt: 'desc' },
         take: limit,
       })
@@ -196,7 +228,7 @@ export async function getProductById(id: string): Promise<DbProduct | null> {
   try {
     const product = await prisma.product.findUnique({
       where: { id, active: true },
-      include: { category: true },
+      include: productInclude,
     })
     if (!product) return null
     return toDbProduct(product)
@@ -211,7 +243,7 @@ export async function getProductsByIds(ids: string[]): Promise<DbProduct[]> {
   try {
     const results = await prisma.product.findMany({
       where: { id: { in: ids }, active: true },
-      include: { category: true },
+      include: productInclude,
     })
     const map = new Map(results.map((p) => [p.id, toDbProduct(p)]))
     return ids.map((id) => map.get(id)).filter((p): p is DbProduct => p !== undefined)
