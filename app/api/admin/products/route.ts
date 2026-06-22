@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
           })),
         },
       },
-      include: { category: true },
+      include: { categories: { include: { category: true }, orderBy: { isPrimary: 'desc' as const } } },
     })
 
     return NextResponse.json({ product }, { status: 201 })

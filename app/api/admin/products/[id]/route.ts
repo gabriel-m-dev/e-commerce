@@ -157,7 +157,7 @@ export async function PUT(
           })),
         },
       },
-      include: { category: true },
+      include: { categories: { include: { category: true }, orderBy: { isPrimary: 'desc' as const } } },
     })
 
     // If brand changed, remove product ID from old brand's sneakersConfig, newArrivals, and masPedido
