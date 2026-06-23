@@ -10,7 +10,7 @@ async function requireAdmin() {
   return { user }
 }
 
-/** PUT /api/admin/shipping-methods/[id] — partial update (name, price, active) */
+/** PUT /api/admin/shipping-methods/[id] — partial update (name, formula fields, active) */
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -29,8 +29,17 @@ export async function PUT(
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
-  const { name, price, active, description } = body as Record<string, unknown>
-  const updates: Partial<{ name: string; description: string | null; price: number; active: boolean }> = {}
+  const { name, active, description, baseWeightKg, baseCostUsd, additionalCostPerKgUsd, additionalUnitKg } =
+    body as Record<string, unknown>
+  const updates: Partial<{
+    name: string
+    description: string | null
+    baseWeightKg: number
+    baseCostUsd: number
+    additionalCostPerKgUsd: number
+    additionalUnitKg: number
+    active: boolean
+  }> = {}
 
   if (name !== undefined) {
     if (typeof name !== 'string' || !name.trim()) {
@@ -39,15 +48,36 @@ export async function PUT(
     updates.name = name.trim()
   }
 
-  if (price !== undefined) {
-    const parsedPrice = Number(price)
-    if (!Number.isInteger(parsedPrice) || parsedPrice <= 0) {
-      return NextResponse.json(
-        { error: 'El precio debe ser un número entero mayor a 0' },
-        { status: 400 }
-      )
+  if (baseWeightKg !== undefined) {
+    const parsed = parseFloat(String(baseWeightKg))
+    if (isNaN(parsed) || parsed < 0) {
+      return NextResponse.json({ error: 'baseWeightKg debe ser un número mayor o igual a 0' }, { status: 400 })
     }
-    updates.price = parsedPrice
+    updates.baseWeightKg = parsed
+  }
+
+  if (baseCostUsd !== undefined) {
+    const parsed = parseFloat(String(baseCostUsd))
+    if (isNaN(parsed) || parsed <= 0) {
+      return NextResponse.json({ error: 'baseCostUsd debe ser un número mayor a 0' }, { status: 400 })
+    }
+    updates.baseCostUsd = parsed
+  }
+
+  if (additionalCostPerKgUsd !== undefined) {
+    const parsed = parseFloat(String(additionalCostPerKgUsd))
+    if (isNaN(parsed) || parsed < 0) {
+      return NextResponse.json({ error: 'additionalCostPerKgUsd debe ser un número mayor o igual a 0' }, { status: 400 })
+    }
+    updates.additionalCostPerKgUsd = parsed
+  }
+
+  if (additionalUnitKg !== undefined) {
+    const parsed = parseFloat(String(additionalUnitKg))
+    if (isNaN(parsed) || parsed <= 0) {
+      return NextResponse.json({ error: 'additionalUnitKg debe ser un número mayor a 0' }, { status: 400 })
+    }
+    updates.additionalUnitKg = parsed
   }
 
   if (active !== undefined) {

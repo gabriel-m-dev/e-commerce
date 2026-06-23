@@ -41,18 +41,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
-  const { name, price, description } = body as Record<string, unknown>
+  const { name, description, baseWeightKg, baseCostUsd, additionalCostPerKgUsd, additionalUnitKg } =
+    body as Record<string, unknown>
 
   if (typeof name !== 'string' || !name.trim()) {
     return NextResponse.json({ error: 'El campo name es requerido' }, { status: 400 })
   }
 
-  const parsedPrice = Number(price)
-  if (!Number.isInteger(parsedPrice) || parsedPrice <= 0) {
-    return NextResponse.json(
-      { error: 'El precio debe ser un número entero mayor a 0' },
-      { status: 400 }
-    )
+  const parsedBaseWeightKg = parseFloat(String(baseWeightKg))
+  const parsedBaseCostUsd = parseFloat(String(baseCostUsd))
+  const parsedAdditionalCostPerKgUsd = parseFloat(String(additionalCostPerKgUsd))
+  const parsedAdditionalUnitKg = parseFloat(String(additionalUnitKg))
+
+  if (isNaN(parsedBaseWeightKg) || parsedBaseWeightKg < 0) {
+    return NextResponse.json({ error: 'baseWeightKg debe ser un número mayor o igual a 0' }, { status: 400 })
+  }
+  if (isNaN(parsedBaseCostUsd) || parsedBaseCostUsd <= 0) {
+    return NextResponse.json({ error: 'baseCostUsd debe ser un número mayor a 0' }, { status: 400 })
+  }
+  if (isNaN(parsedAdditionalCostPerKgUsd) || parsedAdditionalCostPerKgUsd < 0) {
+    return NextResponse.json({ error: 'additionalCostPerKgUsd debe ser un número mayor o igual a 0' }, { status: 400 })
+  }
+  if (isNaN(parsedAdditionalUnitKg) || parsedAdditionalUnitKg <= 0) {
+    return NextResponse.json({ error: 'additionalUnitKg debe ser un número mayor a 0' }, { status: 400 })
   }
 
   // 409 on duplicate name
@@ -69,8 +80,11 @@ export async function POST(request: NextRequest) {
   try {
     const method = await createShippingMethod({
       name: name.trim(),
-      price: parsedPrice,
       description: typeof description === 'string' ? description.trim() || null : null,
+      baseWeightKg: parsedBaseWeightKg,
+      baseCostUsd: parsedBaseCostUsd,
+      additionalCostPerKgUsd: parsedAdditionalCostPerKgUsd,
+      additionalUnitKg: parsedAdditionalUnitKg,
     })
     return NextResponse.json(method, { status: 201 })
   } catch (err) {

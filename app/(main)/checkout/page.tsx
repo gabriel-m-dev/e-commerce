@@ -14,7 +14,7 @@ type ShippingMethod = {
   id: string
   name: string
   description: string | null
-  price: number
+  computedCost: number
   active: boolean
   createdAt: string
 }
@@ -136,8 +136,9 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     const productIds = items.map((i) => i.product.id).filter(Boolean)
+    const quantities = items.map((i) => i.quantity).join(',')
     const url = productIds.length
-      ? `/api/shipping-methods?productIds=${productIds.join(',')}`
+      ? `/api/shipping-methods?productIds=${productIds.join(',')}&quantities=${quantities}`
       : '/api/shipping-methods'
     fetch(url)
       .then((r) => r.json())
@@ -149,7 +150,7 @@ export default function CheckoutPage() {
   }, [items])
 
   const selectedMethod = shippingMethods.find((m) => m.id === selectedMethodId) ?? null
-  const shipping = selectedMethod?.price ?? null
+  const shipping = selectedMethod?.computedCost ?? null
 
   const [fields, setFields] = useState<FormFields>({
     email: '',
@@ -435,7 +436,7 @@ export default function CheckoutPage() {
                         </div>
                       </div>
                       <span className="text-sm font-semibold text-foreground">
-                        {formatPrice(method.price)}
+                        {formatPrice(method.computedCost ?? 0)}
                       </span>
                     </label>
                   ))}

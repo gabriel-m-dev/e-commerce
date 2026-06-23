@@ -60,7 +60,7 @@ export async function PUT(
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { name, slug, price, comparePrice, categorySlugs, primaryCategorySlug, images, description, stock, featured, brand, active, colors, sizes, shippingMethodIds } =
+  const { name, slug, price, comparePrice, categorySlugs, primaryCategorySlug, images, description, stock, featured, brand, active, colors, sizes, shippingMethodIds, weightKg } =
     body as Record<string, unknown>
 
   if (
@@ -150,6 +150,7 @@ export async function PUT(
         featured: featured === true,
         active: active !== false,
         brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
+        weightKg: weightKg != null && !isNaN(Number(weightKg)) ? Number(weightKg) : null,
         categories: {
           create: foundCategories.map((c) => ({
             categoryId: c.id,

@@ -28,6 +28,7 @@ export type DbProduct = {
   sizes: string[]
   createdAt: string
   shippingMethodIds: string[]
+  weightKg?: number | null
 }
 
 // ─── Prisma include shape (reused across all queries) ────────────────────────
@@ -73,6 +74,7 @@ function toDbProduct(p: any): DbProduct {
     sizes: (p.sizes as string[]) ?? [],
     createdAt: (p.createdAt as Date).toISOString(),
     shippingMethodIds: (p.shippingMethods ?? []).map((ps: { shippingMethodId: string }) => ps.shippingMethodId),
+    weightKg: p.weightKg != null ? Number(p.weightKg) : null,
   }
 }
 
@@ -99,6 +101,7 @@ function mockToDb(p: MockProduct): DbProduct {
     active: true,
     createdAt: new Date().toISOString(),
     shippingMethodIds: [],
+    weightKg: null,
   }
 }
 

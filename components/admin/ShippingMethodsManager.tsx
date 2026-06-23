@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { formatPrice } from '@/lib/utils'
 import type { ShippingMethodRow } from '@/lib/queries/shipping-methods'
 
 const INPUT_CLASS =
@@ -15,7 +14,10 @@ type EditState = {
   id: string
   name: string
   description: string
-  price: string
+  baseWeightKg: string
+  baseCostUsd: string
+  additionalCostPerKgUsd: string
+  additionalUnitKg: string
   active: boolean
 }
 
@@ -30,7 +32,10 @@ export default function ShippingMethodsManager({
   // Create form state
   const [newName, setNewName] = useState('')
   const [newDescription, setNewDescription] = useState('')
-  const [newPrice, setNewPrice] = useState('')
+  const [newBaseWeightKg, setNewBaseWeightKg] = useState('')
+  const [newBaseCostUsd, setNewBaseCostUsd] = useState('')
+  const [newAdditionalCostPerKgUsd, setNewAdditionalCostPerKgUsd] = useState('')
+  const [newAdditionalUnitKg, setNewAdditionalUnitKg] = useState('')
   const [creating, setCreating] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
 
@@ -47,9 +52,25 @@ export default function ShippingMethodsManager({
     e.preventDefault()
     if (!newName.trim()) return
 
-    const parsedPrice = parseInt(newPrice, 10)
-    if (!parsedPrice || parsedPrice <= 0) {
-      setCreateError('El precio debe ser un número entero mayor a 0')
+    const parsedBaseWeightKg = parseFloat(newBaseWeightKg)
+    const parsedBaseCostUsd = parseFloat(newBaseCostUsd)
+    const parsedAdditionalCostPerKgUsd = parseFloat(newAdditionalCostPerKgUsd)
+    const parsedAdditionalUnitKg = parseFloat(newAdditionalUnitKg)
+
+    if (isNaN(parsedBaseWeightKg) || parsedBaseWeightKg < 0) {
+      setCreateError('El peso base debe ser un número mayor o igual a 0')
+      return
+    }
+    if (isNaN(parsedBaseCostUsd) || parsedBaseCostUsd <= 0) {
+      setCreateError('El costo base debe ser un número mayor a 0')
+      return
+    }
+    if (isNaN(parsedAdditionalCostPerKgUsd) || parsedAdditionalCostPerKgUsd < 0) {
+      setCreateError('El costo adicional debe ser un número mayor o igual a 0')
+      return
+    }
+    if (isNaN(parsedAdditionalUnitKg) || parsedAdditionalUnitKg <= 0) {
+      setCreateError('La unidad adicional debe ser un número mayor a 0')
       return
     }
 
@@ -60,17 +81,27 @@ export default function ShippingMethodsManager({
       const res = await fetch('/api/admin/shipping-methods', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName.trim(), price: parsedPrice, description: newDescription.trim() || null }),
+        body: JSON.stringify({
+          name: newName.trim(),
+          description: newDescription.trim() || null,
+          baseWeightKg: parsedBaseWeightKg,
+          baseCostUsd: parsedBaseCostUsd,
+          additionalCostPerKgUsd: parsedAdditionalCostPerKgUsd,
+          additionalUnitKg: parsedAdditionalUnitKg,
+        }),
       })
       const data = await res.json()
       if (!res.ok) {
         setCreateError(data.error ?? 'Error al crear el método de envío')
         return
       }
-      setMethods((prev) => [...prev, data].sort((a, b) => a.price - b.price))
+      setMethods((prev) => [...prev, data].sort((a, b) => a.name.localeCompare(b.name)))
       setNewName('')
       setNewDescription('')
-      setNewPrice('')
+      setNewBaseWeightKg('')
+      setNewBaseCostUsd('')
+      setNewAdditionalCostPerKgUsd('')
+      setNewAdditionalUnitKg('')
       router.refresh()
     } finally {
       setCreating(false)
@@ -82,7 +113,10 @@ export default function ShippingMethodsManager({
       id: method.id,
       name: method.name,
       description: method.description ?? '',
-      price: String(method.price),
+      baseWeightKg: String(method.baseWeightKg),
+      baseCostUsd: String(method.baseCostUsd),
+      additionalCostPerKgUsd: String(method.additionalCostPerKgUsd),
+      additionalUnitKg: String(method.additionalUnitKg),
       active: method.active,
     })
     setSaveError(null)
@@ -98,9 +132,25 @@ export default function ShippingMethodsManager({
     e.preventDefault()
     if (!editing) return
 
-    const parsedPrice = parseInt(editing.price, 10)
-    if (!parsedPrice || parsedPrice <= 0) {
-      setSaveError('El precio debe ser un número entero mayor a 0')
+    const parsedBaseWeightKg = parseFloat(editing.baseWeightKg)
+    const parsedBaseCostUsd = parseFloat(editing.baseCostUsd)
+    const parsedAdditionalCostPerKgUsd = parseFloat(editing.additionalCostPerKgUsd)
+    const parsedAdditionalUnitKg = parseFloat(editing.additionalUnitKg)
+
+    if (isNaN(parsedBaseWeightKg) || parsedBaseWeightKg < 0) {
+      setSaveError('El peso base debe ser un número mayor o igual a 0')
+      return
+    }
+    if (isNaN(parsedBaseCostUsd) || parsedBaseCostUsd <= 0) {
+      setSaveError('El costo base debe ser un número mayor a 0')
+      return
+    }
+    if (isNaN(parsedAdditionalCostPerKgUsd) || parsedAdditionalCostPerKgUsd < 0) {
+      setSaveError('El costo adicional debe ser un número mayor o igual a 0')
+      return
+    }
+    if (isNaN(parsedAdditionalUnitKg) || parsedAdditionalUnitKg <= 0) {
+      setSaveError('La unidad adicional debe ser un número mayor a 0')
       return
     }
 
@@ -113,9 +163,12 @@ export default function ShippingMethodsManager({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: editing.name.trim(),
-          price: parsedPrice,
-          active: editing.active,
           description: editing.description.trim() || null,
+          baseWeightKg: parsedBaseWeightKg,
+          baseCostUsd: parsedBaseCostUsd,
+          additionalCostPerKgUsd: parsedAdditionalCostPerKgUsd,
+          additionalUnitKg: parsedAdditionalUnitKg,
+          active: editing.active,
         }),
       })
       const data = await res.json()
@@ -124,7 +177,7 @@ export default function ShippingMethodsManager({
         return
       }
       setMethods((prev) =>
-        prev.map((m) => (m.id === editing.id ? data : m)).sort((a, b) => a.price - b.price)
+        prev.map((m) => (m.id === editing.id ? data : m)).sort((a, b) => a.name.localeCompare(b.name))
       )
       setEditing(null)
       router.refresh()
@@ -192,21 +245,60 @@ export default function ShippingMethodsManager({
             />
           </div>
           <div className="flex flex-col">
-            <label className={LABEL_CLASS}>Precio (ARS)</label>
+            <label className={LABEL_CLASS}>Peso base incluido (kg)</label>
             <input
               type="number"
-              min="1"
-              step="1"
-              value={newPrice}
-              onChange={(e) => setNewPrice(e.target.value)}
-              placeholder="16000"
+              min="0"
+              step="0.01"
+              value={newBaseWeightKg}
+              onChange={(e) => setNewBaseWeightKg(e.target.value)}
+              placeholder="0.25"
+              disabled={creating}
+              className={`${INPUT_CLASS} min-w-[140px]`}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className={LABEL_CLASS}>Costo base (USD)</label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={newBaseCostUsd}
+              onChange={(e) => setNewBaseCostUsd(e.target.value)}
+              placeholder="8"
+              disabled={creating}
+              className={`${INPUT_CLASS} min-w-[140px]`}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className={LABEL_CLASS}>Costo adicional (USD/unidad)</label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={newAdditionalCostPerKgUsd}
+              onChange={(e) => setNewAdditionalCostPerKgUsd(e.target.value)}
+              placeholder="2"
+              disabled={creating}
+              className={`${INPUT_CLASS} min-w-[140px]`}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className={LABEL_CLASS}>Unidad adicional (kg)</label>
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              value={newAdditionalUnitKg}
+              onChange={(e) => setNewAdditionalUnitKg(e.target.value)}
+              placeholder="0.1"
               disabled={creating}
               className={`${INPUT_CLASS} min-w-[140px]`}
             />
           </div>
           <button
             type="submit"
-            disabled={creating || !newName.trim() || !newPrice}
+            disabled={creating || !newName.trim() || !newBaseCostUsd || !newAdditionalUnitKg}
             className="h-9 px-5 bg-foreground text-[10px] font-semibold uppercase tracking-[0.18em] text-background transition-opacity hover:opacity-80 disabled:opacity-40 cursor-pointer"
           >
             {creating ? 'Creando...' : 'Crear'}
@@ -254,7 +346,7 @@ export default function ShippingMethodsManager({
                     Nombre
                   </th>
                   <th className="px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
-                    Precio
+                    Costo base (USD)
                   </th>
                   <th className="px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
                     Estado
@@ -300,15 +392,63 @@ export default function ShippingMethodsManager({
                             />
                           </div>
                           <div className="flex flex-col">
-                            <label className={LABEL_CLASS}>Precio (ARS)</label>
+                            <label className={LABEL_CLASS}>Peso base incluido (kg)</label>
                             <input
                               type="number"
-                              min="1"
-                              step="1"
-                              value={editing.price}
+                              min="0"
+                              step="0.01"
+                              value={editing.baseWeightKg}
                               onChange={(e) =>
                                 setEditing((prev) =>
-                                  prev ? { ...prev, price: e.target.value } : prev
+                                  prev ? { ...prev, baseWeightKg: e.target.value } : prev
+                                )
+                              }
+                              disabled={saving}
+                              className={`${INPUT_CLASS} min-w-[140px]`}
+                            />
+                          </div>
+                          <div className="flex flex-col">
+                            <label className={LABEL_CLASS}>Costo base (USD)</label>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={editing.baseCostUsd}
+                              onChange={(e) =>
+                                setEditing((prev) =>
+                                  prev ? { ...prev, baseCostUsd: e.target.value } : prev
+                                )
+                              }
+                              disabled={saving}
+                              className={`${INPUT_CLASS} min-w-[140px]`}
+                            />
+                          </div>
+                          <div className="flex flex-col">
+                            <label className={LABEL_CLASS}>Costo adicional (USD/unidad)</label>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={editing.additionalCostPerKgUsd}
+                              onChange={(e) =>
+                                setEditing((prev) =>
+                                  prev ? { ...prev, additionalCostPerKgUsd: e.target.value } : prev
+                                )
+                              }
+                              disabled={saving}
+                              className={`${INPUT_CLASS} min-w-[140px]`}
+                            />
+                          </div>
+                          <div className="flex flex-col">
+                            <label className={LABEL_CLASS}>Unidad adicional (kg)</label>
+                            <input
+                              type="number"
+                              min="0.01"
+                              step="0.01"
+                              value={editing.additionalUnitKg}
+                              onChange={(e) =>
+                                setEditing((prev) =>
+                                  prev ? { ...prev, additionalUnitKg: e.target.value } : prev
                                 )
                               }
                               disabled={saving}
@@ -371,7 +511,7 @@ export default function ShippingMethodsManager({
                         {method.name}
                       </td>
                       <td className="px-6 py-3 text-[12px] text-foreground">
-                        {formatPrice(method.price)}
+                        ${method.baseCostUsd} USD
                       </td>
                       <td className="px-6 py-3">
                         <span

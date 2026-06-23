@@ -5,6 +5,7 @@ import { SITE_URL } from '@/lib/constants'
 import type { CartItem } from '@/store/cart'
 import { createClient } from '@/lib/supabase/server'
 import { checkoutLimiter } from '@/lib/ratelimit'
+import { computeShippingCost } from '@/lib/utils/shipping'
 
 type Buyer = {
   email: string
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
     const productIds = items.map((item) => item.product.id)
     const dbProducts = await prisma.product.findMany({
       where: { id: { in: productIds } },
-      select: { id: true, price: true, stock: true, active: true },
+      select: { id: true, price: true, stock: true, active: true, weightKg: true },
     })
 
     if (dbProducts.length !== productIds.length) {
@@ -103,12 +104,27 @@ export async function POST(request: NextRequest) {
     // Resolve shipping cost from DB — never trust client-sent price
     const shippingMethod = await prisma.shippingMethod.findUnique({
       where: { id: shippingMethodId },
-      select: { id: true, name: true, price: true, active: true },
+      select: {
+        id: true,
+        name: true,
+        active: true,
+        baseWeightKg: true,
+        baseCostUsd: true,
+        additionalCostPerKgUsd: true,
+        additionalUnitKg: true,
+      },
     })
     if (!shippingMethod || !shippingMethod.active) {
       return Response.json({ error: 'Método de envío no disponible' }, { status: 400 })
     }
-    const shippingCost = shippingMethod.price
+
+    // Compute total cart weight from DB product weights
+    const dbProductMap = new Map(dbProducts.map((p) => [p.id, p]))
+    const totalWeightKg = items.reduce(
+      (sum, item) => sum + (dbProductMap.get(item.product.id)?.weightKg ?? 0) * item.quantity,
+      0
+    )
+    const shippingCost = computeShippingCost(shippingMethod, totalWeightKg)
 
     // Generate order ID upfront — MP preference created first, order persisted only on success
     const orderId = crypto.randomUUID()

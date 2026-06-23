@@ -113,6 +113,14 @@ const ORDER_ID = 'order-abc-123'
 const PRODUCT_ID = 'prod-001'
 const SHIPPING_METHOD_ID = 'method-001'
 const SHIPPING_METHOD_PRICE = 16000
+// Formula fields that reproduce SHIPPING_METHOD_PRICE: 16 USD * 1000 (USD_TO_ARS fallback) = 16000 ARS
+// baseWeightKg=999 ensures any cart weight falls within base cost range (flat rate effect)
+const SHIPPING_METHOD_FORMULA = {
+  baseWeightKg: 999,
+  baseCostUsd: 16,
+  additionalCostPerKgUsd: 0,
+  additionalUnitKg: 1,
+}
 
 /** Build a minimal CartItem for the request body */
 function makeCartItem(overrides: Record<string, unknown> = {}) {
@@ -254,7 +262,7 @@ describe('POST /api/checkout/create-preference', () => {
       { id: PRODUCT_ID, price: 15000, stock: 0, active: true },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-      id: SHIPPING_METHOD_ID, name: 'Envío estándar', price: SHIPPING_METHOD_PRICE, active: true,
+      id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
     })
 
     const req = makeCreatePreferenceRequest({
@@ -278,7 +286,7 @@ describe('POST /api/checkout/create-preference', () => {
       { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-      id: SHIPPING_METHOD_ID, name: 'Envío estándar', price: SHIPPING_METHOD_PRICE, active: true,
+      id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
     })
 
     const createdOrder = { id: ORDER_ID }
@@ -321,7 +329,7 @@ describe('POST /api/checkout/create-preference', () => {
       { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-      id: SHIPPING_METHOD_ID, name: 'Envío estándar', price: SHIPPING_METHOD_PRICE, active: true,
+      id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
     })
 
     // Simulate a DB failure mid-create
@@ -352,7 +360,7 @@ describe('POST /api/checkout/create-preference', () => {
       { id: PRODUCT_ID, price: 15000, stock: 10, active: false },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-      id: SHIPPING_METHOD_ID, name: 'Envío estándar', price: SHIPPING_METHOD_PRICE, active: true,
+      id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
     })
     const req = makeCreatePreferenceRequest({
       items: [makeCartItem()],
@@ -368,7 +376,7 @@ describe('POST /api/checkout/create-preference', () => {
     mockAnonAuth()
     ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-      id: SHIPPING_METHOD_ID, name: 'Envío estándar', price: SHIPPING_METHOD_PRICE, active: true,
+      id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
     })
     const req = makeCreatePreferenceRequest({
       items: [makeCartItem()],
@@ -386,7 +394,7 @@ describe('POST /api/checkout/create-preference', () => {
       { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-      id: SHIPPING_METHOD_ID, name: 'Envío estándar', price: SHIPPING_METHOD_PRICE, active: true,
+      id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
     })
     ;(prisma.order.create as ReturnType<typeof vi.fn>).mockResolvedValue({ id: ORDER_ID })
     mockPreferenceCreate.mockResolvedValue({ id: 'pref-x', init_point: 'https://mp.com/pref-x' })
@@ -420,7 +428,7 @@ describe('POST /api/checkout/create-preference', () => {
       { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-      id: SHIPPING_METHOD_ID, name: 'Envío estándar', price: SHIPPING_METHOD_PRICE, active: true,
+      id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
     })
     const req = makeCreatePreferenceRequest({
       items: [makeCartItem({ quantity: 0 })],
@@ -438,7 +446,7 @@ describe('POST /api/checkout/create-preference', () => {
       { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-      id: SHIPPING_METHOD_ID, name: 'Envío estándar', price: SHIPPING_METHOD_PRICE, active: true,
+      id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
     })
     const req = makeCreatePreferenceRequest({
       items: [makeCartItem({ quantity: -5 })],
@@ -471,7 +479,7 @@ describe('POST /api/checkout/create-preference', () => {
       { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-      id: SHIPPING_METHOD_ID, name: 'Envío estándar', price: SHIPPING_METHOD_PRICE, active: false,
+      id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: false, ...SHIPPING_METHOD_FORMULA,
     })
     const req = makeCreatePreferenceRequest({
       items: [makeCartItem()],

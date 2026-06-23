@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { type DbProduct } from '@/lib/queries/products'
-import { formatSlug, formatPrice } from '@/lib/utils'
+import { formatSlug } from '@/lib/utils'
 import type { ShippingMethodRow } from '@/lib/queries/shipping-methods'
 
 interface EditProductFormProps {
@@ -40,6 +40,7 @@ export default function EditProductForm({
     stock: product.stock.toString(),
     featured: product.featured,
     active: product.active,
+    weightKg: product.weightKg != null ? String(product.weightKg) : '',
   })
 
   const [selectedCategorySlugs, setSelectedCategorySlugs] = useState<string[]>(
@@ -228,6 +229,7 @@ export default function EditProductForm({
           colors,
           sizes,
           shippingMethodIds,
+          weightKg: form.weightKg ? parseFloat(form.weightKg) : null,
         }),
       })
 
@@ -358,7 +360,7 @@ export default function EditProductForm({
                         className="accent-[#c9a96e]"
                       />
                       <span className="text-[12px] uppercase tracking-wide">
-                        {m.name} — {formatPrice(m.price)}
+                        {m.name}
                       </span>
                     </label>
                   ))
@@ -391,6 +393,20 @@ export default function EditProductForm({
               <textarea required rows={3} value={form.description}
                 onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
                 className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full resize-none" />
+            </div>
+
+            {/* Peso */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Peso (kg)</label>
+              <input
+                type="number"
+                min="0"
+                step="0.001"
+                placeholder="0.000"
+                value={form.weightKg}
+                onChange={(e) => setForm((prev) => ({ ...prev, weightKg: e.target.value }))}
+                className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full"
+              />
             </div>
 
             {/* Imágenes */}
