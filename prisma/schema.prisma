@@ -50,6 +50,7 @@ model Product {
   featuredOrder    Int?
   active           Boolean                 @default(true)
   brand            Brand                   @default(OTROS)
+  weightKg         Float?
   shippingMethods  ProductShippingMethod[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
@@ -99,15 +100,18 @@ model CartItem {
 // ─── Shipping ─────────────────────────────────────────────────────────────────
 
 model ShippingMethod {
-  id          String                  @id @default(cuid())
-  name        String
-  description String?
-  price       Int                     // ARS cents
-  active      Boolean                 @default(true)
-  createdAt DateTime                @default(now())
-  updatedAt DateTime                @updatedAt
-  orders    Order[]
-  products  ProductShippingMethod[]
+  id                     String                  @id @default(cuid())
+  name                   String
+  description            String?
+  baseWeightKg           Float
+  baseCostUsd            Float
+  additionalCostPerKgUsd Float
+  additionalUnitKg       Float
+  active                 Boolean                 @default(true)
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  orders                 Order[]
+  products               ProductShippingMethod[]
 }
 
 // ─── Orders ───────────────────────────────────────────────────────────────────
