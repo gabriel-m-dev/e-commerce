@@ -49,6 +49,14 @@ const mockCount       = prisma.order.count as ReturnType<typeof vi.fn>
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockPsmFindMany = (prisma as any).productShippingMethod.findMany as ReturnType<typeof vi.fn>
 
+// Base formula row shape used across tests
+const baseFormula = {
+  baseWeightKg: 0.25,
+  baseCostUsd: 8,
+  additionalCostPerKgUsd: 2,
+  additionalUnitKg: 0.1,
+}
+
 beforeEach(() => {
   vi.clearAllMocks()
 })
@@ -58,10 +66,10 @@ beforeEach(() => {
 // ===========================================================================
 
 describe('getActiveShippingMethods', () => {
-  it('queries only active methods ordered by price asc', async () => {
+  it('queries only active methods ordered by name asc', async () => {
     const mockRows = [
-      { id: 'a', name: 'Económico', price: 10000, active: true, createdAt: new Date() },
-      { id: 'b', name: 'Express',   price: 25000, active: true, createdAt: new Date() },
+      { id: 'a', name: 'Económico', ...baseFormula, active: true, createdAt: new Date() },
+      { id: 'b', name: 'Express',   ...baseFormula, active: true, createdAt: new Date() },
     ]
     mockFindMany.mockResolvedValue(mockRows)
 
@@ -73,8 +81,8 @@ describe('getActiveShippingMethods', () => {
     // Must filter for active only
     expect(callArgs.where).toEqual({ active: true })
 
-    // Must order by price ascending
-    expect(callArgs.orderBy).toEqual({ price: 'asc' })
+    // Must order by name ascending
+    expect(callArgs.orderBy).toEqual({ name: 'asc' })
 
     expect(result).toEqual(mockRows)
   })
@@ -93,7 +101,7 @@ describe('getActiveShippingMethods', () => {
 describe('getShippingMethodsByProductIds', () => {
   it('returns all active methods when ids array is empty (fallback)', async () => {
     const allMethods = [
-      { id: 'a', name: 'Económico', price: 10000, active: true, createdAt: new Date() },
+      { id: 'a', name: 'Económico', ...baseFormula, active: true, createdAt: new Date() },
     ]
     mockFindMany.mockResolvedValue(allMethods)
 
@@ -109,8 +117,8 @@ describe('getShippingMethodsByProductIds', () => {
 
   it('returns all active methods when any product has zero join rows (zero-assignment fallback)', async () => {
     const allMethods = [
-      { id: 'a', name: 'Económico', price: 10000, active: true, createdAt: new Date() },
-      { id: 'b', name: 'Express',   price: 25000, active: true, createdAt: new Date() },
+      { id: 'a', name: 'Económico', ...baseFormula, active: true, createdAt: new Date() },
+      { id: 'b', name: 'Express',   ...baseFormula, active: true, createdAt: new Date() },
     ]
     // p1 has a method, p2 has none — join table only returns rows for p1
     mockPsmFindMany.mockResolvedValue([
@@ -132,7 +140,7 @@ describe('getShippingMethodsByProductIds', () => {
 
   it('returns only filtered distinct methods when all products have assigned methods', async () => {
     const filteredMethods = [
-      { id: 'a', name: 'Económico', price: 10000, active: true, createdAt: new Date() },
+      { id: 'a', name: 'Económico', ...baseFormula, active: true, createdAt: new Date() },
     ]
     // p1 and p2 both have method 'a' — deduplication must occur
     mockPsmFindMany.mockResolvedValue([
@@ -153,8 +161,8 @@ describe('getShippingMethodsByProductIds', () => {
 
   it('returns union of methods when products share different methods', async () => {
     const methods = [
-      { id: 'a', name: 'Económico', price: 10000, active: true, createdAt: new Date() },
-      { id: 'b', name: 'Express',   price: 25000, active: true, createdAt: new Date() },
+      { id: 'a', name: 'Económico', ...baseFormula, active: true, createdAt: new Date() },
+      { id: 'b', name: 'Express',   ...baseFormula, active: true, createdAt: new Date() },
     ]
     mockPsmFindMany.mockResolvedValue([
       { productId: 'p1', shippingMethodId: 'a' },

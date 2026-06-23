@@ -4,25 +4,41 @@ export type ShippingMethodRow = {
   id: string
   name: string
   description: string | null
-  price: number
+  baseWeightKg: number
+  baseCostUsd: number
+  additionalCostPerKgUsd: number
+  additionalUnitKg: number
   active: boolean
   createdAt: Date
+  computedCost?: number // populated by route when productIds provided; absent in admin list
 }
 
-/** All shipping methods, ordered by price ASC (admin use) */
+const formulaSelect = {
+  id: true,
+  name: true,
+  description: true,
+  baseWeightKg: true,
+  baseCostUsd: true,
+  additionalCostPerKgUsd: true,
+  additionalUnitKg: true,
+  active: true,
+  createdAt: true,
+} as const
+
+/** All shipping methods, ordered by name ASC (admin use) */
 export async function getAllShippingMethods(): Promise<ShippingMethodRow[]> {
   return prisma.shippingMethod.findMany({
-    orderBy: { price: 'asc' },
-    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
+    orderBy: { name: 'asc' },
+    select: formulaSelect,
   })
 }
 
-/** Active shipping methods only, ordered by price ASC (public checkout use) */
+/** Active shipping methods only, ordered by name ASC (public checkout use) */
 export async function getActiveShippingMethods(): Promise<ShippingMethodRow[]> {
   return prisma.shippingMethod.findMany({
     where: { active: true },
-    orderBy: { price: 'asc' },
-    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
+    orderBy: { name: 'asc' },
+    select: formulaSelect,
   })
 }
 
@@ -32,31 +48,49 @@ export async function getShippingMethodById(
 ): Promise<ShippingMethodRow | null> {
   return prisma.shippingMethod.findUnique({
     where: { id },
-    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
+    select: formulaSelect,
   })
 }
 
 /** Create a new shipping method */
 export async function createShippingMethod(data: {
   name: string
-  price: number
   description?: string | null
+  baseWeightKg: number
+  baseCostUsd: number
+  additionalCostPerKgUsd: number
+  additionalUnitKg: number
 }): Promise<ShippingMethodRow> {
   return prisma.shippingMethod.create({
-    data: { name: data.name, price: data.price, description: data.description },
-    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
+    data: {
+      name: data.name,
+      description: data.description,
+      baseWeightKg: data.baseWeightKg,
+      baseCostUsd: data.baseCostUsd,
+      additionalCostPerKgUsd: data.additionalCostPerKgUsd,
+      additionalUnitKg: data.additionalUnitKg,
+    },
+    select: formulaSelect,
   })
 }
 
 /** Update an existing shipping method (partial) */
 export async function updateShippingMethod(
   id: string,
-  data: Partial<{ name: string; description: string | null; price: number; active: boolean }>
+  data: Partial<{
+    name: string
+    description: string | null
+    baseWeightKg: number
+    baseCostUsd: number
+    additionalCostPerKgUsd: number
+    additionalUnitKg: number
+    active: boolean
+  }>
 ): Promise<ShippingMethodRow> {
   return prisma.shippingMethod.update({
     where: { id },
     data,
-    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
+    select: formulaSelect,
   })
 }
 
@@ -84,8 +118,8 @@ export async function getShippingMethodsByProductIds(
   const methodIds = [...new Set(rows.map((r) => r.shippingMethodId))]
   return prisma.shippingMethod.findMany({
     where: { id: { in: methodIds }, active: true },
-    orderBy: { price: 'asc' },
-    select: { id: true, name: true, description: true, price: true, active: true, createdAt: true },
+    orderBy: { name: 'asc' },
+    select: formulaSelect,
   })
 }
 
