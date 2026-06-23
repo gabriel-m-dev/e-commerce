@@ -27,29 +27,44 @@ const formulaSelect = {
 
 /** All shipping methods, ordered by name ASC (admin use) */
 export async function getAllShippingMethods(): Promise<ShippingMethodRow[]> {
-  return prisma.shippingMethod.findMany({
-    orderBy: { name: 'asc' },
-    select: formulaSelect,
-  })
+  try {
+    return await prisma.shippingMethod.findMany({
+      orderBy: { name: 'asc' },
+      select: formulaSelect,
+    })
+  } catch (e) {
+    console.error('[getAllShippingMethods]', e)
+    return []
+  }
 }
 
 /** Active shipping methods only, ordered by name ASC (public checkout use) */
 export async function getActiveShippingMethods(): Promise<ShippingMethodRow[]> {
-  return prisma.shippingMethod.findMany({
-    where: { active: true },
-    orderBy: { name: 'asc' },
-    select: formulaSelect,
-  })
+  try {
+    return await prisma.shippingMethod.findMany({
+      where: { active: true },
+      orderBy: { name: 'asc' },
+      select: formulaSelect,
+    })
+  } catch (e) {
+    console.error('[getActiveShippingMethods]', e)
+    return []
+  }
 }
 
 /** Single shipping method by id */
 export async function getShippingMethodById(
   id: string
 ): Promise<ShippingMethodRow | null> {
-  return prisma.shippingMethod.findUnique({
-    where: { id },
-    select: formulaSelect,
-  })
+  try {
+    return await prisma.shippingMethod.findUnique({
+      where: { id },
+      select: formulaSelect,
+    })
+  } catch (e) {
+    console.error('[getShippingMethodById]', e)
+    return null
+  }
 }
 
 /** Create a new shipping method */
@@ -105,22 +120,26 @@ export async function getShippingMethodsByProductIds(
 ): Promise<ShippingMethodRow[]> {
   if (!ids.length) return getActiveShippingMethods()
 
-  const rows = await prisma.productShippingMethod.findMany({
-    where: { productId: { in: ids } },
-    select: { productId: true, shippingMethodId: true },
-  })
+  try {
+    const rows = await prisma.productShippingMethod.findMany({
+      where: { productId: { in: ids } },
+      select: { productId: true, shippingMethodId: true },
+    })
 
-  // Check if any product has zero assigned methods
-  const productsWithMethods = new Set(rows.map((r) => r.productId))
-  const hasUnassigned = ids.some((id) => !productsWithMethods.has(id))
-  if (hasUnassigned) return getActiveShippingMethods()
+    const productsWithMethods = new Set(rows.map((r) => r.productId))
+    const hasUnassigned = ids.some((id) => !productsWithMethods.has(id))
+    if (hasUnassigned) return getActiveShippingMethods()
 
-  const methodIds = [...new Set(rows.map((r) => r.shippingMethodId))]
-  return prisma.shippingMethod.findMany({
-    where: { id: { in: methodIds }, active: true },
-    orderBy: { name: 'asc' },
-    select: formulaSelect,
-  })
+    const methodIds = [...new Set(rows.map((r) => r.shippingMethodId))]
+    return await prisma.shippingMethod.findMany({
+      where: { id: { in: methodIds }, active: true },
+      orderBy: { name: 'asc' },
+      select: formulaSelect,
+    })
+  } catch (e) {
+    console.error('[getShippingMethodsByProductIds]', e)
+    return []
+  }
 }
 
 /**
