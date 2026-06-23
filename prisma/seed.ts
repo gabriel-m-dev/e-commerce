@@ -371,46 +371,73 @@ async function main() {
 
   await prisma.shippingMethod.upsert({
     where: { id: 'shipping-standard' },
-    update: { name: 'Envío estándar', price: 16000, active: true },
-    create: { id: 'shipping-standard', name: 'Envío estándar', price: 16000, active: true },
+    update: {
+      name: 'Envío estándar',
+      baseWeightKg: 999,
+      baseCostUsd: 16,
+      additionalCostPerKgUsd: 0,
+      additionalUnitKg: 1,
+      active: true,
+    },
+    create: {
+      id: 'shipping-standard',
+      name: 'Envío estándar',
+      baseWeightKg: 999,
+      baseCostUsd: 16,
+      additionalCostPerKgUsd: 0,
+      additionalUnitKg: 1,
+      active: true,
+    },
   })
-  console.log('  ShippingMethod: Envío estándar ($16,000 ARS)')
+  console.log('  ShippingMethod: Envío estándar (base $16 USD flat rate)')
 
   await prisma.shippingMethod.upsert({
     where: { id: 'shipping-ems-argentina' },
     update: {
-      name: 'Argentina EMS',
-      price: 25000,
-      description: 'EMS 20-50 días. Valor aduanero menor a $50. Primeros 0.5kg incluidos. >0.5kg, +$1/0.1kg adicional.',
+      name: 'EMS',
+      description: 'Valor en aduana inferior a $50 — 20 a 50 días hábiles',
+      baseWeightKg: 0.5,
+      baseCostUsd: 25,
+      additionalCostPerKgUsd: 1,
+      additionalUnitKg: 0.1,
       active: true,
     },
     create: {
       id: 'shipping-ems-argentina',
-      name: 'Argentina EMS',
-      price: 25000,
-      description: 'EMS 20-50 días. Valor aduanero menor a $50. Primeros 0.5kg incluidos. >0.5kg, +$1/0.1kg adicional.',
+      name: 'EMS',
+      description: 'Valor en aduana inferior a $50 — 20 a 50 días hábiles',
+      baseWeightKg: 0.5,
+      baseCostUsd: 25,
+      additionalCostPerKgUsd: 1,
+      additionalUnitKg: 0.1,
       active: true,
     },
   })
-  console.log('  ShippingMethod: Argentina EMS ($25,000 ARS)')
+  console.log('  ShippingMethod: EMS (base $25 USD, +$1/0.1kg)')
 
   await prisma.shippingMethod.upsert({
     where: { id: 'shipping-postnl-argentina' },
     update: {
-      name: 'POST NL-Argentina',
-      price: 14000,
-      description: 'POST NL (paquetes menos de 2kg). 20-50 días. Primeros 0.25kg incluidos. >0.25kg, +$2/0.1kg adicional.',
+      name: 'POST NL',
+      description: 'Paquetes de menos de 2 kg — 20 a 50 días hábiles',
+      baseWeightKg: 0.25,
+      baseCostUsd: 8,
+      additionalCostPerKgUsd: 2,
+      additionalUnitKg: 0.1,
       active: true,
     },
     create: {
       id: 'shipping-postnl-argentina',
-      name: 'POST NL-Argentina',
-      price: 14000,
-      description: 'POST NL (paquetes menos de 2kg). 20-50 días. Primeros 0.25kg incluidos. >0.25kg, +$2/0.1kg adicional.',
+      name: 'POST NL',
+      description: 'Paquetes de menos de 2 kg — 20 a 50 días hábiles',
+      baseWeightKg: 0.25,
+      baseCostUsd: 8,
+      additionalCostPerKgUsd: 2,
+      additionalUnitKg: 0.1,
       active: true,
     },
   })
-  console.log('  ShippingMethod: POST NL-Argentina ($14,000 ARS)')
+  console.log('  ShippingMethod: POST NL (base $8 USD, +$2/0.1kg)')
 
   console.log('Seed complete.')
 }
