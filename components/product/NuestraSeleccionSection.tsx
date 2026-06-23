@@ -48,7 +48,7 @@ export default function NuestraSeleccionSection({ products }: { products: DbProd
                   alt={product.name}
                   fill
                   sizes="(min-width: 1024px) 25vw, 50vw"
-                  className={`object-cover object-center transition-opacity duration-[250ms]${product.images?.[1] ? ' [@media(hover:hover)]:group-hover:opacity-0' : ''}`}
+                  className={`object-contain object-center transition-opacity duration-[250ms]${product.images?.[1] ? ' [@media(hover:hover)]:group-hover:opacity-0' : ''}`}
                 />
                 {product.images?.[1] && (
                   <Image
@@ -56,7 +56,7 @@ export default function NuestraSeleccionSection({ products }: { products: DbProd
                     alt=""
                     fill
                     sizes="(min-width: 1024px) 25vw, 50vw"
-                    className="object-cover object-center opacity-0 transition-opacity duration-[250ms] [@media(hover:hover)]:group-hover:opacity-100"
+                    className="object-contain object-center opacity-0 transition-opacity duration-[250ms] [@media(hover:hover)]:group-hover:opacity-100"
                   />
                 )}
                 <div className="absolute inset-x-0 bottom-0 z-10 min-h-[45%] bg-gradient-to-t from-black/70 to-transparent px-4 py-4 text-center text-white flex flex-col justify-end">
