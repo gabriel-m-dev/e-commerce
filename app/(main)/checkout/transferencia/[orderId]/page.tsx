@@ -86,6 +86,8 @@ export default async function TransferInstructionsPage({
                   label="Concepto / Referencia"
                   value={shortRef}
                   mono
+                  copyable
+                  copyValue={shortRef.replace(/^#/, '')}
                 />
               </div>
             </div>
@@ -141,12 +143,14 @@ function TransferRow({
   mono = false,
   highlight = false,
   copyable = false,
+  copyValue,
 }: {
   label: string
   value: string
   mono?: boolean
   highlight?: boolean
   copyable?: boolean
+  copyValue?: string
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -162,7 +166,7 @@ function TransferRow({
         >
           {value}
         </span>
-        {copyable && <CopyButton value={value} />}
+        {copyable && <CopyButton value={copyValue ?? value} />}
       </span>
     </div>
   )
