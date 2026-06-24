@@ -12,7 +12,7 @@ import type { OrderStatus } from '@/lib/queries/orders'
 
 export const dynamic = 'force-dynamic'
 
-const VALID_STATUSES: OrderStatus[] = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED']
+const VALID_STATUSES: OrderStatus[] = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED', 'PENDING_TRANSFER']
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('es-AR', {
