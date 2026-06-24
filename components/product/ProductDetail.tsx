@@ -154,10 +154,10 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
       </div>
 
       {/* ── Gallery — desktop (thumbnails + main) ── */}
-      <div className="hidden lg:flex lg:flex-row lg:gap-3">
+      <div className="hidden lg:flex lg:flex-row lg:gap-3 items-start">
 
         {/* Vertical thumbnails */}
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2.5 overflow-y-auto max-h-[500px]">
           {product.images.map((src, i) => (
             <button
               key={i}
