@@ -5,14 +5,15 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import type { OrderStatus } from '@/lib/queries/orders'
 
 const TABS: { value: OrderStatus | 'ALL'; label: string }[] = [
-  { value: 'ALL',              label: 'Todos'      },
-  { value: 'PENDING',          label: 'Pendiente'  },
-  { value: 'CONFIRMED',        label: 'Confirmado' },
-  { value: 'PROCESSING',       label: 'En proceso' },
-  { value: 'SHIPPED',          label: 'Enviado'    },
-  { value: 'OUT_FOR_DELIVERY', label: 'En reparto' },
-  { value: 'DELIVERED',        label: 'Entregado'  },
-  { value: 'CANCELLED',        label: 'Cancelado'  },
+  { value: 'ALL',              label: 'Todos'           },
+  { value: 'PENDING',          label: 'Pendiente'       },
+  { value: 'PENDING_TRANSFER', label: 'Transferencia'   },
+  { value: 'CONFIRMED',        label: 'Confirmado'      },
+  { value: 'PROCESSING',       label: 'En proceso'      },
+  { value: 'SHIPPED',          label: 'Enviado'         },
+  { value: 'OUT_FOR_DELIVERY', label: 'En reparto'      },
+  { value: 'DELIVERED',        label: 'Entregado'       },
+  { value: 'CANCELLED',        label: 'Cancelado'       },
 ]
 
 export default function OrdersFilter({ counts }: { counts: Record<string, number> }) {
