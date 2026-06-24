@@ -215,6 +215,114 @@ export async function sendOutForDeliveryEmail(order: OrderEmailData): Promise<vo
   }
 }
 
+export async function sendTransferInstructionsEmail(params: {
+  to: string
+  orderId: string
+  total: number
+  cbu: string
+  alias: string
+}): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const { to, orderId, total, cbu, alias } = params
+  const shortId = orderId.slice(0, 8).toUpperCase()
+
+  const html = baseLayout(`
+    <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:#d97706;">
+      Transferencia bancaria
+    </p>
+    <h1 style="margin:0 0 24px;font-size:18px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:#0a0a0a;">
+      Instrucciones de pago
+    </h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
+      Recibimos tu pedido. Para confirmarlo, realizá la transferencia con los datos que aparecen a continuación.
+    </p>
+
+    <div style="background:#f5f5f5;padding:24px;margin-bottom:24px;">
+      <p style="margin:0 0 16px;font-size:10px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#8a8a8a;">Datos bancarios</p>
+
+      <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#8a8a8a;">CBU</p>
+      <p style="margin:0 0 16px;font-size:14px;font-weight:700;color:#0a0a0a;font-family:monospace;">${cbu}</p>
+
+      <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#8a8a8a;">Alias</p>
+      <p style="margin:0 0 16px;font-size:14px;font-weight:700;color:#0a0a0a;">${alias}</p>
+
+      <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#8a8a8a;">Monto a transferir</p>
+      <p style="margin:0 0 16px;font-size:18px;font-weight:900;color:#0a0a0a;">${formatPrice(total)}</p>
+
+      <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#8a8a8a;">Referencia del pedido</p>
+      <p style="margin:0;font-size:14px;font-weight:700;color:#0a0a0a;">${shortId}</p>
+    </div>
+
+    <p style="margin:0 0 24px;font-size:12px;color:#8a8a8a;line-height:1.6;">
+      Una vez realizada la transferencia, envianos el comprobante por WhatsApp o email.
+      Tu pedido se confirmará en cuanto verifiquemos el pago.
+    </p>
+
+    <a href="${SITE_URL}/checkout/transferencia/${orderId}" style="display:inline-block;background:#0a0a0a;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
+      Ver instrucciones →
+    </a>
+  `)
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to,
+      subject: `Instrucciones de transferencia — N° ${shortId}`,
+      html,
+    })
+  } catch (err) {
+    console.error('[email] sendTransferInstructionsEmail failed:', err)
+  }
+}
+
+export async function sendTransferConfirmedEmail(params: {
+  to: string
+  orderId: string
+  total: number
+}): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const { to, orderId, total } = params
+  const shortId = orderId.slice(0, 8).toUpperCase()
+
+  const html = baseLayout(`
+    <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:#c9a96e;">
+      Pago confirmado
+    </p>
+    <h1 style="margin:0 0 24px;font-size:18px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:#0a0a0a;">
+      ¡Tu transferencia fue verificada!
+    </h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
+      Confirmamos el pago de tu pedido N° <strong>${shortId}</strong>. Estamos preparando tu pedido y te avisaremos cuando sea despachado.
+    </p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+      <tr>
+        <td style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#0a0a0a;">Total pagado</td>
+        <td style="font-size:14px;font-weight:900;color:#0a0a0a;text-align:right;">${formatPrice(total)}</td>
+      </tr>
+    </table>
+
+    <a href="${SITE_URL}/account" style="display:inline-block;background:#0a0a0a;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
+      Ver mis pedidos →
+    </a>
+  `)
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to,
+      subject: `Transferencia confirmada — N° ${shortId}`,
+      html,
+    })
+  } catch (err) {
+    console.error('[email] sendTransferConfirmedEmail failed:', err)
+  }
+}
+
 export async function sendOrderShippedEmail(order: OrderEmailData): Promise<void> {
   if (!process.env.RESEND_API_KEY) return
   const resend = new Resend(process.env.RESEND_API_KEY)

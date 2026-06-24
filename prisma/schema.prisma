@@ -130,6 +130,8 @@ model Order {
   shippingMethodId String?
   shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
   shippingBreakdown Json?
+  paymentMethod   String?
+  discount        Int         @default(0)
   items           OrderItem[]
   address         Address?
   createdAt       DateTime    @default(now())
@@ -193,6 +195,7 @@ enum OrderStatus {
   OUT_FOR_DELIVERY
   DELIVERED
   CANCELLED
+  PENDING_TRANSFER
 }
 
 enum CategoryGroup {

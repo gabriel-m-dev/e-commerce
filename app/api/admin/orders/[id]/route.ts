@@ -3,10 +3,13 @@ import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
 import { sendOrderCancelledEmail, sendOrderShippedEmail, sendOutForDeliveryEmail } from '@/lib/email'
 
-const VALID_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'] as const
+const VALID_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED', 'PENDING_TRANSFER'] as const
 type OrderStatus = typeof VALID_STATUSES[number]
 
-// Statuses where payment was confirmed and stock was decremented
+// Statuses where payment was confirmed and stock was decremented.
+// PENDING_TRANSFER is intentionally excluded: stock is only decremented when admin
+// confirms the transfer via /confirm-transfer — never at order creation.
+// Cancelling a PENDING_TRANSFER order must NOT restore stock (nothing was decremented yet).
 const POST_PAYMENT: OrderStatus[] = ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED']
 
 export async function PATCH(
@@ -118,7 +121,8 @@ export async function PATCH(
   }
 }
 
-const DELETABLE_STATUSES: OrderStatus[] = ['PENDING', 'CANCELLED']
+// PENDING_TRANSFER is deletable: no stock was decremented, so no restore is needed.
+const DELETABLE_STATUSES: OrderStatus[] = ['PENDING', 'CANCELLED', 'PENDING_TRANSFER']
 
 export async function DELETE(
   _request: NextRequest,

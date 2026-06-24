@@ -5,13 +5,14 @@ import { useState } from 'react'
 import type { OrderStatus } from '@/lib/queries/orders'
 
 const STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
-  { value: 'PENDING',          label: 'Pendiente'   },
-  { value: 'CONFIRMED',        label: 'Confirmado'  },
-  { value: 'PROCESSING',       label: 'En proceso'  },
-  { value: 'SHIPPED',          label: 'Enviado'     },
-  { value: 'OUT_FOR_DELIVERY', label: 'En reparto'  },
-  { value: 'DELIVERED',        label: 'Entregado'   },
-  { value: 'CANCELLED',        label: 'Cancelado'   },
+  { value: 'PENDING',          label: 'Pendiente'          },
+  { value: 'CONFIRMED',        label: 'Confirmado'         },
+  { value: 'PROCESSING',       label: 'En proceso'         },
+  { value: 'SHIPPED',          label: 'Enviado'            },
+  { value: 'OUT_FOR_DELIVERY', label: 'En reparto'         },
+  { value: 'DELIVERED',        label: 'Entregado'          },
+  { value: 'CANCELLED',        label: 'Cancelado'          },
+  { value: 'PENDING_TRANSFER', label: 'Pend. Transferencia'},
 ]
 
 const STATUS_COLOR: Record<OrderStatus, string> = {
@@ -22,6 +23,7 @@ const STATUS_COLOR: Record<OrderStatus, string> = {
   OUT_FOR_DELIVERY: 'text-[#f97316]',
   DELIVERED:        'text-foreground font-bold',
   CANCELLED:        'text-destructive',
+  PENDING_TRANSFER: 'text-[#d97706]',
 }
 
 export default function OrderStatusSelect({
@@ -64,7 +66,7 @@ export default function OrderStatusSelect({
       onChange={(e) => handleChange(e.target.value as OrderStatus)}
       className={`border border-border bg-background px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] focus:outline-none focus:border-foreground transition-colors disabled:opacity-50 ${STATUS_COLOR[value]}`}
     >
-      {STATUS_OPTIONS.map((opt) => (
+      {STATUS_OPTIONS.filter((opt) => opt.value !== 'PENDING_TRANSFER').map((opt) => (
         <option key={opt.value} value={opt.value}>
           {opt.label}
         </option>

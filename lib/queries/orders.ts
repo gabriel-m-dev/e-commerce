@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { Prisma } from '../generated/prisma/client'
 
 // SYNC WITH schema.prisma enum OrderStatus
-export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED'
+export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED' | 'PENDING_TRANSFER'
 
 export type OrderWithItems = {
   id: string
@@ -12,6 +12,8 @@ export type OrderWithItems = {
   subtotal: number
   shipping: number
   total: number
+  paymentMethod: string | null
+  discount: number
   createdAt: Date
   items: {
     id: string
@@ -53,6 +55,8 @@ function mapOrder(order: {
   subtotal: number
   shipping: number
   total: number
+  paymentMethod?: string | null
+  discount?: number | null
   createdAt: Date
   items: {
     id: string
@@ -73,6 +77,8 @@ function mapOrder(order: {
     subtotal: Number(order.subtotal),
     shipping: Number(order.shipping),
     total: Number(order.total),
+    paymentMethod: order.paymentMethod ?? null,
+    discount: Number(order.discount ?? 0),
     createdAt: order.createdAt,
     items: order.items.map((item) => ({
       id: item.id,
