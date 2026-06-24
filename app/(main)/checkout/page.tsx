@@ -273,7 +273,7 @@ export default function CheckoutPage() {
   }, [items])
 
   // ── Multi-supplier disclaimer ──
-  const hasMultipleSuppliers = supplierGroups.filter((g) => g.supplier !== null).length >= 2
+  const hasMultipleSuppliers = supplierGroups.length >= 2
 
   // ── Total shipping (display only) ──
   const totalShipping = Object.values(groupSelections).reduce(
