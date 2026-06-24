@@ -34,8 +34,17 @@ export default async function NuevosIngresosPage() {
                   alt={product.name}
                   fill
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className={`object-cover transition duration-500 [@media(hover:hover)]:group-hover:scale-105${product.images[1] ? ' [@media(hover:hover)]:group-hover:opacity-0' : ''}`}
                 />
+                {product.images[1] && (
+                  <Image
+                    src={product.images[1]}
+                    alt=""
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
+                    className="object-cover opacity-0 transition-opacity duration-500 [@media(hover:hover)]:group-hover:opacity-100"
+                  />
+                )}
                 <div className="absolute inset-0 bg-foreground/0 transition-colors duration-500 group-hover:bg-foreground/15" />
               </div>
               <div className="mt-3.5">

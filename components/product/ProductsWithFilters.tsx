@@ -950,14 +950,14 @@ export default function ProductsWithFilters({
                 {/* Imagen */}
                 <Link
                   href={`/product/${product.slug}`}
-                  className={`relative block w-full overflow-hidden${usesGroupedNav ? (isMobileBig ? ' aspect-[4/5] lg:aspect-square' : isDesktopBeat ? ' aspect-[3/4] lg:aspect-square' : ' aspect-[3/4]') : ' aspect-[3/4] bg-surface'}`}
+                  className={`relative block w-full overflow-hidden${usesGroupedNav ? (isMobileBig ? ' aspect-[4/5] lg:aspect-square' : isDesktopBeat ? ' aspect-[3/4] lg:aspect-square' : ' aspect-[3/4]') : ' aspect-square bg-surface'}`}
                 >
                   <Image
                     src={product.image}
                     alt={product.name}
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
-                    className={`object-contain sm:object-cover object-center transition-opacity duration-[250ms]${product.images?.[1] ? ' [@media(hover:hover)]:group-hover:opacity-0' : ''}`}
+                    className={`object-cover object-center transition-opacity duration-[250ms]${product.images?.[1] ? ' [@media(hover:hover)]:group-hover:opacity-0' : ''}`}
                     priority={index < 4}
                   />
                   {product.images?.[1] && (
@@ -966,7 +966,7 @@ export default function ProductsWithFilters({
                       alt=""
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
-                      className="object-contain sm:object-cover object-center opacity-0 transition-opacity duration-[250ms] [@media(hover:hover)]:group-hover:opacity-100"
+                      className="object-cover object-center opacity-0 transition-opacity duration-[250ms] [@media(hover:hover)]:group-hover:opacity-100"
                     />
                   )}
                   {product.comparePrice && product.comparePrice > product.price && (
