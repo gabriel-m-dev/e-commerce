@@ -5,10 +5,10 @@ import ArrowIcon from '@/components/ui/ArrowIcon'
 
 export const metadata: Metadata = {
   title: 'Nuestra historia',
-  description: 'Conocé la historia detrás de eMe. Una marca argentina de moda premium que combina diseño minimalista con calidad de primer nivel.',
+  description: 'Conocé la historia detrás de eMe. Empezamos en 2023 como hobby importando para amigos y familia, y crecimos hasta convertirnos en lo que somos hoy.',
   openGraph: {
     title: `Nuestra historia — ${SITE_NAME}`,
-    description: 'Una marca argentina de moda premium. Diseño minimalista, calidad que se siente.',
+    description: 'Empezamos en 2023 importando para gente cercana. Hoy somos eMe.',
     url: '/about',
     type: 'website',
   },
@@ -17,19 +17,19 @@ export const metadata: Metadata = {
 
 const VALUES = [
   {
-    label: 'Diseño',
+    label: 'Origen',
     description:
-      'Cada pieza nace de un proceso de diseño riguroso. Formas limpias, proporciones exactas, materiales que duran.',
+      'Arrancamos importando para amigos. Esa lógica — traer lo que vale la pena — sigue siendo la misma hoy.',
   },
   {
-    label: 'Calidad',
+    label: 'Confianza',
     description:
-      'Trabajamos con proveedores cuidadosamente seleccionados. Sin atajos, sin compromisos en la manufactura.',
+      'Crecimos por recomendación. Cada cliente nuevo llegó porque alguien de confianza nos recomendó primero.',
   },
   {
-    label: 'Identidad',
+    label: 'Criterio',
     description:
-      'eMe no es una tendencia. Es una postura. Para quienes eligen lo que usan con intención.',
+      'No vendemos todo. Elegimos lo que nosotros mismos usaríamos. Si no pasa ese filtro, no entra al catálogo.',
   },
 ]
 
@@ -46,11 +46,11 @@ export default function AboutPage() {
             className="mt-5 font-black uppercase leading-[0.9] tracking-tighter text-background"
             style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)' }}
           >
-            Diseño que<br />tiene nombre.
+            Lo que empezó<br />entre amigos.
           </h1>
           <p className="mt-6 max-w-lg text-[13px] leading-relaxed text-background/60">
-            eMe nació de una idea simple: que la ropa de calidad no debería ser difícil de encontrar
-            en Argentina. Que el diseño premium puede ser accesible sin perder su esencia.
+            eMe arrancó en 2023 como un hobby: importar indumentaria y zapatillas para gente
+            cercana que buscaba calidad sin tener que salir a buscarla sola.
           </p>
         </div>
       </section>
@@ -67,13 +67,13 @@ export default function AboutPage() {
                 </p>
               </div>
               <p className="mt-6 text-[13px] leading-[1.8] text-muted">
-                Empezamos en 2024 con una colección pequeña y una obsesión por los detalles.
-                Cada prenda fue pensada para durar más de una temporada, para vivir en los
-                armarios de personas que valoran lo que tienen.
+                En 2023 empezamos a importar zapatillas e indumentaria para amigos y familia.
+                Sin local, sin catálogo — solo pedidos por confianza y boca en boca.
+                Lo que era un hobby fue creciendo solo, pedido a pedido.
               </p>
               <p className="mt-4 text-[13px] leading-[1.8] text-muted">
-                Hoy somos una marca en crecimiento, con productos que combinan streetwear contemporáneo
-                con materiales de primera selección y un proceso de diseño que no hace concesiones.
+                Hoy eMe es una tienda online con catálogo propio, envíos a todo el país y
+                una comunidad que confía en nosotros para traer lo que no se consigue fácil.
               </p>
             </div>
             <div>
@@ -84,12 +84,12 @@ export default function AboutPage() {
                 </p>
               </div>
               <p className="mt-6 text-[13px] leading-[1.8] text-muted">
-                Queremos ser la marca de referencia para quienes en Argentina buscan moda con
-                identidad propia. No seguimos tendencias — las acompañamos con criterio.
+                Seguir siendo el lugar al que recurre la gente cuando quiere algo que vale la pena.
+                No la opción más ruidosa — la opción que no defrauda.
               </p>
               <p className="mt-4 text-[13px] leading-[1.8] text-muted">
-                Cada colección es una declaración de que el diseño y la calidad pueden coexistir
-                sin que ninguno ceda terreno al otro.
+                Cada producto que sumamos al catálogo pasa por el mismo filtro que usábamos
+                al principio: ¿lo compraríamos nosotros? Si la respuesta es sí, entra.
               </p>
             </div>
           </div>

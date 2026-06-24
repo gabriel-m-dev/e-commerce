@@ -18,8 +18,8 @@ const FOOTER_LINKS = {
     { label: 'Trabajá con nosotros', href: '/jobs' },
   ],
   Contacto: [
-    { label: '+54 11 1234 5678', href: 'tel:+541112345678' },
-    { label: 'hola@luxe.com', href: 'mailto:hola@luxe.com' },
+    { label: '+54 11 4164-8955', href: 'tel:+541141648955' },
+    { label: 'gabyboss065@gmail.com', href: 'mailto:gabyboss065@gmail.com' },
   ],
 }
 

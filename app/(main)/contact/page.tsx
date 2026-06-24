@@ -17,20 +17,20 @@ export const metadata: Metadata = {
 const CONTACT_ITEMS = [
   {
     label: 'Email',
-    value: 'hola@luxe.com',
-    href: 'mailto:hola@luxe.com',
+    value: 'gabyboss065@gmail.com',
+    href: 'mailto:gabyboss065@gmail.com',
     description: 'Respondemos en menos de 24 horas hábiles.',
   },
   {
     label: 'Teléfono / WhatsApp',
-    value: '+54 11 1234-5678',
-    href: 'https://wa.me/541112345678',
+    value: '+54 11 4164-8955',
+    href: 'https://wa.me/541141648955',
     description: 'Lunes a viernes de 10 a 18 hs.',
   },
   {
     label: 'Instagram',
-    value: '@luxearg',
-    href: 'https://instagram.com/luxearg',
+    value: '@eme.import23',
+    href: 'https://instagram.com/eme.import23',
     description: 'También podés escribirnos por DM.',
   },
 ]

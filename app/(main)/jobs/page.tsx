@@ -112,10 +112,10 @@ export default function JobsPage() {
           <p className="mt-2 text-[12px] text-muted">
             Mandanos tu CV a{' '}
             <a
-              href="mailto:hola@luxe.com?subject=Postulación espontánea"
+              href="mailto:gabyboss065@gmail.com?subject=Postulación espontánea"
               className="font-semibold text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
             >
-              hola@luxe.com
+              gabyboss065@gmail.com
             </a>
             {' '}con el asunto &ldquo;Postulación espontánea&rdquo;.
           </p>

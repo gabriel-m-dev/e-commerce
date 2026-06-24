@@ -40,7 +40,7 @@ export async function sendContactEmail(
 
   const { error } = await resend.emails.send({
     from: FROM,
-    to: 'hola@luxe.com',
+    to: 'gabyboss065@gmail.com',
     replyTo: email,
     subject: subject ? `[Contacto] ${subject}` : `[Contacto] Mensaje de ${name}`,
     text: `Nombre: ${name}\nEmail: ${email}\n\n${message}`,
