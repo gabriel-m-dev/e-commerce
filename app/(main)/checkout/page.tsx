@@ -677,7 +677,7 @@ export default function CheckoutPage() {
                         Transferencia Bancaria
                       </span>
                       <span className="text-[9px] font-black uppercase tracking-[0.18em] text-gold border border-gold px-2 py-0.5">
-                        10% OFF
+                        6% OFF
                       </span>
                     </div>
                     <p className="text-[11px] leading-relaxed text-muted">
@@ -750,7 +750,7 @@ function OrderSummary({
   shipping: number | null
   paymentMethod: 'mp' | 'transfer'
 }) {
-  const discount = paymentMethod === 'transfer' ? Math.floor(subtotal * 0.10) : 0
+  const discount = paymentMethod === 'transfer' ? Math.floor(subtotal * 0.06) : 0
   const discountedSubtotal = subtotal - discount
   const displayTotal = discountedSubtotal + (shipping ?? 0)
 
@@ -827,7 +827,7 @@ function OrderSummary({
             {paymentMethod === 'transfer' && (
               <div className="flex justify-between items-baseline">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">
-                  Descuento 10%
+                  Descuento 6%
                 </span>
                 <span className="text-sm font-semibold text-gold">
                   -{formatPrice(discount)}

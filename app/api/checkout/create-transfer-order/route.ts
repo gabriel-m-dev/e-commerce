@@ -137,8 +137,8 @@ export async function POST(request: NextRequest) {
       0
     )
 
-    // 10% discount — stored as integer ARS cents, floor arithmetic
-    const discount = Math.floor(subtotal * 0.10)
+    // 6% discount — stored as integer ARS cents, floor arithmetic
+    const discount = Math.floor(subtotal * 0.06)
 
     // Server-side shipping cost per group
     const uniqueMethodIds = [...new Set(normalizedGroups.map((g) => g.shippingMethodId))]
