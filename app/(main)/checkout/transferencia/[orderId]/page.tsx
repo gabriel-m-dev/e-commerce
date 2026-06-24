@@ -19,6 +19,7 @@ export default async function TransferInstructionsPage({
   const cbu = process.env.TRANSFER_CBU
   const alias = process.env.TRANSFER_ALIAS
   const contact = process.env.TRANSFER_CONTACT ?? 'hola@tienda-luxe.vercel.app'
+  const whatsapp = process.env.TRANSFER_WHATSAPP
 
   const shortRef = `#${orderId.slice(0, 8).toUpperCase()}`
   const missingEnvVars = !cbu || !alias
@@ -103,6 +104,14 @@ export default async function TransferInstructionsPage({
             >
               {contact}
             </a>
+            {whatsapp && (
+              <a
+                href={`https://wa.me/${whatsapp}`}
+                className="block mt-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold hover:underline"
+              >
+                WhatsApp
+              </a>
+            )}
             <p className="mt-2 text-[11px] text-muted">
               Incluí el número de referencia <span className="text-foreground font-semibold">{shortRef}</span> en el asunto.
             </p>
