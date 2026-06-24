@@ -60,6 +60,19 @@ export async function PATCH(
   })
   if (!current) return NextResponse.json({ error: 'Orden no encontrada' }, { status: 404 })
 
+  // Guard: PENDING_TRANSFER → CONFIRMED must go through /confirm-transfer (stock decrement side-effect).
+  // Only CANCELLED is allowed as a PATCH transition from PENDING_TRANSFER.
+  if (
+    current.status === 'PENDING_TRANSFER' &&
+    status !== undefined &&
+    status !== 'CANCELLED'
+  ) {
+    return NextResponse.json(
+      { error: 'Usá /confirm-transfer para confirmar pagos por transferencia' },
+      { status: 400 }
+    )
+  }
+
   const nextStatus = status as OrderStatus | undefined
   const isCancelling = nextStatus === 'CANCELLED' && current.status !== 'CANCELLED'
   const isShipping = nextStatus === 'SHIPPED' && current.status !== 'SHIPPED'
