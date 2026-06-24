@@ -19,7 +19,7 @@ export default async function TransferInstructionsPage({
 
   const cbu = process.env.TRANSFER_CBU
   const alias = process.env.TRANSFER_ALIAS
-  const contact = process.env.TRANSFER_CONTACT ?? 'hola@tienda-luxe.vercel.app'
+  const contact = process.env.TRANSFER_CONTACT ?? 'hola@emeimports.vercel.app'
   const whatsapp = process.env.TRANSFER_WHATSAPP
 
   const shortRef = `#${orderId.slice(0, 8).toUpperCase()}`
