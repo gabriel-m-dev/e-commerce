@@ -979,12 +979,13 @@ export default function ProductsWithFilters({
                       SIN STOCK
                     </span>
                   )}
+                </Link>
                   {usesGroupedNav && (
                     <button
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!isOutOfStock) setOpenProductId(isOpen ? null : product.id) }}
+                      onClick={(e) => { e.stopPropagation(); if (!isOutOfStock) setOpenProductId(isOpen ? null : product.id) }}
                       aria-label={isOutOfStock ? 'Sin stock' : `Agregar ${product.name} al carrito`}
                       disabled={isOutOfStock}
-                      className={`absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-md bg-black/60 backdrop-blur-sm text-white border border-white/20 transition ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : 'hover:bg-black/80 cursor-pointer'}`}
+                      className={`absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-md bg-black/60 backdrop-blur-sm text-white border border-white/20 transition z-10 ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : 'hover:bg-black/80 cursor-pointer'}`}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
@@ -993,7 +994,6 @@ export default function ProductsWithFilters({
                       </svg>
                     </button>
                   )}
-                </Link>
 
                 {/* Info row */}
                 <div className={`flex-1 flex gap-2${usesGroupedNav ? ' mt-2 justify-center' : ' mt-3.5 justify-between'}`}>
