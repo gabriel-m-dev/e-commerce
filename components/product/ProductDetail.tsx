@@ -187,7 +187,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
             alt={product.name}
             fill
             sizes="55vw"
-            className="object-cover object-center transition-opacity duration-300"
+            className="object-contain object-center transition-opacity duration-300"
             priority
           />
         </div>
