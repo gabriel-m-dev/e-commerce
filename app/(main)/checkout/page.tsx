@@ -175,8 +175,13 @@ function ShippingSelector({
               className="accent-foreground w-4 h-4 shrink-0"
             />
             <div className="flex flex-col gap-0.5">
-              <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground">
+              <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground flex items-center gap-2">
                 {method.name}
+                {method.name.toUpperCase().includes('EMS') && (
+                  <span className="text-[9px] font-black uppercase tracking-[0.18em] text-[#c9a96e] border border-[#c9a96e] px-1.5 py-0.5 leading-none">
+                    RECOMENDADO
+                  </span>
+                )}
               </span>
               {method.description && (
                 <span className="text-[11px] text-muted leading-tight">{method.description}</span>
