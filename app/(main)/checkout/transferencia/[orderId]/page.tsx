@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getOrderById } from '@/lib/queries/orders'
 import { formatPrice } from '@/lib/utils'
 import ArrowIcon from '@/components/ui/ArrowIcon'
+import { CopyButton } from '@/components/ui/CopyButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -74,8 +75,8 @@ export default async function TransferInstructionsPage({
                 </span>
               </div>
               <div className="px-6 py-5 flex flex-col gap-5">
-                <TransferRow label="CBU" value={cbu!} mono />
-                <TransferRow label="Alias" value={alias!} mono />
+                <TransferRow label="CBU" value={cbu!} mono copyable />
+                <TransferRow label="Alias" value={alias!} mono copyable />
                 <TransferRow
                   label="Monto a transferir"
                   value={formatPrice(order.total)}
@@ -136,24 +137,29 @@ function TransferRow({
   value,
   mono = false,
   highlight = false,
+  copyable = false,
 }: {
   label: string
   value: string
   mono?: boolean
   highlight?: boolean
+  copyable?: boolean
 }) {
   return (
     <div className="flex flex-col gap-1">
       <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
         {label}
       </span>
-      <span
-        className={[
-          highlight ? 'text-gold text-xl font-black' : 'text-foreground text-[13px] font-semibold',
-          mono ? 'font-mono tracking-wider' : 'uppercase tracking-[0.08em]',
-        ].join(' ')}
-      >
-        {value}
+      <span className="flex items-center gap-1">
+        <span
+          className={[
+            highlight ? 'text-gold text-xl font-black' : 'text-foreground text-[13px] font-semibold',
+            mono ? 'font-mono tracking-wider' : 'uppercase tracking-[0.08em]',
+          ].join(' ')}
+        >
+          {value}
+        </span>
+        {copyable && <CopyButton value={value} />}
       </span>
     </div>
   )
