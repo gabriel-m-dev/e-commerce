@@ -8,7 +8,7 @@ import { formatPrice } from '@/lib/utils'
 
 export const metadata = {
   title: 'Mi cuenta',
-  description: 'Gestioná tu perfil, revisá el historial de pedidos y configurá tu cuenta en LUXE.',
+  description: 'Gestioná tu perfil, revisá el historial de pedidos y configurá tu cuenta en eMe.',
   robots: { index: false },
 }
 

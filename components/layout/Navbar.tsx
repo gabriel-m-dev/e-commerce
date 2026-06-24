@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import NavLinks from './NavLinks'
 import NavbarActions from './NavbarActions'
 import NavbarShell from './NavbarShell'
@@ -17,14 +16,7 @@ export default async function Navbar() {
 
         {/* Logo */}
         <Link href="/" className="transition-opacity hover:opacity-70">
-          <Image
-            src="/buena_pilcha_logo.png"
-            alt="Logo"
-            height={36}
-            width={120}
-            className="object-contain"
-            priority
-          />
+          <span className="text-2xl font-bold tracking-tight">eMe</span>
         </Link>
 
         {/* Nav — centered, desktop only */}

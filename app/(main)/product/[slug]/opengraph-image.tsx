@@ -101,7 +101,7 @@ export default async function ProductOGImage({
               letterSpacing: '0.25em',
             }}
           >
-            LUXE.
+            eMe
           </div>
         </div>
 

@@ -3,7 +3,7 @@ import { SITE_NAME, SITE_URL } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Cambios y devoluciones',
-  description: 'Política de cambios y devoluciones de LUXE. Tenés 30 días para solicitar un cambio o devolución. Proceso simple y rápido.',
+  description: 'Política de cambios y devoluciones de eMe. Tenés 30 días para solicitar un cambio o devolución. Proceso simple y rápido.',
   openGraph: {
     title: `Cambios y devoluciones — ${SITE_NAME}`,
     description: '30 días para cambiar o devolver. Proceso simple, sin complicaciones.',

@@ -401,7 +401,7 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
                   onChange={(e) => setForm((prev) => ({ ...prev, brand: e.target.value }))}
                   className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full cursor-pointer"
                 >
-                  <option value="OTROS">Otros / LUXE.</option>
+                  <option value="OTROS">Otros / eMe</option>
                   <option value="NIKE">Nike</option>
                   <option value="JORDAN">Jordan</option>
                   <option value="ADIDAS">Adidas</option>

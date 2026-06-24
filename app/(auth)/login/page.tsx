@@ -179,7 +179,7 @@ export default function LoginPage() {
           href="/"
           className="text-2xl font-black uppercase tracking-[0.25em] text-foreground"
         >
-          LUXE.
+          eMe
         </Link>
       </div>
 

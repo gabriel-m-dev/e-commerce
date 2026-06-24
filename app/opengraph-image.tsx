@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-export const alt = 'LUXE. — Moda Premium Argentina'
+export const alt = 'eMe — Moda Premium Argentina'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -36,7 +36,7 @@ export default function Image() {
               lineHeight: 1,
             }}
           >
-            LUXE.
+            eMe
           </div>
           <div style={{ width: 80, height: 2, background: '#c9a96e' }} />
           <div

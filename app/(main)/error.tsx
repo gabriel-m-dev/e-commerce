@@ -11,7 +11,7 @@ export default function MainError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('[LUXE.]', error)
+    console.error('[eMe]', error)
   }, [error])
 
   return (

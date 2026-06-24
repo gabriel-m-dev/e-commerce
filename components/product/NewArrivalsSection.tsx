@@ -22,7 +22,7 @@ export default function NewArrivalsSection({ products }: { products: DbProduct[]
           Nuevos ingresos
         </h2>
         <p className="mt-2 text-[12px] text-muted">
-          Descubrí lo último que llegó a LUXE.
+          Descubrí lo último que llegó a eMe
         </p>
 
         {/*

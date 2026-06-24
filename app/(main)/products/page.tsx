@@ -15,17 +15,17 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Tienda',
-  description: 'Explorá toda la colección LUXE. Zapatillas, buzos, remeras, pantalones, gorras y mochilas premium. Filtros por categoría y búsqueda instantánea.',
+  description: 'Explorá toda la colección eMe. Zapatillas, buzos, remeras, pantalones, gorras y mochilas premium. Filtros por categoría y búsqueda instantánea.',
   openGraph: {
     title: `Tienda — ${SITE_NAME}`,
-    description: 'Toda la colección LUXE. en un solo lugar. Diseño premium, calidad que se siente.',
+    description: 'Toda la colección eMe en un solo lugar. Diseño premium, calidad que se siente.',
     url: '/products',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: `Tienda — ${SITE_NAME}`,
-    description: 'Toda la colección LUXE. Diseño premium, calidad que se siente.',
+    description: 'Toda la colección eMe. Diseño premium, calidad que se siente.',
   },
   alternates: { canonical: '/products' },
 }
@@ -110,7 +110,7 @@ export default async function ProductsPage({
             '@context': 'https://schema.org',
             '@type': 'ItemList',
             name: `Tienda ${SITE_NAME}`,
-            description: 'Catálogo completo de productos LUXE.',
+            description: 'Catálogo completo de productos eMe.',
             numberOfItems: products.length,
             itemListElement: products.map((p, i) => ({
               '@type': 'ListItem',

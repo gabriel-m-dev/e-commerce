@@ -4,7 +4,7 @@ import ContactForm from '@/components/contact/ContactForm'
 
 export const metadata: Metadata = {
   title: 'Contacto',
-  description: 'Contactate con LUXE. Atención al cliente, consultas sobre productos, pedidos y más. Respondemos en menos de 24 horas.',
+  description: 'Contactate con eMe. Atención al cliente, consultas sobre productos, pedidos y más. Respondemos en menos de 24 horas.',
   openGraph: {
     title: `Contacto — ${SITE_NAME}`,
     description: 'Contactate con nosotros. Respondemos todas las consultas en menos de 24 horas.',
@@ -54,7 +54,7 @@ export default function ContactPage() {
             Estamos para ayudarte.
           </h1>
           <p className="mt-4 max-w-md text-[13px] leading-relaxed text-muted">
-            Tenés una consulta sobre un producto, un pedido o simplemente querés saber más sobre LUXE.
+            Tenés una consulta sobre un producto, un pedido o simplemente querés saber más sobre eMe.
             Escribinos — respondemos todas las consultas.
           </p>
         </div>

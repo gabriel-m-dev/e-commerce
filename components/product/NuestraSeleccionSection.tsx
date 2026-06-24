@@ -17,7 +17,7 @@ export default function NuestraSeleccionSection({ products }: { products: DbProd
           className="w-full text-center font-bold uppercase tracking-[0.2em] whitespace-nowrap"
           style={{ fontSize: 'clamp(300px,50vw,800px)', WebkitTextStroke: '1.5px rgba(10,10,10,0.15)', color: 'transparent' }}
         >
-          LUXE.
+          eMe
         </span>
       </div>
 
@@ -33,7 +33,7 @@ export default function NuestraSeleccionSection({ products }: { products: DbProd
           Nuestra Selección
         </h2>
         <p className="mt-2 text-[12px] text-muted">
-          Los mejores picks del equipo LUXE.
+          Los mejores picks del equipo eMe
         </p>
 
         <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 lg:gap-x-6 lg:max-w-[75%] lg:mx-auto">

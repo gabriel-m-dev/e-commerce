@@ -5,7 +5,7 @@ import ArrowIcon from '@/components/ui/ArrowIcon'
 
 export const metadata: Metadata = {
   title: 'Nuestra historia',
-  description: 'Conocé la historia detrás de LUXE. Una marca argentina de moda premium que combina diseño minimalista con calidad de primer nivel.',
+  description: 'Conocé la historia detrás de eMe. Una marca argentina de moda premium que combina diseño minimalista con calidad de primer nivel.',
   openGraph: {
     title: `Nuestra historia — ${SITE_NAME}`,
     description: 'Una marca argentina de moda premium. Diseño minimalista, calidad que se siente.',
@@ -29,7 +29,7 @@ const VALUES = [
   {
     label: 'Identidad',
     description:
-      'LUXE. no es una tendencia. Es una postura. Para quienes eligen lo que usan con intención.',
+      'eMe no es una tendencia. Es una postura. Para quienes eligen lo que usan con intención.',
   },
 ]
 
@@ -49,7 +49,7 @@ export default function AboutPage() {
             Diseño que<br />tiene nombre.
           </h1>
           <p className="mt-6 max-w-lg text-[13px] leading-relaxed text-background/60">
-            LUXE. nació de una idea simple: que la ropa de calidad no debería ser difícil de encontrar
+            eMe nació de una idea simple: que la ropa de calidad no debería ser difícil de encontrar
             en Argentina. Que el diseño premium puede ser accesible sin perder su esencia.
           </p>
         </div>

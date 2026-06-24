@@ -14,7 +14,7 @@ export type MockProduct = {
 export const MOCK_PRODUCTS: MockProduct[] = [
   {
     id: '1',
-    name: 'Gorra LUXE.',
+    name: 'Gorra eMe',
     slug: 'gorra-luxe',
     price: 24900,
     category: 'Gorras',
@@ -24,7 +24,7 @@ export const MOCK_PRODUCTS: MockProduct[] = [
       'https://images.unsplash.com/photo-1521369909029-2afed882baee?w=900&auto=format&fit=crop&q=85',
       'https://images.unsplash.com/photo-1534258936925-c58bed479fcb?w=900&auto=format&fit=crop&q=85',
     ],
-    description: 'Diseño limpio, estructura premium. La Gorra LUXE. está hecha para los que no necesitan explicar su estilo.',
+    description: 'Diseño limpio, estructura premium. La Gorra eMe está hecha para los que no necesitan explicar su estilo.',
     featured: true,
   },
   {
@@ -59,7 +59,7 @@ export const MOCK_PRODUCTS: MockProduct[] = [
   },
   {
     id: '4',
-    name: 'Mochila LUXE.',
+    name: 'Mochila eMe',
     slug: 'mochila-luxe',
     price: 59900,
     category: 'Mochilas',
@@ -74,7 +74,7 @@ export const MOCK_PRODUCTS: MockProduct[] = [
   },
   {
     id: '5',
-    name: 'LUXE AIR',
+    name: 'eMe AIR',
     slug: 'luxe-air',
     price: 119900,
     category: 'Zapatillas',
@@ -103,7 +103,7 @@ export const MOCK_PRODUCTS: MockProduct[] = [
   },
   {
     id: '7',
-    name: 'Pantalón LUXE.',
+    name: 'Pantalón eMe',
     slug: 'pantalon-luxe',
     price: 44900,
     category: 'Pantalones',
@@ -152,6 +152,6 @@ export const SIZES_BY_CATEGORY: Record<string, string[]> = {
   mochilas: [],
 }
 
-export const LUXE_AIR_THUMBNAILS = MOCK_PRODUCTS.find(
+export const EME_AIR_THUMBNAILS = MOCK_PRODUCTS.find(
   (p) => p.slug === 'luxe-air'
 )!.images

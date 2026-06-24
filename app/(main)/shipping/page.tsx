@@ -3,9 +3,9 @@ import Link from 'next/link'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 
 export const metadata: Metadata = {
-  title: 'Envíos — LUXE.',
+  title: 'Envíos — eMe',
   description:
-    'Los envíos de LUXE. toman entre 20 y 60 días hábiles. Conocé cómo funciona el proceso y cómo te mantenemos informado.',
+    'Los envíos de eMe toman entre 20 y 60 días hábiles. Conocé cómo funciona el proceso y cómo te mantenemos informado.',
   openGraph: {
     title: `Envíos — ${SITE_NAME}`,
     description:

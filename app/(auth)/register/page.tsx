@@ -126,7 +126,7 @@ export default function RegisterPage() {
           href="/"
           className="text-2xl font-black uppercase tracking-[0.25em] text-foreground"
         >
-          LUXE.
+          eMe
         </Link>
         <div className="mt-10 flex flex-col gap-3">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground">
@@ -151,7 +151,7 @@ export default function RegisterPage() {
           href="/"
           className="text-2xl font-black uppercase tracking-[0.25em] text-foreground"
         >
-          LUXE.
+          eMe
         </Link>
       </div>
 

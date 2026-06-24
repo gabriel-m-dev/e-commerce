@@ -5,7 +5,7 @@ import ArrowIcon from '@/components/ui/ArrowIcon'
 
 export const metadata: Metadata = {
   title: 'Trabajá con nosotros',
-  description: 'Sumate al equipo LUXE. Buscamos personas apasionadas por el diseño, la moda y la tecnología para construir la mejor marca de moda premium de Argentina.',
+  description: 'Sumate al equipo eMe. Buscamos personas apasionadas por el diseño, la moda y la tecnología para construir la mejor marca de moda premium de Argentina.',
   openGraph: {
     title: `Trabajá con nosotros — ${SITE_NAME}`,
     description: 'Sumate al equipo. Buscamos personas apasionadas por el diseño y la moda.',
@@ -39,7 +39,7 @@ export default function JobsPage() {
             className="mt-5 font-black uppercase leading-[0.9] tracking-tighter text-background"
             style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)' }}
           >
-            Construí LUXE.<br />con nosotros.
+            Construí eMe<br />con nosotros.
           </h1>
           <p className="mt-6 max-w-lg text-[13px] leading-relaxed text-background/60">
             Somos un equipo pequeño con grandes ambiciones. Si te apasiona la moda, el diseño

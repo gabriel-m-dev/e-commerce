@@ -23,7 +23,7 @@ export async function generateMetadata({
   return {
     title: product.name,
     description: product.description,
-    keywords: [product.name, product.category, 'comprar online', 'Argentina', 'LUXE'],
+    keywords: [product.name, product.category, 'comprar online', 'Argentina', 'eMe'],
     openGraph: {
       title: `${product.name} — ${SITE_NAME}`,
       description: product.description,
@@ -76,13 +76,13 @@ export default async function ProductPage({
             name: product.name,
             description: product.description,
             image: product.images,
-            brand: { '@type': 'Brand', name: 'LUXE.' },
+            brand: { '@type': 'Brand', name: 'eMe' },
             offers: {
               '@type': 'Offer',
               price: product.price.toString(),
               priceCurrency: 'ARS',
               availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-              seller: { '@type': 'Organization', name: 'LUXE.' },
+              seller: { '@type': 'Organization', name: 'eMe' },
               url: `${SITE_URL}/product/${product.slug}`,
             },
           }),

@@ -46,7 +46,7 @@ export default function MobileMenu() {
         {/* ─── Close button ─── */}
         <div className="flex h-16 shrink-0 items-center justify-between px-6">
           <span className="select-none text-lg font-black tracking-tighter text-background opacity-0">
-            LUXE.
+            eMe
           </span>
           <button
             aria-label="Cerrar menú"

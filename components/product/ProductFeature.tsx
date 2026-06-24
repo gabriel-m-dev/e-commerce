@@ -11,7 +11,7 @@ import type { DbProduct } from '@/lib/queries/products'
 
 const DEFAULT_PRODUCT: DbProduct = {
   id: 'luxe-air-default',
-  name: 'LUXE AIR',
+  name: 'eMe AIR',
   slug: 'luxe-air',
   price: 119900,
   comparePrice: null,

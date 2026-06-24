@@ -31,7 +31,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         <div className="flex items-center justify-between px-4 pt-8 pb-6">
           <div>
             <span className="text-[15px] font-black uppercase tracking-[0.22em] text-background">
-              LUXE.
+              eMe
             </span>
             <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-background/40">
               Admin

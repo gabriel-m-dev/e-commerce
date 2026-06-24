@@ -413,7 +413,7 @@ export default function CheckoutPage() {
             href="/"
             className="text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground"
           >
-            LUXE.
+            eMe
           </Link>
         </div>
 

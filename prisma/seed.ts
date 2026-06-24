@@ -23,7 +23,7 @@ const categories = [
 // Prices are stored as integers (ARS, no cents conversion — same value as mock)
 const products = [
   {
-    name:         'Gorra LUXE.',
+    name:         'Gorra eMe',
     slug:         'gorra-luxe',
     price:        24900,
     categorySlug: 'gorras',
@@ -32,7 +32,7 @@ const products = [
       'https://images.unsplash.com/photo-1521369909029-2afed882baee?w=900&auto=format&fit=crop&q=85',
       'https://images.unsplash.com/photo-1534258936925-c58bed479fcb?w=900&auto=format&fit=crop&q=85',
     ],
-    description: 'Diseño limpio, estructura premium. La Gorra LUXE. está hecha para los que no necesitan explicar su estilo.',
+    description: 'Diseño limpio, estructura premium. La Gorra eMe está hecha para los que no necesitan explicar su estilo.',
     featured:    true,
     stock:       50,
     brand:       'OTROS' as const,
@@ -71,7 +71,7 @@ const products = [
     colors:      [] as string[],
   },
   {
-    name:         'Mochila LUXE.',
+    name:         'Mochila eMe',
     slug:         'mochila-luxe',
     price:        59900,
     categorySlug: 'mochilas',
@@ -87,7 +87,7 @@ const products = [
     colors:      [] as string[],
   },
   {
-    name:         'LUXE AIR',
+    name:         'eMe AIR',
     slug:         'luxe-air',
     price:        119900,
     categorySlug: 'zapatillas',
@@ -120,7 +120,7 @@ const products = [
     colors:      [] as string[],
   },
   {
-    name:         'Pantalón LUXE.',
+    name:         'Pantalón eMe',
     slug:         'pantalon-luxe',
     price:        44900,
     categorySlug: 'pantalones',
@@ -152,7 +152,7 @@ const products = [
     colors:      [] as string[],
   },
   {
-    name:         'Remera Oversize LUXE.',
+    name:         'Remera Oversize eMe',
     slug:         'remera-oversize-luxe',
     price:        34900,
     categorySlug: 'remeras',
@@ -183,7 +183,7 @@ const products = [
     colors:      [] as string[],
   },
   {
-    name:         'Zapatilla LUXE. Runner',
+    name:         'Zapatilla eMe Runner',
     slug:         'zapatilla-luxe-runner',
     price:        109900,
     categorySlug: 'zapatillas',
@@ -199,7 +199,7 @@ const products = [
     colors:      [] as string[],
   },
   {
-    name:         'Zapatilla LUXE. Court',
+    name:         'Zapatilla eMe Court',
     slug:         'zapatilla-luxe-court',
     price:        129900,
     categorySlug: 'zapatillas',
@@ -215,7 +215,7 @@ const products = [
     colors:      [] as string[],
   },
   {
-    name:         'Mochila Urban LUXE.',
+    name:         'Mochila Urban eMe',
     slug:         'mochila-urban-luxe',
     price:        69900,
     categorySlug: 'mochilas',
@@ -231,7 +231,7 @@ const products = [
     colors:      [] as string[],
   },
   {
-    name:         'Pantalón Cargo LUXE.',
+    name:         'Pantalón Cargo eMe',
     slug:         'pantalon-cargo-luxe',
     price:        54900,
     categorySlug: 'pantalones',

@@ -3,7 +3,7 @@ import { SITE_NAME, SITE_URL } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Preguntas frecuentes',
-  description: 'Respondemos las preguntas más comunes sobre envíos, talles, devoluciones y pagos en LUXE.',
+  description: 'Respondemos las preguntas más comunes sobre envíos, talles, devoluciones y pagos en eMe.',
   openGraph: {
     title: `Preguntas frecuentes — ${SITE_NAME}`,
     description: 'Todo lo que necesitás saber sobre envíos, talles, devoluciones y pagos.',

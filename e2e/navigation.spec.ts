@@ -6,18 +6,18 @@ import { test, expect } from '@playwright/test'
  */
 
 test.describe('Homepage', () => {
-  test('loads with LUXE. in the title', async ({ page }) => {
+  test('loads with eMe in the title', async ({ page }) => {
     await page.goto('/')
-    await expect(page).toHaveTitle(/LUXE/i)
+    await expect(page).toHaveTitle(/eMe/i)
   })
 
   test('renders the hero section', async ({ page }) => {
     await page.goto('/')
-    // HeroSection renders a <section> or a container — look for any heading/link with LUXE
+    // HeroSection renders a <section> or a container — look for any heading/link with eMe
     // The hero slides contain images; wait for the page to be visually ready
     await page.waitForLoadState('domcontentloaded')
-    // Navbar always shows "LUXE." as the brand link
-    await expect(page.getByRole('link', { name: /LUXE/i }).first()).toBeVisible()
+    // Navbar always shows "eMe" as the brand link
+    await expect(page.getByRole('link', { name: /eMe/i }).first()).toBeVisible()
   })
 
   test('featured products section is visible', async ({ page }) => {

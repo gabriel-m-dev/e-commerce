@@ -53,7 +53,7 @@ export default function ResetPasswordPage() {
     <div className="w-full max-w-sm px-6">
       <div className="mb-10 text-center">
         <Link href="/" className="text-2xl font-black uppercase tracking-[0.25em] text-foreground">
-          LUXE.
+          eMe
         </Link>
       </div>
 

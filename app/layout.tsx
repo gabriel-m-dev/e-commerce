@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   metadataBase: new URL(SITE_URL),
-  keywords: ['ropa premium', 'zapatillas', 'moda argentina', 'streetwear', 'LUXE'],
+  keywords: ['ropa premium', 'zapatillas', 'moda argentina', 'streetwear', 'eMe'],
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
   openGraph: {
@@ -75,7 +75,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'Organization',
-              name: 'LUXE.',
+              name: 'eMe',
               url: SITE_URL,
               description: 'Tienda de moda premium argentina. Zapatillas, ropa y accesorios.',
               contactPoint: {
