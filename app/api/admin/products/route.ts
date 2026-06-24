@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 3. Validar campos requeridos
-  const { name, slug, price, comparePrice, categorySlugs, primaryCategorySlug, images, description, stock, featured, brand, active, colors, sizes, shippingMethodIds, weightKg } = body as Record<string, unknown>
+  const { name, slug, price, comparePrice, categorySlugs, primaryCategorySlug, images, description, stock, featured, brand, supplier, active, colors, sizes, shippingMethodIds, weightKg } = body as Record<string, unknown>
 
   if (
     typeof name !== 'string' || !name.trim() ||
@@ -48,6 +48,11 @@ export async function POST(request: NextRequest) {
   const VALID_BRANDS = ['NIKE', 'JORDAN', 'ADIDAS', 'OTROS']
   if (brand !== undefined && !VALID_BRANDS.includes(brand as string)) {
     return NextResponse.json({ error: 'Marca inválida' }, { status: 400 })
+  }
+
+  const VALID_SUPPLIERS = ['GM', 'KIT', 'S23', 'ADJ']
+  if (supplier !== undefined && supplier !== null && !VALID_SUPPLIERS.includes(supplier as string)) {
+    return NextResponse.json({ error: 'Proveedor inválido' }, { status: 400 })
   }
 
   const HEX_RE = /^#[0-9A-Fa-f]{6}$/
@@ -97,6 +102,7 @@ export async function POST(request: NextRequest) {
           featured: featured === true,
           active: active !== false,
           brand: (brand as string | undefined) ? (brand as string) as import('@/lib/generated/prisma/client').Brand : 'OTROS',
+          supplier: (supplier as string | null | undefined) ? (supplier as string) as import('@/lib/generated/prisma/client').Supplier : null,
           weightKg: weightKg != null && !isNaN(Number(weightKg)) ? Number(weightKg) : null,
           categories: {
             create: foundCategories.map((c) => ({

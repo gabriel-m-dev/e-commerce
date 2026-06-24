@@ -25,16 +25,21 @@ export default function ShippingNotice({ variant }: ShippingNoticeProps) {
 
   if (variant === 'pdp') {
     return (
-      <div className="flex items-center gap-2 text-[11px] text-muted">
-        {clockIcon}
-        <span>ENVÍOS EN 20 A 60 DÍAS HÁBILES</span>
-        <span className="text-border">·</span>
-        <Link
-          href="/shipping"
-          className="font-semibold uppercase tracking-[0.1em] text-foreground underline underline-offset-4 transition-opacity hover:opacity-60"
-        >
-          Ver más
-        </Link>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-2 text-xs text-muted">
+          {clockIcon}
+          <span>ENVÍOS EN 20 A 60 DÍAS HÁBILES</span>
+          <span className="text-border">·</span>
+          <Link
+            href="/shipping"
+            className="font-semibold uppercase tracking-[0.1em] text-foreground underline underline-offset-4 transition-opacity hover:opacity-60"
+          >
+            Ver más
+          </Link>
+        </div>
+        <p className="pl-6 text-xs font-semibold uppercase tracking-[0.08em] text-green-600">
+          (PROMEDIO DE ENVÍOS: 25-35 DÍAS)
+        </p>
       </div>
     )
   }

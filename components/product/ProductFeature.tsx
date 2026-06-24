@@ -56,7 +56,7 @@ export default function ProductFeature({ product: productProp }: { product?: DbP
       toast.error('Seleccioná un talle para continuar')
       return
     }
-    addItem({ id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category, stock: product.stock }, quantity, selectedSize ?? undefined)
+    addItem({ id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category, stock: product.stock, supplier: product.supplier ?? undefined }, quantity, selectedSize ?? undefined)
     setAdded(true)
     setTimeout(() => setAdded(false), 1800)
   }
@@ -66,7 +66,7 @@ export default function ProductFeature({ product: productProp }: { product?: DbP
       toast.error('Seleccioná un talle para continuar')
       return
     }
-    addItem({ id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category, stock: product.stock }, quantity, selectedSize ?? undefined)
+    addItem({ id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image, category: product.category, stock: product.stock, supplier: product.supplier ?? undefined }, quantity, selectedSize ?? undefined)
     router.push('/checkout')
   }
 

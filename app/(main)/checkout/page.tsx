@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -20,6 +20,13 @@ type ShippingMethod = {
 }
 
 {/* ─── Types ─── */}
+
+type SupplierGroup = {
+  supplier: string | null
+  items: CartItem[]
+  selectedMethodId: string | null
+  computedCost: number
+}
 
 type FormFields = {
   email: string
@@ -115,6 +122,76 @@ function FieldError({ message }: { message?: string }) {
   )
 }
 
+function ShippingSelector({
+  groupId,
+  methods,
+  loading,
+  selectedMethodId,
+  onSelect,
+}: {
+  groupId: string
+  methods: ShippingMethod[]
+  loading: boolean
+  selectedMethodId: string | null
+  onSelect: (id: string, cost: number) => void
+}) {
+  if (loading) {
+    return (
+      <div className="border border-border p-6 bg-surface">
+        <p className="text-[11px] text-muted uppercase tracking-[0.15em]">
+          Cargando métodos de envío...
+        </p>
+      </div>
+    )
+  }
+  if (methods.length === 0) {
+    return (
+      <div className="border border-border p-6 bg-surface">
+        <p className="text-[11px] text-muted uppercase tracking-[0.15em]">
+          No hay métodos de envío disponibles.
+        </p>
+      </div>
+    )
+  }
+  return (
+    <div className="flex flex-col gap-2">
+      {methods.map((method) => (
+        <label
+          key={method.id}
+          className={[
+            'flex items-start justify-between border px-5 py-4 cursor-pointer transition-colors',
+            selectedMethodId === method.id
+              ? 'border-foreground bg-surface'
+              : 'border-border hover:border-foreground/40',
+          ].join(' ')}
+        >
+          <div className="flex items-center gap-3">
+            <input
+              type="radio"
+              name={`shippingMethod-${groupId}`}
+              value={method.id}
+              checked={selectedMethodId === method.id}
+              onChange={() => onSelect(method.id, method.computedCost)}
+              className="accent-foreground w-4 h-4 shrink-0"
+            />
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground">
+                {method.name}
+              </span>
+              {method.description && (
+                <span className="text-[11px] text-muted leading-tight">{method.description}</span>
+              )}
+            </div>
+          </div>
+          <span className="text-sm font-semibold text-foreground">
+            {formatPrice(method.computedCost ?? 0)}
+          </span>
+        </label>
+      ))}
+    </div>
+  )
+}
+
 {/* ─── Page ─── */}
 
 export default function CheckoutPage() {
@@ -130,27 +207,88 @@ export default function CheckoutPage() {
     if (mounted && items.length === 0) router.replace('/cart')
   }, [mounted, items, router])
 
-  const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>([])
-  const [methodsLoading, setMethodsLoading] = useState(true)
-  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(null)
-
-  useEffect(() => {
-    const productIds = items.map((i) => i.product.id).filter(Boolean)
-    const quantities = items.map((i) => i.quantity).join(',')
-    const url = productIds.length
-      ? `/api/shipping-methods?productIds=${productIds.join(',')}&quantities=${quantities}`
-      : '/api/shipping-methods'
-    fetch(url)
-      .then((r) => r.json())
-      .then((data: ShippingMethod[]) => {
-        setShippingMethods(Array.isArray(data) ? data : [])
-      })
-      .catch(() => setShippingMethods([]))
-      .finally(() => setMethodsLoading(false))
+  // ── Derive supplier groups from cart items ──
+  const supplierGroups = useMemo<SupplierGroup[]>(() => {
+    const map = new Map<string | null, CartItem[]>()
+    for (const item of items) {
+      const key = item.product.supplier ?? null
+      if (!map.has(key)) map.set(key, [])
+      map.get(key)!.push(item)
+    }
+    return Array.from(map.entries()).map(([supplier, groupItems]) => ({
+      supplier,
+      items: groupItems,
+      selectedMethodId: null,
+      computedCost: 0,
+    }))
   }, [items])
 
-  const selectedMethod = shippingMethods.find((m) => m.id === selectedMethodId) ?? null
-  const shipping = selectedMethod?.computedCost ?? null
+  // ── Per-group shipping methods state: Record<groupKey, ShippingMethod[]> ──
+  // groupKey = supplier value or '__null__' for null supplier
+  const [groupMethods, setGroupMethods] = useState<Record<string, ShippingMethod[]>>({})
+  const [methodsLoading, setMethodsLoading] = useState(true)
+
+  // ── Per-group selections: Record<groupKey, { selectedMethodId, computedCost }> ──
+  const [groupSelections, setGroupSelections] = useState<
+    Record<string, { selectedMethodId: string | null; computedCost: number }>
+  >({})
+
+  const groupKey = (supplier: string | null) => supplier ?? '__null__'
+
+  useEffect(() => {
+    if (items.length === 0) return
+    setMethodsLoading(true)
+
+    // Re-derive groups locally to avoid stale closure over supplierGroups
+    const localGroups = new Map<string | null, CartItem[]>()
+    for (const item of items) {
+      const key = item.product.supplier ?? null
+      if (!localGroups.has(key)) localGroups.set(key, [])
+      localGroups.get(key)!.push(item)
+    }
+
+    Promise.all(
+      Array.from(localGroups.entries()).map(async ([supplier, groupItems]) => {
+        const productIds = groupItems.map((i) => i.product.id).filter(Boolean)
+        const quantities = groupItems.map((i) => i.quantity).join(',')
+        const url = productIds.length
+          ? `/api/shipping-methods?productIds=${productIds.join(',')}&quantities=${quantities}`
+          : '/api/shipping-methods'
+        try {
+          const r = await fetch(url)
+          const data = await r.json()
+          return { supplier, methods: Array.isArray(data) ? data : [] }
+        } catch {
+          return { supplier, methods: [] }
+        }
+      })
+    ).then((results) => {
+      const nextGroupMethods: Record<string, ShippingMethod[]> = {}
+      for (const { supplier, methods } of results) {
+        nextGroupMethods[groupKey(supplier)] = methods
+      }
+      setGroupMethods(nextGroupMethods)
+      setMethodsLoading(false)
+    })
+  }, [items])
+
+  // ── Multi-supplier disclaimer ──
+  const hasMultipleSuppliers = supplierGroups.filter((g) => g.supplier !== null).length >= 2
+
+  // ── Total shipping (display only) ──
+  const totalShipping = Object.values(groupSelections).reduce(
+    (sum, g) => sum + g.computedCost,
+    0
+  )
+  const allGroupsSelected = supplierGroups.length > 0 &&
+    supplierGroups.every((g) => (groupSelections[groupKey(g.supplier)]?.selectedMethodId ?? null) !== null)
+
+  function handleGroupSelect(supplier: string | null, methodId: string, cost: number) {
+    setGroupSelections((prev) => ({
+      ...prev,
+      [groupKey(supplier)]: { selectedMethodId: methodId, computedCost: cost },
+    }))
+  }
 
   const [fields, setFields] = useState<FormFields>({
     email: '',
@@ -184,13 +322,19 @@ export default function CheckoutPage() {
       return
     }
 
-    if (!selectedMethodId) {
-      setSubmitError('Seleccioná un método de envío para continuar.')
+    if (!allGroupsSelected) {
+      setSubmitError('Seleccioná un método de envío para cada grupo de productos.')
       return
     }
 
     setLoading(true)
     setSubmitError(null)
+
+    // Build shippingGroups payload for the API
+    const shippingGroups = supplierGroups.map((g) => ({
+      supplier: g.supplier,
+      shippingMethodId: groupSelections[groupKey(g.supplier)]!.selectedMethodId!,
+    }))
 
     try {
       const res = await fetch('/api/checkout/create-preference', {
@@ -209,7 +353,7 @@ export default function CheckoutPage() {
             province: fields.province,
             postalCode: fields.postalCode,
           },
-          shippingMethodId: selectedMethodId,
+          shippingGroups,
         }),
       })
 
@@ -247,7 +391,7 @@ export default function CheckoutPage() {
 
           {/* ─── Order summary — mobile first ─── */}
           <aside className="w-full lg:hidden border border-border p-6">
-            <OrderSummary items={items} subtotal={subtotal} shipping={shipping} />
+            <OrderSummary items={items} subtotal={subtotal} shipping={allGroupsSelected ? totalShipping : null} />
           </aside>
 
           {/* ─── Form ─── */}
@@ -393,55 +537,52 @@ export default function CheckoutPage() {
             {/* ─── 03 Método de envío ─── */}
             <section className="mb-12">
               <SectionHeader number="03" title="Método de envío" />
-              {methodsLoading ? (
-                <div className="border border-border p-6 bg-surface">
-                  <p className="text-[11px] text-muted uppercase tracking-[0.15em]">
-                    Cargando métodos de envío...
+
+              {/* Multi-supplier disclaimer */}
+              {hasMultipleSuppliers && (
+                <div className="mb-6 border border-border px-5 py-4 bg-surface">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground mb-3">
+                    Tus productos son de distintos proveedores. El envío se abona por separado para cada uno.
                   </p>
-                </div>
-              ) : shippingMethods.length === 0 ? (
-                <div className="border border-border p-6 bg-surface">
-                  <p className="text-[11px] text-muted uppercase tracking-[0.15em]">
-                    No hay métodos de envío disponibles.
-                  </p>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  {shippingMethods.map((method) => (
-                    <label
-                      key={method.id}
-                      className={[
-                        'flex items-start justify-between border px-5 py-4 cursor-pointer transition-colors',
-                        selectedMethodId === method.id
-                          ? 'border-foreground bg-surface'
-                          : 'border-border hover:border-foreground/40',
-                      ].join(' ')}
-                    >
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="shippingMethod"
-                          value={method.id}
-                          checked={selectedMethodId === method.id}
-                          onChange={() => setSelectedMethodId(method.id)}
-                          className="accent-foreground w-4 h-4 shrink-0"
-                        />
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground">
-                            {method.name}
-                          </span>
-                          {method.description && (
-                            <span className="text-[11px] text-muted leading-tight">{method.description}</span>
-                          )}
-                        </div>
+                  <div className="flex flex-col gap-2">
+                    {supplierGroups.filter((g) => g.supplier !== null).map((group) => (
+                      <div key={group.supplier} className="flex items-baseline gap-2">
+                        <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-gold shrink-0">
+                          {group.supplier}:
+                        </span>
+                        <span className="text-[10px] text-muted leading-tight">
+                          {group.items.map((i) => i.product.name).join(', ')}
+                        </span>
                       </div>
-                      <span className="text-sm font-semibold text-foreground">
-                        {formatPrice(method.computedCost ?? 0)}
-                      </span>
-                    </label>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
+
+              {/* Per-group shipping selectors */}
+              <div className="flex flex-col gap-8">
+                {supplierGroups.map((group) => {
+                  const key = groupKey(group.supplier)
+                  const methods = groupMethods[key] ?? []
+                  const selection = groupSelections[key] ?? { selectedMethodId: null, computedCost: 0 }
+                  return (
+                    <div key={key}>
+                      {group.supplier && (
+                        <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
+                          Proveedor: {group.supplier}
+                        </p>
+                      )}
+                      <ShippingSelector
+                        groupId={key}
+                        methods={methods}
+                        loading={methodsLoading}
+                        selectedMethodId={selection.selectedMethodId}
+                        onSelect={(id, cost) => handleGroupSelect(group.supplier, id, cost)}
+                      />
+                    </div>
+                  )
+                })}
+              </div>
             </section>
 
             {/* ─── 04 Pago ─── */}
@@ -517,7 +658,7 @@ export default function CheckoutPage() {
               )}
               <button
                 type="submit"
-                disabled={loading || methodsLoading || !selectedMethodId}
+                disabled={loading || methodsLoading || !allGroupsSelected}
                 className="w-full flex items-center justify-center gap-3 bg-foreground text-background px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.22em] transition-opacity hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Procesando...' : 'Confirmar pedido'}
@@ -539,7 +680,7 @@ export default function CheckoutPage() {
           {/* ─── Order summary — desktop ─── */}
           <aside className="hidden lg:block w-[380px] shrink-0 sticky top-8">
             <div className="border border-border p-8">
-              <OrderSummary items={items} subtotal={subtotal} shipping={shipping} />
+              <OrderSummary items={items} subtotal={subtotal} shipping={allGroupsSelected ? totalShipping : null} />
             </div>
           </aside>
 
@@ -610,7 +751,7 @@ function OrderSummary({
                     </p>
                   )}
                   <p className="text-[10px] text-muted mt-0.5">
-                    ×{item.quantity}
+                    x{item.quantity}
                   </p>
                 </div>
                 <span className="text-sm font-semibold text-foreground shrink-0">

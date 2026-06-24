@@ -50,6 +50,7 @@ model Product {
   featuredOrder    Int?
   active           Boolean                 @default(true)
   brand            Brand                   @default(OTROS)
+  supplier         Supplier?
   weightKg         Float?
   shippingMethods  ProductShippingMethod[]
   cartItems        CartItem[]
@@ -128,6 +129,7 @@ model Order {
   total           Int
   shippingMethodId String?
   shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
+  shippingBreakdown Json?
   items           OrderItem[]
   address         Address?
   createdAt       DateTime    @default(now())
@@ -174,6 +176,13 @@ enum Brand {
   JORDAN
   ADIDAS
   OTROS
+}
+
+enum Supplier {
+  GM
+  KIT
+  S23
+  ADJ
 }
 
 enum OrderStatus {

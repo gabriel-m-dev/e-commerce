@@ -33,6 +33,7 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
     price: '',
     comparePrice: '',
     brand: 'OTROS',
+    supplier: '',
     description: '',
     images: [''],
     stock: '0',
@@ -139,6 +140,7 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
       price: '',
       comparePrice: '',
       brand: 'OTROS',
+      supplier: '',
       description: '',
       images: [''],
       stock: '0',
@@ -202,6 +204,7 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
           sizes,
           shippingMethodIds,
           weightKg: form.weightKg ? parseFloat(form.weightKg) : null,
+          supplier: form.supplier || null,
         }),
       })
 
@@ -402,6 +405,24 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
                   <option value="NIKE">Nike</option>
                   <option value="JORDAN">Jordan</option>
                   <option value="ADIDAS">Adidas</option>
+                </select>
+              </div>
+
+              {/* Proveedor */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+                  Proveedor
+                </label>
+                <select
+                  value={form.supplier}
+                  onChange={(e) => setForm((prev) => ({ ...prev, supplier: e.target.value }))}
+                  className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors w-full cursor-pointer"
+                >
+                  <option value="">Sin proveedor</option>
+                  <option value="GM">GM</option>
+                  <option value="KIT">KIT</option>
+                  <option value="S23">S23</option>
+                  <option value="ADJ">ADJ</option>
                 </select>
               </div>
 

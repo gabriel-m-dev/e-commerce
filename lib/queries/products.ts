@@ -29,6 +29,7 @@ export type DbProduct = {
   createdAt: string
   shippingMethodIds: string[]
   weightKg?: number | null
+  supplier?: string | null
 }
 
 // ─── Prisma include shape (reused across all queries) ────────────────────────
@@ -75,6 +76,7 @@ function toDbProduct(p: any): DbProduct {
     createdAt: (p.createdAt as Date).toISOString(),
     shippingMethodIds: (p.shippingMethods ?? []).map((ps: { shippingMethodId: string }) => ps.shippingMethodId),
     weightKg: p.weightKg != null ? Number(p.weightKg) : null,
+    supplier: (p.supplier as string | null | undefined) ?? null,
   }
 }
 

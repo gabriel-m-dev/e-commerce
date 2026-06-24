@@ -53,6 +53,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         category: product.category,
         stock: product.stock,
         colors: product.colors ?? undefined,
+        supplier: product.supplier ?? undefined,
       },
       quantity,
       selectedSize ?? undefined,
@@ -89,6 +90,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
           category: product.category,
           stock: product.stock,
           colors: product.colors ?? undefined,
+          supplier: product.supplier ?? undefined,
         },
         quantity,
         size,
@@ -303,6 +305,11 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         {/* Shipping notice */}
         <div className="mt-6 w-full">
           <ShippingNotice variant="pdp" />
+          {product.supplier && (
+            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-foreground">
+              Proveedor: <span className="text-gold">{product.supplier}</span>
+            </p>
+          )}
         </div>
 
         {/* CTA buttons */}

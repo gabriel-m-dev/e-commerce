@@ -10,6 +10,7 @@ export type CartProduct = {
   category: string
   stock: number
   colors?: string[]
+  supplier?: string
 }
 
 export type CartItem = {

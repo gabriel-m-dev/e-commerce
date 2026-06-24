@@ -20,11 +20,19 @@ type ShippingData = {
   postalCode: string
 }
 
+type ShippingGroupPayload = {
+  supplier: string | null
+  shippingMethodId: string
+}
+
 type RequestBody = {
   items: CartItem[]
   buyer: Buyer
   shipping: ShippingData
-  shippingMethodId: string
+  // New multi-group format
+  shippingGroups?: ShippingGroupPayload[]
+  // Legacy single-method format (backward compat)
+  shippingMethodId?: string
 }
 
 export async function POST(request: NextRequest) {
@@ -37,13 +45,26 @@ export async function POST(request: NextRequest) {
   }
 
   const body: RequestBody = await request.json()
-  const { items, buyer, shipping, shippingMethodId } = body
+  const { items, buyer, shipping, shippingGroups, shippingMethodId } = body
 
   if (!items || items.length === 0) {
     return Response.json({ error: 'El carrito está vacío' }, { status: 400 })
   }
 
-  if (!shippingMethodId || typeof shippingMethodId !== 'string') {
+  // Normalize: if shippingGroups array provided use it; otherwise fall back to legacy single field
+  let normalizedGroups: ShippingGroupPayload[]
+  if (Array.isArray(shippingGroups) && shippingGroups.length > 0) {
+    // Validate each group has a shippingMethodId
+    for (const g of shippingGroups) {
+      if (!g.shippingMethodId || typeof g.shippingMethodId !== 'string') {
+        return Response.json({ error: 'Seleccioná un método de envío para cada grupo de productos.' }, { status: 400 })
+      }
+    }
+    normalizedGroups = shippingGroups
+  } else if (shippingMethodId && typeof shippingMethodId === 'string') {
+    // Legacy single-method compat
+    normalizedGroups = [{ supplier: null, shippingMethodId }]
+  } else {
     return Response.json({ error: 'Seleccioná un método de envío' }, { status: 400 })
   }
 
@@ -101,9 +122,11 @@ export async function POST(request: NextRequest) {
       0
     )
 
-    // Resolve shipping cost from DB — never trust client-sent price
-    const shippingMethod = await prisma.shippingMethod.findUnique({
-      where: { id: shippingMethodId },
+    // ── Server-side shipping cost per group ──
+    // Fetch all referenced shipping methods in one query
+    const uniqueMethodIds = [...new Set(normalizedGroups.map((g) => g.shippingMethodId))]
+    const dbShippingMethods = await prisma.shippingMethod.findMany({
+      where: { id: { in: uniqueMethodIds } },
       select: {
         id: true,
         name: true,
@@ -114,19 +137,57 @@ export async function POST(request: NextRequest) {
         additionalUnitKg: true,
       },
     })
-    if (!shippingMethod || !shippingMethod.active) {
-      return Response.json({ error: 'Método de envío no disponible' }, { status: 400 })
+    const methodMap = new Map(dbShippingMethods.map((m) => [m.id, m]))
+
+    // Group items by supplier for weight computation (mirrors checkout grouping)
+    const dbProductMap = new Map(dbProducts.map((p) => [p.id, p]))
+    const itemsBySupplier = new Map<string, CartItem[]>()
+    for (const item of items) {
+      const key = item.product.supplier ?? '__null__'
+      if (!itemsBySupplier.has(key)) itemsBySupplier.set(key, [])
+      itemsBySupplier.get(key)!.push(item)
     }
 
-    // Compute total cart weight from DB product weights
-    const dbProductMap = new Map(dbProducts.map((p) => [p.id, p]))
-    const totalWeightKg = items.reduce(
-      (sum, item) => sum + (dbProductMap.get(item.product.id)?.weightKg ?? 0) * item.quantity,
-      0
-    )
-    const shippingCost = computeShippingCost(shippingMethod, totalWeightKg)
+    const perGroupCosts: number[] = []
+    const shippingBreakdown: Array<{ supplier: string | null; shippingMethodId: string; cost: number }> = []
+    const mpShippingLineItems: Array<{ id: string; title: string; quantity: number; unit_price: number; currency_id: string }> = []
 
-    // Generate order ID upfront — MP preference created first, order persisted only on success
+    for (const group of normalizedGroups) {
+      const method = methodMap.get(group.shippingMethodId)
+      if (!method || !method.active) {
+        return Response.json({ error: 'Método de envío no disponible' }, { status: 400 })
+      }
+
+      // Compute group weight from DB product weights
+      const groupKey = group.supplier ?? '__null__'
+      const groupItems = itemsBySupplier.get(groupKey) ?? items // fallback: use all items if not grouped
+      const groupWeightKg = groupItems.reduce(
+        (sum, item) => sum + (dbProductMap.get(item.product.id)?.weightKg ?? 0) * item.quantity,
+        0
+      )
+      const groupCost = computeShippingCost(method, groupWeightKg)
+      perGroupCosts.push(groupCost)
+      shippingBreakdown.push({
+        supplier: group.supplier,
+        shippingMethodId: group.shippingMethodId,
+        cost: groupCost,
+      })
+
+      const lineTitle = group.supplier
+        ? `${method.name} (${group.supplier})`
+        : method.name
+      mpShippingLineItems.push({
+        id: `shipping-${group.shippingMethodId}${group.supplier ? `-${group.supplier}` : ''}`,
+        title: lineTitle,
+        quantity: 1,
+        unit_price: groupCost,
+        currency_id: 'ARS',
+      })
+    }
+
+    const totalShipping = perGroupCosts.reduce((sum, c) => sum + c, 0)
+
+    // Generate order ID upfront
     const orderId = crypto.randomUUID()
 
     const preference = new Preference(mp)
@@ -140,13 +201,7 @@ export async function POST(request: NextRequest) {
             unit_price: priceMap.get(item.product.id) as number,
             currency_id: 'ARS',
           })),
-          {
-            id: 'shipping',
-            title: shippingMethod.name,
-            quantity: 1,
-            unit_price: shippingCost,
-            currency_id: 'ARS',
-          },
+          ...mpShippingLineItems,
         ],
         payer: {
           email: buyer.email,
@@ -170,9 +225,10 @@ export async function POST(request: NextRequest) {
         email: buyer.email,
         status: 'PENDING',
         subtotal,
-        shipping: shippingCost,
-        total: subtotal + shippingCost,
-        shippingMethodId: shippingMethod.id,
+        shipping: totalShipping,
+        total: subtotal + totalShipping,
+        shippingMethodId: normalizedGroups[0].shippingMethodId,
+        shippingBreakdown,
         items: {
           create: items.map((item) => ({
             productId: item.product.id,
