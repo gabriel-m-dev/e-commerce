@@ -106,7 +106,7 @@ export default async function TransferInstructionsPage({
             </a>
             {whatsapp && (
               <a
-                href={`https://wa.me/${whatsapp}`}
+                href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`Hola! Te envío el comprobante de pago para el pedido ${shortRef}. Monto transferido: ${formatPrice(order.total)}.`)}`}
                 className="block mt-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold hover:underline"
               >
                 WhatsApp
