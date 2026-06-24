@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getOrderById } from '@/lib/queries/orders'
 import { formatPrice } from '@/lib/utils'
 import OrderStatusSelect from '@/components/admin/OrderStatusSelect'
+import ConfirmTransferButton from '@/components/admin/ConfirmTransferButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,6 +25,7 @@ const STATUS_LABEL: Record<string, string> = {
   OUT_FOR_DELIVERY: 'En reparto',
   DELIVERED:        'Entregado',
   CANCELLED:        'Cancelado',
+  PENDING_TRANSFER: 'Transf. pendiente',
 }
 
 const STATUS_COLOR: Record<string, string> = {
@@ -34,6 +36,7 @@ const STATUS_COLOR: Record<string, string> = {
   OUT_FOR_DELIVERY: 'text-[#f97316] border-[#f97316]',
   DELIVERED:        'text-foreground border-foreground font-bold',
   CANCELLED:        'text-destructive border-destructive',
+  PENDING_TRANSFER: 'text-[#d97706] border-[#d97706]',
 }
 
 export default async function AdminOrderDetailPage({
@@ -220,6 +223,21 @@ export default async function AdminOrderDetailPage({
         </p>
         <OrderStatusSelect orderId={order.id} current={order.status} />
       </div>
+
+      {/* ─── Confirmar Pago — visible only for pending transfer orders ─── */}
+      {order.status === 'PENDING_TRANSFER' && order.paymentMethod === 'transfer' && (
+        <div className="border border-[#d97706] p-6 space-y-3">
+          <div className="mb-1">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#d97706] mb-1">
+              Pago por transferencia
+            </p>
+            <p className="text-[11px] text-muted leading-relaxed">
+              Al confirmar, el stock se descontará y se notificará al comprador. Esta acción no se puede deshacer.
+            </p>
+          </div>
+          <ConfirmTransferButton orderId={order.id} />
+        </div>
+      )}
     </div>
   )
 }

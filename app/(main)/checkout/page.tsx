@@ -300,6 +300,9 @@ export default function CheckoutPage() {
     postalCode: '',
   })
 
+  // ── Payment method ──
+  const [paymentMethod, setPaymentMethod] = useState<'mp' | 'transfer'>('mp')
+
   const [errors, setErrors] = useState<FormErrors>({})
   const [loading, setLoading] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -336,25 +339,47 @@ export default function CheckoutPage() {
       shippingMethodId: groupSelections[groupKey(g.supplier)]!.selectedMethodId!,
     }))
 
+    const payload = {
+      items,
+      buyer: {
+        email: fields.email,
+        fullName: fields.fullName,
+        phone: fields.phone,
+      },
+      shipping: {
+        address: fields.address,
+        city: fields.city,
+        province: fields.province,
+        postalCode: fields.postalCode,
+      },
+      shippingGroups,
+    }
+
     try {
+      if (paymentMethod === 'transfer') {
+        const res = await fetch('/api/checkout/create-transfer-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+
+        if (!res.ok) {
+          const data = await res.json()
+          setSubmitError(data.error ?? 'Error al crear la orden de transferencia')
+          setLoading(false)
+          return
+        }
+
+        const { orderId } = await res.json()
+        router.push(`/checkout/transferencia/${orderId}`)
+        return
+      }
+
+      // ── Mercado Pago flow (default) ──
       const res = await fetch('/api/checkout/create-preference', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items,
-          buyer: {
-            email: fields.email,
-            fullName: fields.fullName,
-            phone: fields.phone,
-          },
-          shipping: {
-            address: fields.address,
-            city: fields.city,
-            province: fields.province,
-            postalCode: fields.postalCode,
-          },
-          shippingGroups,
-        }),
+        body: JSON.stringify(payload),
       })
 
       if (!res.ok) {
@@ -391,7 +416,12 @@ export default function CheckoutPage() {
 
           {/* ─── Order summary — mobile first ─── */}
           <aside className="w-full lg:hidden border border-border p-6">
-            <OrderSummary items={items} subtotal={subtotal} shipping={allGroupsSelected ? totalShipping : null} />
+            <OrderSummary
+              items={items}
+              subtotal={subtotal}
+              shipping={allGroupsSelected ? totalShipping : null}
+              paymentMethod={paymentMethod}
+            />
           </aside>
 
           {/* ─── Form ─── */}
@@ -588,61 +618,73 @@ export default function CheckoutPage() {
             {/* ─── 04 Pago ─── */}
             <section className="mb-12">
               <SectionHeader number="04" title="Pago" />
-              <div className="border border-border p-6 bg-surface">
-                <div className="flex items-start gap-4 mb-5">
-                  {/* MP logo simplified */}
-                  <div className="shrink-0 w-10 h-10 bg-[#009ee3] flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden>
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground mb-1">
-                      Mercado Pago
-                    </p>
+              <div className="flex flex-col gap-3">
+
+                {/* ── Mercado Pago option ── */}
+                <label
+                  className={[
+                    'flex items-start gap-4 border px-5 py-4 cursor-pointer transition-colors',
+                    paymentMethod === 'mp'
+                      ? 'border-foreground bg-surface'
+                      : 'border-border hover:border-foreground/40',
+                  ].join(' ')}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="mp"
+                    checked={paymentMethod === 'mp'}
+                    onChange={() => setPaymentMethod('mp')}
+                    className="accent-foreground w-4 h-4 shrink-0 mt-0.5"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-1">
+                      <div className="shrink-0 w-8 h-8 bg-[#009ee3] flex items-center justify-center">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="white" aria-hidden>
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                        </svg>
+                      </div>
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
+                        Mercado Pago
+                      </span>
+                    </div>
                     <p className="text-[11px] leading-relaxed text-muted">
-                      Al confirmar tu pedido serás redirigido a Mercado Pago para completar el pago de forma segura.
+                      Serás redirigido a Mercado Pago para completar el pago de forma segura. Tarjeta, transferencia, efectivo y cuotas.
                     </p>
                   </div>
-                </div>
-                <div className="flex items-center gap-6 pt-4 border-t border-border">
-                  <div className="flex flex-col items-center gap-1.5">
-                    <div className="w-10 h-7 border border-border bg-background flex items-center justify-center">
-                      <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden>
-                        <rect x="0.5" y="0.5" width="17" height="11" rx="1" stroke="currentColor" strokeOpacity="0.3" />
-                        <rect y="2" width="18" height="3" fill="currentColor" fillOpacity="0.12" />
-                        <rect x="2" y="7" width="5" height="1.5" rx="0.25" fill="currentColor" fillOpacity="0.3" />
-                      </svg>
+                </label>
+
+                {/* ── Transferencia option ── */}
+                <label
+                  className={[
+                    'flex items-start gap-4 border px-5 py-4 cursor-pointer transition-colors',
+                    paymentMethod === 'transfer'
+                      ? 'border-gold bg-surface'
+                      : 'border-border hover:border-foreground/40',
+                  ].join(' ')}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="transfer"
+                    checked={paymentMethod === 'transfer'}
+                    onChange={() => setPaymentMethod('transfer')}
+                    className="accent-foreground w-4 h-4 shrink-0 mt-0.5"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-1">
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
+                        Transferencia Bancaria
+                      </span>
+                      <span className="text-[9px] font-black uppercase tracking-[0.18em] text-gold border border-gold px-2 py-0.5">
+                        10% OFF
+                      </span>
                     </div>
-                    <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted">Tarjeta</span>
+                    <p className="text-[11px] leading-relaxed text-muted">
+                      Recibirás CBU/alias y el monto exacto. Enviá el comprobante y confirmamos tu pedido.
+                    </p>
                   </div>
-                  <div className="flex flex-col items-center gap-1.5">
-                    <div className="w-10 h-7 border border-border bg-background flex items-center justify-center">
-                      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden>
-                        <path d="M1 6h14M11 2l4 4-4 4" stroke="currentColor" strokeOpacity="0.4" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                    <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted">Transferencia</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1.5">
-                    <div className="w-10 h-7 border border-border bg-background flex items-center justify-center">
-                      <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden>
-                        <rect x="0.5" y="0.5" width="15" height="9" rx="0.5" stroke="currentColor" strokeOpacity="0.3" />
-                        <circle cx="8" cy="5" r="2" stroke="currentColor" strokeOpacity="0.35" strokeWidth="1" />
-                      </svg>
-                    </div>
-                    <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted">Efectivo</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1.5">
-                    <div className="w-10 h-7 border border-border bg-background flex items-center justify-center">
-                      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden>
-                        <rect x="0.5" y="0.5" width="15" height="11" rx="0.5" stroke="currentColor" strokeOpacity="0.3"/>
-                        <path d="M4 6h8M4 8.5h5" stroke="currentColor" strokeOpacity="0.4" strokeWidth="1" strokeLinecap="round"/>
-                      </svg>
-                    </div>
-                    <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted">Cuotas</span>
-                  </div>
-                </div>
+                </label>
               </div>
             </section>
 
@@ -680,7 +722,12 @@ export default function CheckoutPage() {
           {/* ─── Order summary — desktop ─── */}
           <aside className="hidden lg:block w-[380px] shrink-0 sticky top-8">
             <div className="border border-border p-8">
-              <OrderSummary items={items} subtotal={subtotal} shipping={allGroupsSelected ? totalShipping : null} />
+              <OrderSummary
+                items={items}
+                subtotal={subtotal}
+                shipping={allGroupsSelected ? totalShipping : null}
+                paymentMethod={paymentMethod}
+              />
             </div>
           </aside>
 
@@ -696,11 +743,17 @@ function OrderSummary({
   items,
   subtotal,
   shipping,
+  paymentMethod,
 }: {
   items: CartItem[]
   subtotal: number
   shipping: number | null
+  paymentMethod: 'mp' | 'transfer'
 }) {
+  const discount = paymentMethod === 'transfer' ? Math.floor(subtotal * 0.10) : 0
+  const discountedSubtotal = subtotal - discount
+  const displayTotal = discountedSubtotal + (shipping ?? 0)
+
   return (
     <>
       {/* Header */}
@@ -771,6 +824,16 @@ function OrderSummary({
                 {formatPrice(subtotal)}
               </span>
             </div>
+            {paymentMethod === 'transfer' && (
+              <div className="flex justify-between items-baseline">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">
+                  Descuento 10%
+                </span>
+                <span className="text-sm font-semibold text-gold">
+                  -{formatPrice(discount)}
+                </span>
+              </div>
+            )}
             {shipping !== null && (
               <div className="flex justify-between items-baseline">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
@@ -786,7 +849,7 @@ function OrderSummary({
                 Total
               </span>
               <span className="text-base font-semibold text-foreground">
-                {formatPrice(subtotal + (shipping ?? 0))}
+                {formatPrice(displayTotal)}
               </span>
             </div>
           </div>
