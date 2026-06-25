@@ -5,7 +5,7 @@ import { SITE_URL } from '@/lib/constants'
 import type { CartItem } from '@/store/cart'
 import { createClient } from '@/lib/supabase/server'
 import { checkoutLimiter } from '@/lib/ratelimit'
-import { computeShippingCost } from '@/lib/utils/shipping'
+import { computeShippingCost, resolveFormula } from '@/lib/utils/shipping'
 
 type Buyer = {
   email: string
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     const productIds = [...new Set(items.map((item) => item.product.id))]
     const dbProducts = await prisma.product.findMany({
       where: { id: { in: productIds } },
-      select: { id: true, price: true, stock: true, active: true, weightKg: true },
+      select: { id: true, price: true, stock: true, active: true, weightKg: true, supplier: true },
     })
 
     if (dbProducts.length !== productIds.length) {
@@ -141,6 +141,7 @@ export async function POST(request: NextRequest) {
 
     // Group items by supplier for weight computation (mirrors checkout grouping)
     const dbProductMap = new Map(dbProducts.map((p) => [p.id, p]))
+    const dbSupplierMap = new Map(dbProducts.map((p) => [p.id, p.supplier]))
     const itemsBySupplier = new Map<string, CartItem[]>()
     for (const item of items) {
       const key = item.product.supplier ?? '__null__'
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest) {
     }
 
     const perGroupCosts: number[] = []
-    const shippingBreakdown: Array<{ supplier: string | null; shippingMethodId: string; cost: number }> = []
+    const shippingBreakdown: Array<{ supplier: string | null; shippingMethodId: string; shippingMethodName: string; cost: number }> = []
     const mpShippingLineItems: Array<{ id: string; title: string; quantity: number; unit_price: number; currency_id: string }> = []
 
     for (const group of normalizedGroups) {
@@ -165,11 +166,14 @@ export async function POST(request: NextRequest) {
         (sum, item) => sum + (dbProductMap.get(item.product.id)?.weightKg ?? 0) * item.quantity,
         0
       )
-      const groupCost = computeShippingCost(method, groupWeightKg)
+      const dbSupplier = dbSupplierMap.get(groupItems[0]?.product.id) ?? null
+      const formula = resolveFormula(method, dbSupplier)
+      const groupCost = computeShippingCost(formula, groupWeightKg)
       perGroupCosts.push(groupCost)
       shippingBreakdown.push({
         supplier: group.supplier,
         shippingMethodId: group.shippingMethodId,
+        shippingMethodName: method.name,
         cost: groupCost,
       })
 
@@ -242,6 +246,7 @@ export async function POST(request: NextRequest) {
         address: {
           create: {
             name: buyer.fullName,
+            phone: buyer.phone || null,
             street: shipping.address,
             city: shipping.city,
             state: shipping.province,
