@@ -4,7 +4,7 @@ import {
   getShippingMethodsByProductIds,
 } from '@/lib/queries/shipping-methods'
 import { prisma } from '@/lib/prisma'
-import { computeShippingCost } from '@/lib/utils/shipping'
+import { computeShippingCost, resolveFormula } from '@/lib/utils/shipping'
 
 /**
  * Public GET — returns active shipping methods with computed cost. No auth required.
@@ -29,10 +29,10 @@ export async function GET(request: NextRequest) {
       : await getActiveShippingMethods()
 
     if (productIds.length) {
-      // Fetch product weights and compute total cart weight
+      // Fetch product weights + supplier and compute total cart weight
       const products = await prisma.product.findMany({
         where: { id: { in: productIds } },
-        select: { id: true, weightKg: true },
+        select: { id: true, weightKg: true, supplier: true },
       })
       const weightMap = new Map(products.map((p) => [p.id, p.weightKg ?? 0]))
       const totalWeightKg = productIds.reduce(
@@ -40,12 +40,19 @@ export async function GET(request: NextRequest) {
         0
       )
 
+      // Use supplier-specific formula when all products share the same supplier
+      const uniqueSuppliers = [...new Set(products.map((p) => p.supplier).filter(Boolean))]
+      const effectiveSupplier = uniqueSuppliers.length === 1 ? uniqueSuppliers[0] : null
+
       // Compute cost per method and strip formula fields from response
       const response = methods.map(
         ({ baseWeightKg, baseCostUsd, additionalCostPerKgUsd, additionalUnitKg, ...pub }) => ({
           ...pub,
           computedCost: computeShippingCost(
-            { baseWeightKg, baseCostUsd, additionalCostPerKgUsd, additionalUnitKg },
+            resolveFormula(
+              { id: pub.id, baseWeightKg, baseCostUsd, additionalCostPerKgUsd, additionalUnitKg },
+              effectiveSupplier
+            ),
             totalWeightKg
           ),
         })
