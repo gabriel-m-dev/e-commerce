@@ -11,24 +11,22 @@ export type ShippingFormula = {
   additionalUnitKg: number
 }
 
-// ADJ charges different rates for EMS: shorter included base + higher per-unit rate
-const ADJ_FORMULA_OVERRIDES: Record<string, ShippingFormula> = {
-  'shipping-ems-argentina': {
-    baseWeightKg: 0.3,
-    baseCostUsd: 25,
-    additionalCostPerKgUsd: 2,
-    additionalUnitKg: 0.1,
-  },
+// ADJ charges different EMS rates: shorter base weight + higher per-unit rate
+const ADJ_EMS_FORMULA: ShippingFormula = {
+  baseWeightKg: 0.3,
+  baseCostUsd: 25,
+  additionalCostPerKgUsd: 2,
+  additionalUnitKg: 0.1,
 }
 
 // Returns the effective formula based on shipping method + supplier.
-// ADJ has non-standard EMS rates — apply their formula when supplier is ADJ.
+// ADJ has non-standard EMS rates — matched by method name, not ID (production IDs are CUIDs).
 export function resolveFormula(
-  method: { id: string } & ShippingFormula,
+  method: { name: string } & ShippingFormula,
   supplier: string | null | undefined
 ): ShippingFormula {
-  if (supplier === 'ADJ' && ADJ_FORMULA_OVERRIDES[method.id]) {
-    return ADJ_FORMULA_OVERRIDES[method.id]
+  if (supplier === 'ADJ' && method.name.toLowerCase().includes('ems')) {
+    return ADJ_EMS_FORMULA
   }
   return method
 }

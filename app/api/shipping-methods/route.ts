@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
           ...pub,
           computedCost: computeShippingCost(
             resolveFormula(
-              { id: pub.id, baseWeightKg, baseCostUsd, additionalCostPerKgUsd, additionalUnitKg },
+              { name: pub.name, baseWeightKg, baseCostUsd, additionalCostPerKgUsd, additionalUnitKg },
               effectiveSupplier
             ),
             totalWeightKg
