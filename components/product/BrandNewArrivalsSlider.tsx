@@ -1,6 +1,6 @@
-'use client'
+﻿'use client'
 
-import Image from 'next/image'
+import Image from '@/components/ui/AppImage'
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'

@@ -48,3 +48,18 @@ CLAUDE.md
 next-env.d.ts
 
 /lib/generated/prisma
+.env*.local
+
+# screenshots / debug images
+*.png
+*.jpeg
+*.jpg
+!public/**/*.png
+!public/**/*.jpeg
+!public/**/*.jpg
+
+# test artifacts
+test-results/
+
+# Next.js dev log
+nextdev.log

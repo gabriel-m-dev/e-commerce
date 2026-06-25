@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation'
-import Image from 'next/image'
+﻿import { redirect } from 'next/navigation'
+import Image from '@/components/ui/AppImage'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from '@/components/auth/LogoutButton'

@@ -1,6 +1,6 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import Image from '@/components/ui/AppImage'
 import Link from 'next/link'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 import { type HeroSlide, DEFAULT_HERO_SLIDES } from '@/lib/data/site-config-defaults'

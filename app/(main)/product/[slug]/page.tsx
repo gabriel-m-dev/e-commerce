@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
+import Image from '@/components/ui/AppImage'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'

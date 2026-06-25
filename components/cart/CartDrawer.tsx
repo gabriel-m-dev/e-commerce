@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
+import Image from '@/components/ui/AppImage'
 import Link from 'next/link'
 import useCartStore from '@/store/cart'
 import { formatPrice } from '@/lib/utils'

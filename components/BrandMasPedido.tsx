@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef } from 'react'
-import Image from 'next/image'
+import Image from '@/components/ui/AppImage'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
 import type { DbProduct } from '@/lib/queries/products'

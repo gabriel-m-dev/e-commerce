@@ -4,6 +4,7 @@ import { getOrderById } from '@/lib/queries/orders'
 import { formatPrice } from '@/lib/utils'
 import OrderStatusSelect from '@/components/admin/OrderStatusSelect'
 import ConfirmTransferButton from '@/components/admin/ConfirmTransferButton'
+import AddressEditForm from '@/components/admin/AddressEditForm'
 
 export const dynamic = 'force-dynamic'
 
@@ -178,20 +179,7 @@ export default async function AdminOrderDetailPage({
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
             Direccion de envio
           </p>
-          {order.address ? (
-            <address className="not-italic space-y-1">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground">
-                {order.address.name}
-              </p>
-              <p className="text-[11px] text-muted">{order.address.street}</p>
-              <p className="text-[11px] text-muted">
-                {order.address.city}, {order.address.state} {order.address.zipCode}
-              </p>
-              <p className="text-[11px] text-muted">{order.address.country}</p>
-            </address>
-          ) : (
-            <p className="text-[11px] text-muted">Sin direccion registrada</p>
-          )}
+          <AddressEditForm orderId={order.id} address={order.address ?? null} />
         </div>
 
         {/* Totals block */}
@@ -204,6 +192,12 @@ export default async function AdminOrderDetailPage({
               <span className="text-muted uppercase tracking-[0.1em]">Subtotal</span>
               <span className="text-foreground">{formatPrice(subtotal)}</span>
             </div>
+            {order.discount > 0 && (
+              <div className="flex justify-between text-[11px]">
+                <span className="text-gold uppercase tracking-[0.1em]">Descuento</span>
+                <span className="text-gold">-{formatPrice(order.discount)}</span>
+              </div>
+            )}
             <div className="flex justify-between text-[11px]">
               <span className="text-muted uppercase tracking-[0.1em]">Envío</span>
               <span className="text-foreground">{formatPrice(shipping)}</span>
@@ -212,8 +206,46 @@ export default async function AdminOrderDetailPage({
               <span className="font-black uppercase tracking-[0.14em] text-foreground">Total</span>
               <span className="font-black text-foreground">{formatPrice(total)}</span>
             </div>
+            {order.paymentMethod && (
+              <div className="flex justify-between text-[11px] pt-1">
+                <span className="text-muted uppercase tracking-[0.1em]">Método de pago</span>
+                <span className="text-foreground font-semibold uppercase tracking-[0.08em]">
+                  {order.paymentMethod === 'transfer' ? 'Transferencia' : 'MercadoPago'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
+      </div>
+
+      {/* Shipping method block */}
+      <div className="border border-border p-6 space-y-3">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+          Método de envío
+        </p>
+        {order.shippingBreakdown && order.shippingBreakdown.length > 1 ? (
+          <div className="space-y-2">
+            {order.shippingBreakdown.map((entry, i) => (
+              <div key={i} className="flex items-baseline justify-between">
+                <div className="flex items-baseline gap-2">
+                  {entry.supplier && (
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-gold">
+                      {entry.supplier}:
+                    </span>
+                  )}
+                  <span className="text-[11px] text-foreground">
+                    {entry.shippingMethodName ?? entry.shippingMethodId.slice(0, 8)}
+                  </span>
+                </div>
+                <span className="text-[11px] font-semibold text-foreground">{formatPrice(entry.cost)}</span>
+              </div>
+            ))}
+          </div>
+        ) : order.shippingMethodName ? (
+          <p className="text-[12px] font-semibold text-foreground">{order.shippingMethodName}</p>
+        ) : (
+          <p className="text-[11px] text-muted">Sin información de envío</p>
+        )}
       </div>
 
       {/* Status change island */}

@@ -1,4 +1,4 @@
-import Image from 'next/image'
+﻿import Image from '@/components/ui/AppImage'
 import { type BrandHeroPanel } from '@/lib/data/site-config-defaults'
 
 interface BrandCategorySplitProps {

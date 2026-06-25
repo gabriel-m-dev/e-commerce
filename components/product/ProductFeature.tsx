@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import Image from '@/components/ui/AppImage'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { SIZES_BY_CATEGORY, MOCK_PRODUCTS } from '@/lib/data/products'

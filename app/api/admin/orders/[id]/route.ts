@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
-import { sendOrderCancelledEmail, sendOrderShippedEmail, sendOutForDeliveryEmail } from '@/lib/email'
+import { sendOrderCancelledEmail, sendOrderShippedEmail, sendOutForDeliveryEmail, sendOrderProcessingEmail } from '@/lib/email'
 
 const VALID_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED', 'PENDING_TRANSFER'] as const
 type OrderStatus = typeof VALID_STATUSES[number]
@@ -29,7 +29,7 @@ export async function PATCH(
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { status, trackingNumber } = body as Record<string, unknown>
+  const { status, trackingNumber, address } = body as Record<string, unknown>
 
   const data: Record<string, unknown> = {}
 
@@ -47,6 +47,28 @@ export async function PATCH(
     data.trackingNumber = trackingNumber === '' ? null : trackingNumber
   }
 
+  if (address !== undefined && typeof address === 'object' && address !== null) {
+    const a = address as Record<string, unknown>
+    const requiredKeys = ['name', 'phone', 'street', 'city', 'state', 'zipCode', 'country']
+    const allowedKeys = requiredKeys
+    const addressData: Record<string, string | null> = {}
+    for (const key of allowedKeys) {
+      if (key in a) {
+        const val = a[key]
+        if (typeof val !== 'string' && val !== null) {
+          return NextResponse.json({ error: `address.${key} inválido` }, { status: 400 })
+        }
+        if (val === '' || val === null) {
+          return NextResponse.json({ error: `address.${key} es requerido` }, { status: 400 })
+        }
+        addressData[key] = val as string
+      }
+    }
+    if (Object.keys(addressData).length > 0) {
+      data._addressUpdate = addressData
+    }
+  }
+
   if (Object.keys(data).length === 0) {
     return NextResponse.json({ error: 'Nada que actualizar' }, { status: 400 })
   }
@@ -56,6 +78,7 @@ export async function PATCH(
     where: { id },
     include: {
       items: { select: { productId: true, quantity: true, name: true, price: true, size: true } },
+      address: { select: { phone: true } },
     },
   })
   if (!current) return NextResponse.json({ error: 'Orden no encontrada' }, { status: 404 })
@@ -77,13 +100,26 @@ export async function PATCH(
   const isCancelling = nextStatus === 'CANCELLED' && current.status !== 'CANCELLED'
   const isShipping = nextStatus === 'SHIPPED' && current.status !== 'SHIPPED'
   const isOutForDelivery = nextStatus === 'OUT_FOR_DELIVERY' && current.status !== 'OUT_FOR_DELIVERY'
+  const isProcessing = nextStatus === 'PROCESSING' && current.status !== 'PROCESSING'
   const shouldRestoreStock = isCancelling && POST_PAYMENT.includes(current.status as OrderStatus)
 
   try {
     let updatedOrder
 
+    const addressUpdate = data._addressUpdate as Record<string, string | null> | undefined
+    delete data._addressUpdate
+
+    const addressUpsert = addressUpdate
+      ? prisma.address.upsert({
+          where: { orderId: id },
+          update: addressUpdate,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          create: { orderId: id, ...(addressUpdate as any) },
+        })
+      : null
+
     if (shouldRestoreStock) {
-      // Restore stock in the same transaction as the status update
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const [order] = await prisma.$transaction([
         prisma.order.update({ where: { id }, data }),
         ...current.items.map((item) =>
@@ -92,17 +128,26 @@ export async function PATCH(
             data: { stock: { increment: item.quantity } },
           })
         ),
-      ])
+        ...(addressUpsert ? [addressUpsert] : []),
+      ] as any)
       updatedOrder = order
       console.log(`[admin/orders] Orden ${id} cancelada, stock restaurado`)
     } else {
-      updatedOrder = await prisma.order.update({ where: { id }, data })
+      const hasOrderUpdate = Object.keys(data).length > 0
+      await Promise.all([
+        hasOrderUpdate ? prisma.order.update({ where: { id }, data }) : null,
+        addressUpsert,
+      ].filter(Boolean))
+      updatedOrder = hasOrderUpdate
+        ? await prisma.order.findUnique({ where: { id } })
+        : current
     }
 
     // Send email side effects (fire-and-forget, don't block the response)
     const emailData = {
       orderId: current.id,
       email: current.email,
+      phone: current.address?.phone ?? null,
       items: current.items.map((i) => ({
         name: i.name,
         quantity: i.quantity,
@@ -116,6 +161,10 @@ export async function PATCH(
     if (isCancelling) {
       sendOrderCancelledEmail(emailData).catch((e) =>
         console.error('[admin/orders] cancel email failed:', e)
+      )
+    } else if (isProcessing) {
+      sendOrderProcessingEmail(emailData).catch((e) =>
+        console.error('[admin/orders] processing email failed:', e)
       )
     } else if (isShipping) {
       sendOrderShippedEmail(emailData).catch((e) =>

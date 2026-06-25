@@ -1,5 +1,5 @@
-import type { Metadata } from 'next'
-import Image from 'next/image'
+﻿import type { Metadata } from 'next'
+import Image from '@/components/ui/AppImage'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import { getProducts, getNewProducts, getProductsByIds, getCategories } from '@/lib/queries/products'
 import { getSiteConfig, getMasPedidoProduct, getBrandHeroConfig } from '@/lib/queries/site-config'

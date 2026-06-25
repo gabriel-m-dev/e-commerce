@@ -1,4 +1,4 @@
-import Image from 'next/image'
+﻿import Image from '@/components/ui/AppImage'
 import Link from 'next/link'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 import { type CategoryCard, DEFAULT_CATEGORY_CARDS } from '@/lib/data/site-config-defaults'

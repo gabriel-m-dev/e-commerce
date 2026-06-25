@@ -1,4 +1,4 @@
-import Image from 'next/image'
+﻿import Image from '@/components/ui/AppImage'
 import { getBenefitCardsConfig } from '@/lib/queries/site-config'
 import BenefitCardsSlider from './BenefitCardsSlider'
 

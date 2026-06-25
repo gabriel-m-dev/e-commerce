@@ -10,6 +10,7 @@ type OrderEmailData = {
   items: { name: string; quantity: number; price: number; size?: string | null }[]
   total: number
   trackingNumber?: string | null
+  phone?: string | null
 }
 
 function itemsHtml(items: OrderEmailData['items']): string {
@@ -29,6 +30,22 @@ function itemsHtml(items: OrderEmailData['items']): string {
       </tr>`
     )
     .join('')
+}
+
+function phoneRequestBlock(phone?: string | null): string {
+  if (phone) return ''
+  return `
+    <div style="background:#fefce8;border:1px solid #d97706;padding:20px 24px;margin-bottom:28px;">
+      <p style="margin:0 0 6px;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#d97706;">
+        Acción requerida
+      </p>
+      <p style="margin:0 0 12px;font-size:13px;color:#0a0a0a;line-height:1.6;">
+        Necesitamos tu <strong>número de celular</strong> para coordinar la entrega con el correo.
+      </p>
+      <a href="mailto:${FROM}" style="display:inline-block;background:#d97706;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;padding:12px 22px;">
+        Respondé con tu número →
+      </a>
+    </div>`
 }
 
 function baseLayout(content: string): string {
@@ -78,6 +95,8 @@ export async function sendOrderConfirmedEmail(order: OrderEmailData): Promise<vo
     <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
       Tu pago fue aprobado. Estamos preparando tu pedido y te avisaremos cuando sea despachado.
     </p>
+
+    ${phoneRequestBlock(order.phone)}
 
     <p style="margin:0 0 8px;font-size:10px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#8a8a8a;">
       N° de orden
@@ -190,6 +209,8 @@ export async function sendOutForDeliveryEmail(order: OrderEmailData): Promise<vo
       Tu pedido N° <strong>${shortId}</strong> está siendo entregado hoy. El repartidor se pondrá en contacto para coordinar la entrega.
     </p>
 
+    ${phoneRequestBlock(order.phone)}
+
     ${order.trackingNumber ? `
     <div style="background:#f5f5f5;padding:16px 20px;margin-bottom:24px;">
       <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;">
@@ -281,11 +302,12 @@ export async function sendTransferConfirmedEmail(params: {
   to: string
   orderId: string
   total: number
+  phone?: string | null
 }): Promise<void> {
   if (!process.env.RESEND_API_KEY) return
   const resend = new Resend(process.env.RESEND_API_KEY)
 
-  const { to, orderId, total } = params
+  const { to, orderId, total, phone } = params
   const shortId = orderId.slice(0, 8).toUpperCase()
 
   const html = baseLayout(`
@@ -298,6 +320,8 @@ export async function sendTransferConfirmedEmail(params: {
     <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
       Confirmamos el pago de tu pedido N° <strong>${shortId}</strong>. Estamos preparando tu pedido y te avisaremos cuando sea despachado.
     </p>
+
+    ${phoneRequestBlock(phone)}
 
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
       <tr>
@@ -323,6 +347,60 @@ export async function sendTransferConfirmedEmail(params: {
   }
 }
 
+export async function sendOrderProcessingEmail(order: OrderEmailData): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const shortId = order.orderId.slice(0, 8).toUpperCase()
+
+  const html = baseLayout(`
+    <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:#3b82f6;">
+      En preparación
+    </p>
+    <h1 style="margin:0 0 24px;font-size:18px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:#0a0a0a;">
+      Estamos preparando tu pedido
+    </h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
+      Tu pedido N° <strong>${shortId}</strong> está siendo preparado. Te avisaremos en cuanto sea despachado.
+    </p>
+
+    ${phoneRequestBlock(order.phone)}
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <thead>
+        <tr>
+          <th style="padding:8px 0;border-bottom:2px solid #0a0a0a;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;text-align:left;">Producto</th>
+          <th style="padding:8px 0;border-bottom:2px solid #0a0a0a;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;text-align:center;">Cant.</th>
+          <th style="padding:8px 0;border-bottom:2px solid #0a0a0a;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;text-align:right;">Precio</th>
+        </tr>
+      </thead>
+      <tbody>${itemsHtml(order.items)}</tbody>
+    </table>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+      <tr>
+        <td style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#0a0a0a;">Total</td>
+        <td style="font-size:14px;font-weight:900;color:#0a0a0a;text-align:right;">${formatPrice(order.total)}</td>
+      </tr>
+    </table>
+
+    <a href="${SITE_URL}/account" style="display:inline-block;background:#0a0a0a;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
+      Ver mi pedido →
+    </a>
+  `)
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: order.email,
+      subject: `Tu pedido está en preparación — N° ${shortId}`,
+      html,
+    })
+  } catch (err) {
+    console.error('[email] sendOrderProcessingEmail failed:', err)
+  }
+}
+
 export async function sendOrderShippedEmail(order: OrderEmailData): Promise<void> {
   if (!process.env.RESEND_API_KEY) return
   const resend = new Resend(process.env.RESEND_API_KEY)
@@ -339,6 +417,8 @@ export async function sendOrderShippedEmail(order: OrderEmailData): Promise<void
     <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
       Tu pedido N° <strong>${shortId}</strong> ya está en camino.
     </p>
+
+    ${phoneRequestBlock(order.phone)}
 
     ${order.trackingNumber ? `
     <div style="background:#f5f5f5;padding:16px 20px;margin-bottom:24px;">

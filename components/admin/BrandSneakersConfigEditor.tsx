@@ -1,8 +1,8 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import Image from '@/components/ui/AppImage'
 import { toast } from 'sonner'
 import { formatPrice } from '@/lib/utils'
 import type { DbProduct } from '@/lib/queries/products'

@@ -160,10 +160,11 @@ model OrderItem {
 // ─── Address ──────────────────────────────────────────────────────────────────
 
 model Address {
-  id      String @id @default(cuid())
-  orderId String @unique
-  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id      String  @id @default(cuid())
+  orderId String  @unique
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   name    String
+  phone   String?
   street  String
   city    String
   state   String

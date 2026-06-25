@@ -1,9 +1,9 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
+import Image from '@/components/ui/AppImage'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 import ShippingNotice from '@/components/ui/ShippingNotice'
 import useCartStore from '@/store/cart'

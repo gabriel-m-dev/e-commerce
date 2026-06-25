@@ -76,7 +76,10 @@ export async function POST(request: NextRequest) {
       // Fetch order with items to check current status (idempotency) and get productIds
       const order = await prisma.order.findUnique({
         where: { id: externalReference },
-        include: { items: { select: { productId: true, quantity: true, name: true, price: true, size: true } } },
+        include: {
+          items: { select: { productId: true, quantity: true, name: true, price: true, size: true } },
+          address: { select: { phone: true } },
+        },
       })
 
       if (!order) {
@@ -103,6 +106,7 @@ export async function POST(request: NextRequest) {
         await sendOrderConfirmedEmail({
           orderId: order.id,
           email: order.email,
+          phone: order.address?.phone ?? null,
           items: order.items.map((i) => ({
             name: i.name,
             quantity: i.quantity,

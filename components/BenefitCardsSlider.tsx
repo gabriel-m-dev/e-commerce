@@ -1,6 +1,6 @@
-'use client'
+﻿'use client'
 import { useRef, useState, useEffect } from 'react'
-import Image from 'next/image'
+import Image from '@/components/ui/AppImage'
 import { type BenefitCardsConfig } from '@/lib/data/site-config-defaults'
 
 const CARD_DEFAULTS = {

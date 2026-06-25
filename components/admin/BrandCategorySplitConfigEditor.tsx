@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef } from 'react'
-import Image from 'next/image'
+import Image from '@/components/ui/AppImage'
 import { toast } from 'sonner'
 import { type BrandCategorySplitConfig, type BrandHeroPanel } from '@/lib/data/site-config-defaults'
 import { type SiteConfigKey } from '@/lib/queries/site-config'

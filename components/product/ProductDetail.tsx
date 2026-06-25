@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import Image from 'next/image'
+import Image from '@/components/ui/AppImage'
 import { useRouter } from 'next/navigation'
 import { formatPrice } from '@/lib/utils'
 import { SIZES_BY_CATEGORY } from '@/lib/data/products'

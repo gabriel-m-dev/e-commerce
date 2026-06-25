@@ -4,6 +4,13 @@ import { Prisma } from '../generated/prisma/client'
 // SYNC WITH schema.prisma enum OrderStatus
 export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED' | 'PENDING_TRANSFER'
 
+export type ShippingBreakdownEntry = {
+  supplier: string | null
+  shippingMethodId: string
+  shippingMethodName: string | null
+  cost: number
+}
+
 export type OrderWithItems = {
   id: string
   email: string
@@ -14,6 +21,8 @@ export type OrderWithItems = {
   total: number
   paymentMethod: string | null
   discount: number
+  shippingMethodName: string | null
+  shippingBreakdown: ShippingBreakdownEntry[] | null
   createdAt: Date
   items: {
     id: string
@@ -27,6 +36,7 @@ export type OrderWithItems = {
   address: {
     id: string
     name: string
+    phone: string | null
     street: string
     city: string
     state: string
@@ -57,6 +67,8 @@ function mapOrder(order: {
   total: number
   paymentMethod?: string | null
   discount?: number | null
+  shippingBreakdown?: unknown
+  shippingMethod?: { name: string } | null
   createdAt: Date
   items: {
     id: string
@@ -67,8 +79,9 @@ function mapOrder(order: {
     color?: string | null
     product: { images: string[] }
   }[]
-  address: { id: string; name: string; street: string; city: string; state: string; zipCode: string; country: string } | null
+  address: { id: string; name: string; phone?: string | null; street: string; city: string; state: string; zipCode: string; country: string } | null
 }): OrderWithItems {
+  const rawBreakdown = order.shippingBreakdown as Array<{ supplier: string | null; shippingMethodId: string; shippingMethodName?: string | null; cost: number }> | null | undefined
   return {
     id: order.id,
     email: order.email,
@@ -79,6 +92,15 @@ function mapOrder(order: {
     total: Number(order.total),
     paymentMethod: order.paymentMethod ?? null,
     discount: Number(order.discount ?? 0),
+    shippingMethodName: order.shippingMethod?.name ?? null,
+    shippingBreakdown: rawBreakdown
+      ? rawBreakdown.map((e) => ({
+          supplier: e.supplier,
+          shippingMethodId: e.shippingMethodId,
+          shippingMethodName: e.shippingMethodName ?? null,
+          cost: Number(e.cost),
+        }))
+      : null,
     createdAt: order.createdAt,
     items: order.items.map((item) => ({
       id: item.id,
@@ -89,7 +111,7 @@ function mapOrder(order: {
       color: item.color ?? null,
       image: item.product.images[0] ?? null,
     })),
-    address: order.address ?? null,
+    address: order.address ? { ...order.address, phone: order.address.phone ?? null } : null,
   }
 }
 
@@ -119,6 +141,7 @@ export async function getAllOrders(
             },
           },
           address: true,
+          shippingMethod: { select: { name: true } },
         },
       })
       return orders.map(mapOrder)
@@ -191,6 +214,7 @@ export async function getAllOrders(
           },
         },
         address: true,
+        shippingMethod: { select: { name: true } },
       },
     })
 
@@ -227,6 +251,7 @@ export async function getOrderById(id: string): Promise<OrderWithItems | null> {
           },
         },
         address: true,
+        shippingMethod: { select: { name: true } },
       },
     })
     if (!order) return null
@@ -255,6 +280,7 @@ export async function getOrdersByEmail(email: string): Promise<OrderWithItems[]>
           },
         },
         address: true,
+        shippingMethod: { select: { name: true } },
       },
     })
     return orders.map(mapOrder)
@@ -287,6 +313,7 @@ export async function getOrdersByUserId(userId: string, email: string): Promise<
           },
         },
         address: true,
+        shippingMethod: { select: { name: true } },
       },
     })
     return orders.map(mapOrder)
