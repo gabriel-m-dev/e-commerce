@@ -812,17 +812,17 @@ export default function ProductsWithFilters({
                     )}
                   </div>
 
-                  {/* Cart button — outside overflow-hidden image container to avoid mobile clipping */}
+                  {/* Cart button — hidden when out of stock to avoid overlapping SIN STOCK badge */}
+                  {!isOutOfStock && (
                   <button
                     type="button"
                     onClick={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      if (!isOutOfStock) setOpenProductId(isOpen ? null : product.id)
+                      setOpenProductId(isOpen ? null : product.id)
                     }}
-                    aria-label={isOutOfStock ? 'Sin stock' : `Agregar ${product.name} al carrito`}
-                    disabled={isOutOfStock}
-                    className={`absolute top-2 right-2 z-10 flex h-7 w-7 items-center justify-center rounded-md bg-black/60 backdrop-blur-sm text-white border border-white/20 transition ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : 'hover:bg-black/80 cursor-pointer'}`}
+                    aria-label={`Agregar ${product.name} al carrito`}
+                    className="absolute top-2 right-2 z-[1] flex h-7 w-7 items-center justify-center rounded-md bg-black/60 backdrop-blur-sm text-white border border-white/20 transition hover:bg-black/80 cursor-pointer"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                       <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
@@ -830,6 +830,7 @@ export default function ProductsWithFilters({
                       <path d="M16 10a4 4 0 0 1-8 0" />
                     </svg>
                   </button>
+                  )}
 
                   {/* Info: nombre + precio + colores */}
                   <div className={`flex-1 flex flex-col${usesGroupedNav ? ' mt-2 gap-0.5 items-center text-center' : ' mt-3 gap-1'}`}>
