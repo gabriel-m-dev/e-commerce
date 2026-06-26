@@ -19,7 +19,7 @@ export const STATUS_LABEL: Record<OrderStatus, string> = {
 export const STATUS_TO_STAGE: Record<OrderStatus, number> = {
   PENDING: 0,
   PENDING_TRANSFER: 0,
-  CONFIRMED: 1,
+  CONFIRMED: 0,
   PROCESSING: 1,
   SHIPPED: 2,
   ARRIVED_COUNTRY: 2,
@@ -32,7 +32,7 @@ export const STATUS_TO_STAGE: Record<OrderStatus, number> = {
 
 export const STAGE_CONFIG: { label: string; icon: LucideIcon }[] = [
   { label: 'Pedido realizado', icon: ShoppingBag },
-  { label: 'Preparación', icon: Package },
+  { label: 'En preparación', icon: Package },
   { label: 'Envío internacional', icon: Plane },
   { label: 'Distribución local', icon: MapPin },
   { label: 'Entregado', icon: CheckCircle },
