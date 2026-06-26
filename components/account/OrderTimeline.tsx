@@ -47,18 +47,18 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                   return (
                     <div key={i} className="flex flex-col items-center">
                       <div
-                        className={`w-10 h-10 flex items-center justify-center border-2 rounded-full ${
+                        className={`w-12 h-12 flex items-center justify-center border-2 rounded-full ${
                           isPassed || isActive
                             ? 'bg-[#c9a96e] border-[#c9a96e]'
                             : 'bg-white border-border'
                         }`}
                       >
                         <Icon
-                          className={`w-4 h-4 ${isPassed || isActive ? 'text-white' : 'text-[#8a8a8a]'}`}
+                          className={`w-5 h-5 ${isPassed || isActive ? 'text-white' : 'text-[#8a8a8a]'}`}
                         />
                       </div>
                       <p
-                        className={`mt-2 text-[9px] md:text-xs uppercase tracking-[0.12em] text-center max-w-[64px] leading-tight ${
+                        className={`mt-2 text-xs md:text-sm uppercase tracking-[0.12em] text-center max-w-[64px] leading-tight ${
                           isActive ? 'text-foreground font-semibold' : 'text-[#8a8a8a]'
                         }`}
                       >
@@ -73,7 +73,7 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                                 return (
                                   <p
                                     key={idx}
-                                    className={`text-[9px] md:text-[11px] font-medium ${
+                                    className={`text-[11px] md:text-xs font-medium ${
                                       idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a]'
                                     }`}
                                   >
@@ -82,10 +82,10 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                                 )
                               })
                             : subStatus && (
-                                <p className="text-[9px] md:text-[11px] text-[#c9a96e] font-medium">{subStatus}</p>
+                                <p className="text-[11px] md:text-xs text-[#c9a96e] font-medium">{subStatus}</p>
                               )}
                           {formattedDate && (
-                            <p className="text-[9px] md:text-[11px] text-[#8a8a8a]">{formattedDate}</p>
+                            <p className="text-[11px] md:text-xs text-[#8a8a8a]">{formattedDate}</p>
                           )}
                         </div>
                       )}
@@ -108,14 +108,14 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                   <div key={i} className="flex gap-4">
                     <div className="flex flex-col items-center">
                       <div
-                        className={`w-9 h-9 flex items-center justify-center border-2 rounded-full shrink-0 ${
+                        className={`w-11 h-11 flex items-center justify-center border-2 rounded-full shrink-0 ${
                           isPassed || isActive
                             ? 'bg-[#c9a96e] border-[#c9a96e]'
                             : 'bg-white border-border'
                         }`}
                       >
                         <Icon
-                          className={`w-4 h-4 ${isPassed || isActive ? 'text-white' : 'text-[#8a8a8a]'}`}
+                          className={`w-5 h-5 ${isPassed || isActive ? 'text-white' : 'text-[#8a8a8a]'}`}
                         />
                       </div>
                       {!isLast && (
@@ -128,7 +128,7 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                     </div>
                     <div className={`pt-1 ${isLast ? '' : 'pb-4'}`}>
                       <p
-                        className={`text-[10px] uppercase tracking-[0.12em] ${
+                        className={`text-xs uppercase tracking-[0.12em] ${
                           isActive ? 'text-foreground font-semibold' : 'text-[#8a8a8a]'
                         }`}
                       >
@@ -143,7 +143,7 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                                 return (
                                   <p
                                     key={idx}
-                                    className={`text-[10px] font-medium ${
+                                    className={`text-[11px] font-medium ${
                                       idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a]'
                                     }`}
                                   >
@@ -152,10 +152,10 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                                 )
                               })
                             : subStatus && (
-                                <p className="text-[10px] text-[#c9a96e] font-medium">{subStatus}</p>
+                                <p className="text-[11px] text-[#c9a96e] font-medium">{subStatus}</p>
                               )}
                           {formattedDate && (
-                            <p className="text-[10px] text-[#8a8a8a]">{formattedDate}</p>
+                            <p className="text-[11px] text-[#8a8a8a]">{formattedDate}</p>
                           )}
                         </div>
                       )}
