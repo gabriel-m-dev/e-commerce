@@ -1,3 +1,5 @@
+'use client'
+
 import { STATUS_TO_STAGE, STAGE_CONFIG, STATUS_ALERT, Info, XCircle } from '@/lib/order-status'
 import type { OrderStatus } from '@/lib/queries/orders'
 
@@ -43,14 +45,11 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
           {/* Desktop: horizontal bar */}
           <div className="hidden md:block">
             <div className="relative">
-              {/* Track — left-4/right-4 so it spans between node centers (nodes are w-8 = 2rem) */}
               <div className="absolute top-4 left-4 right-4 h-[2px] bg-border" />
-              {/* Gold fill — width covers stage/4 of the track */}
               <div
                 className="absolute top-4 left-4 h-[2px] bg-[#c9a96e] transition-all duration-700"
                 style={{ width: `calc(${(stage / 4) * 100}% - ${(stage / 4) * 2}rem)` }}
               />
-              {/* Nodes */}
               <div className="relative flex justify-between">
                 {STAGE_CONFIG.map((s, i) => {
                   const isActive = i === stage
@@ -103,7 +102,6 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
                 const Icon = s.icon
                 return (
                   <div key={i} className="flex gap-4">
-                    {/* Node + connector */}
                     <div className="flex flex-col items-center">
                       <div
                         className={`w-8 h-8 flex items-center justify-center border-2 shrink-0 ${
@@ -124,7 +122,6 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
                         />
                       )}
                     </div>
-                    {/* Label */}
                     <div className={`pt-1 ${isLast ? '' : 'pb-4'}`}>
                       <p
                         className={`text-[10px] uppercase tracking-[0.12em] ${

@@ -1,47 +1,29 @@
-import { notFound, redirect } from 'next/navigation'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { redirect, notFound } from 'next/navigation'
 import { getOrderById } from '@/lib/queries/orders'
-import { formatPrice } from '@/lib/utils'
 import { OrderTimeline } from '@/components/account/OrderTimeline'
+import { STATUS_LABEL } from '@/lib/order-status'
+import AppImage from '@/components/ui/AppImage'
+import { LocalDate } from '@/components/ui/LocalDate'
+import Link from 'next/link'
+import {
+  ArrowLeft,
+  Truck,
+  MapPin,
+  Receipt,
+  Tag,
+  MessageCircle,
+  Package,
+} from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
-const STATUS_LABEL: Record<string, string> = {
-  PENDING:                'PENDIENTE',
-  PENDING_TRANSFER:       'PAGO POR TRANSFERENCIA',
-  CONFIRMED:              'CONFIRMADO',
-  PROCESSING:             'EN PROCESO',
-  SHIPPED:                'ENVIADO',
-  ARRIVED_COUNTRY:        'LLEGÓ AL PAÍS',
-  CUSTOMS:                'EN ADUANA',
-  NATIONAL_DISTRIBUTION:  'DISTRIBUCIÓN NACIONAL',
-  OUT_FOR_DELIVERY:       'EN REPARTO',
-  DELIVERED:              'ENTREGADO',
-  CANCELLED:              'CANCELADO',
-}
-
-const STATUS_BG: Record<string, string> = {
-  PENDING:                'bg-black text-white',
-  PENDING_TRANSFER:       'bg-yellow-400 text-black',
-  CONFIRMED:              'bg-blue-500 text-white',
-  PROCESSING:             'bg-yellow-400 text-black',
-  SHIPPED:                'bg-yellow-400 text-black',
-  ARRIVED_COUNTRY:        'bg-indigo-500 text-white',
-  CUSTOMS:                'bg-violet-500 text-white',
-  NATIONAL_DISTRIBUTION:  'bg-orange-500 text-white',
-  OUT_FOR_DELIVERY:       'bg-orange-500 text-white',
-  DELIVERED:              'bg-green-600 text-white',
-  CANCELLED:              'bg-red-600 text-white',
-}
-
-export default async function CustomerOrderDetailPage({
+export default async function OrderDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -55,123 +37,226 @@ export default async function CustomerOrderDetailPage({
     notFound()
   }
 
-  const shortId = order.id.slice(0, 8).toUpperCase()
-  const statusLabel = STATUS_LABEL[order.status] ?? order.status.toUpperCase()
-  const statusBg = STATUS_BG[order.status] ?? 'bg-[#8a8a8a] text-white'
+  const shortId = order.id.slice(-8).toUpperCase()
+  const createdAt = new Intl.DateTimeFormat('es-AR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(order.createdAt))
+
+  const statusLabel = STATUS_LABEL[order.status] ?? order.status
+
+  const badgeStyles: Record<string, string> = {
+    DELIVERED: 'bg-green-50 text-green-700 border-green-200',
+    CANCELLED: 'bg-red-50 text-red-700 border-red-200',
+    PENDING_TRANSFER: 'bg-amber-50 text-amber-700 border-amber-200',
+    PENDING: 'bg-[#fdf8f0] text-[#c9a96e] border-[#c9a96e]/30',
+    CONFIRMED: 'bg-[#fdf8f0] text-[#c9a96e] border-[#c9a96e]/30',
+    PROCESSING: 'bg-[#fdf8f0] text-[#c9a96e] border-[#c9a96e]/30',
+    SHIPPED: 'bg-[#fdf8f0] text-[#c9a96e] border-[#c9a96e]/30',
+    ARRIVED_COUNTRY: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    CUSTOMS: 'bg-violet-50 text-violet-700 border-violet-200',
+    NATIONAL_DISTRIBUTION: 'bg-orange-50 text-orange-700 border-orange-200',
+    OUT_FOR_DELIVERY: 'bg-[#fdf8f0] text-[#c9a96e] border-[#c9a96e]/30',
+  }
+  const badgeClass = badgeStyles[order.status] ?? 'bg-[#f5f5f5] text-[#8a8a8a] border-[#e5e5e5]'
+
+  const formatPrice = (amount: number) =>
+    new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(amount)
 
   return (
-    <div className="bg-white pt-8 md:pt-12 pb-24 px-6 max-w-2xl mx-auto">
+    <div className="min-h-screen bg-[#f5f5f5] pb-24 md:pb-12">
+      <div className="max-w-3xl mx-auto px-4 py-6 space-y-4">
 
-      {/* Back link */}
-      <div className="mb-8">
+        {/* Back link */}
         <Link
           href="/account"
-          className="text-[10px] uppercase tracking-[0.18em] text-muted hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-[#8a8a8a] hover:text-[#0a0a0a] transition-colors"
         >
-          &larr; Mis pedidos
+          <ArrowLeft className="w-4 h-4" />
+          Volver a mis pedidos
         </Link>
-      </div>
 
-      {/* Order header */}
-      <div className="flex flex-wrap items-start justify-between gap-4 mb-8 pb-8 border-b border-border">
-        <div>
-          <h1 className="text-[13px] font-black uppercase tracking-[0.22em] text-foreground">
-            #{shortId}
-          </h1>
+        {/* Header card */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#e5e5e5]">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-xl font-bold text-[#0a0a0a] tracking-wide uppercase">
+                Pedido #{shortId}
+              </h1>
+              <p className="text-sm text-[#8a8a8a] mt-0.5">Realizado el {createdAt}</p>
+            </div>
+            <div className="flex flex-col items-end gap-1.5">
+              <span
+                className={`text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full border ${badgeClass}`}
+              >
+                {statusLabel}
+              </span>
+              <span className="text-[11px] text-[#8a8a8a]">
+                Últ. act.: <LocalDate
+                  date={order.updatedAt.toISOString()}
+                  options={{ day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }}
+                />
+              </span>
+            </div>
+          </div>
         </div>
-        <span
-          className={`inline-block px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] ${statusBg}`}
-        >
-          {statusLabel}
-        </span>
-      </div>
 
-      {/* Tracking number */}
-      {order.trackingNumber ? (
-        <div className="bg-surface border border-border px-5 py-4 mb-8">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted mb-1">
-            Número de seguimiento
-          </p>
-          <p className="text-[13px] font-semibold text-foreground">{order.trackingNumber}</p>
+        {/* Timeline card */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#e5e5e5]">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-[#8a8a8a] mb-5">
+            Estado del pedido
+          </h2>
+          <OrderTimeline
+            status={order.status}
+            subStatus={order.subStatus}
+            updatedAt={order.updatedAt}
+          />
         </div>
-      ) : (
-        <div className="bg-surface border border-border px-5 py-4 mb-8">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted mb-1">
-            Número de seguimiento
-          </p>
-          <p className="text-[12px] text-muted">Número de seguimiento no disponible aún</p>
-        </div>
-      )}
 
-      {/* Order timeline */}
-      <OrderTimeline
-        status={order.status}
-        subStatus={order.subStatus}
-        updatedAt={order.updatedAt}
-      />
-
-      {/* Products */}
-      <div className="mb-8">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-foreground mb-4">
-          Productos
-        </p>
-        <div className="divide-y divide-border border border-border">
-          {order.items.map((item) => (
-            <div key={item.id} className="px-5 py-4 flex items-center justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground truncate">
-                  {item.name}
+        {/* Tracking number card */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#e5e5e5]">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#f5f5f5] flex items-center justify-center flex-shrink-0">
+              <Truck className="w-4 h-4 text-[#c9a96e]" />
+            </div>
+            <div>
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-[#0a0a0a] mb-1">
+                Número de seguimiento
+              </h2>
+              {order.trackingNumber ? (
+                <p className="text-sm font-mono font-semibold text-[#0a0a0a]">
+                  {order.trackingNumber}
                 </p>
-                {item.size && (
-                  <p className="text-[10px] text-muted mt-0.5 uppercase tracking-[0.08em]">
-                    Talle: {item.size}
-                  </p>
-                )}
+              ) : (
+                <p className="text-sm text-[#0a0a0a]">
+                  El número de seguimiento estará disponible cuando el pedido sea despachado.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Products card */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#e5e5e5]">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-[#8a8a8a] mb-4">
+            Productos
+          </h2>
+          <div className="space-y-4">
+            {order.items.map((item) => (
+              <div key={item.id} className="flex gap-3 items-start">
+                <div className="w-20 h-20 rounded-xl overflow-hidden bg-[#f5f5f5] flex-shrink-0 border border-[#e5e5e5]">
+                  {item.image ? (
+                    <AppImage
+                      src={item.image}
+                      alt={item.name}
+                      width={80}
+                      height={80}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Package className="w-6 h-6 text-[#8a8a8a]" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#0a0a0a] leading-snug">{item.name}</p>
+                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+                    {item.size && (
+                      <span className="text-sm text-[#8a8a8a]">Talle: {item.size}</span>
+                    )}
+                    <span className="text-sm text-[#8a8a8a]">Cantidad: {item.quantity}</span>
+                  </div>
+                </div>
+                <p className="text-sm font-bold text-[#0a0a0a] flex-shrink-0">
+                  {formatPrice(item.price * item.quantity)}
+                </p>
               </div>
-              <div className="text-right shrink-0">
-                <p className="text-[11px] text-muted">×{item.quantity}</p>
-                <p className="text-[11px] font-semibold text-foreground">{formatPrice(item.price * item.quantity)}</p>
+            ))}
+          </div>
+        </div>
+
+        {/* Order summary card */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#e5e5e5]">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-[#8a8a8a] mb-4">
+            Resumen
+          </h2>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-[#8a8a8a]">
+                <Receipt className="w-4 h-4" />
+                Subtotal
+              </div>
+              <span className="text-sm text-[#0a0a0a]">{formatPrice(order.subtotal)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-[#8a8a8a]">
+                <Truck className="w-4 h-4" />
+                Envío
+              </div>
+              <span className="text-sm text-[#0a0a0a]">{formatPrice(order.shipping)}</span>
+            </div>
+            {order.discount > 0 && (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm text-green-600">
+                  <Tag className="w-4 h-4" />
+                  Descuento
+                </div>
+                <span className="text-sm text-green-600">-{formatPrice(order.discount)}</span>
+              </div>
+            )}
+            <div className="border-t border-[#e5e5e5] pt-3 flex items-center justify-between">
+              <span className="text-sm font-semibold text-[#0a0a0a] uppercase tracking-wide">Total</span>
+              <span className="text-lg font-bold text-[#c9a96e]">{formatPrice(order.total)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Delivery address card */}
+        {order.address && (
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#e5e5e5]">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#f5f5f5] flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-4 h-4 text-[#c9a96e]" />
+              </div>
+              <div>
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-[#8a8a8a] mb-1">
+                  Dirección de entrega
+                </h2>
+                <p className="text-sm font-semibold text-[#0a0a0a]">{order.address.name}</p>
+                <p className="text-sm text-[#8a8a8a] mt-0.5">{order.address.street}</p>
+                <p className="text-sm text-[#8a8a8a]">
+                  {order.address.city}, {order.address.state} {order.address.zipCode}
+                </p>
+                <p className="text-sm text-[#8a8a8a]">{order.address.country}</p>
               </div>
             </div>
-          ))}
+          </div>
+        )}
+
+        {/* Support button — desktop only */}
+        <div className="hidden md:block">
+          <a
+            href="#"
+            className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-[#0a0a0a] text-white text-sm font-semibold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors"
+          >
+            <MessageCircle className="w-4 h-4" />
+            Contactar soporte
+          </a>
         </div>
       </div>
 
-      {/* Totals */}
-      <div className="border border-border p-5 mb-8 space-y-2">
-        <div className="flex justify-between text-[11px]">
-          <span className="text-muted uppercase tracking-[0.1em]">Subtotal</span>
-          <span className="text-foreground">{formatPrice(order.subtotal)}</span>
-        </div>
-        <div className="flex justify-between text-[11px]">
-          <span className="text-muted uppercase tracking-[0.1em]">Envío</span>
-          <span className="text-foreground">{formatPrice(order.shipping)}</span>
-        </div>
-        <div className="border-t border-border pt-2 flex justify-between text-[12px]">
-          <span className="font-black uppercase tracking-[0.14em] text-foreground">Total</span>
-          <span className="font-black text-foreground">{formatPrice(order.total)}</span>
-        </div>
+      {/* Support button — mobile fixed bottom */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-[#e5e5e5] md:hidden">
+        <a
+          href="#"
+          className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-[#0a0a0a] text-white text-sm font-semibold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors"
+        >
+          <MessageCircle className="w-4 h-4" />
+          Contactar soporte
+        </a>
       </div>
-
-      {/* Delivery address */}
-      {order.address && (
-        <div className="border border-border p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted mb-3">
-            Dirección de entrega
-          </p>
-          <address className="not-italic space-y-1">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground">
-              {order.address.name}
-            </p>
-            <p className="text-[11px] text-muted">{order.address.street}</p>
-            <p className="text-[11px] text-muted">
-              {order.address.city}, {order.address.state} {order.address.zipCode}
-            </p>
-            <p className="text-[11px] text-muted">{order.address.country}</p>
-          </address>
-        </div>
-      )}
-
     </div>
   )
 }

@@ -1,6 +1,6 @@
 export const SITE_NAME = 'eMe'
 export const SITE_DESCRIPTION = 'Diseño minimalista. Calidad premium.'
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000').replace(/^﻿/, '')
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/^﻿/, '')
 
 export const SOCIAL_INSTAGRAM = process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? 'https://instagram.com'
 export const SOCIAL_FACEBOOK = process.env.NEXT_PUBLIC_FACEBOOK_URL ?? 'https://facebook.com'
