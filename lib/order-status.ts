@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { Package, Plane, Building2, MapPin, CheckCircle, Info, XCircle } from 'lucide-react'
+import { ShoppingBag, Package, Plane, MapPin, CheckCircle, Info, XCircle } from 'lucide-react'
 import type { OrderStatus } from '@/lib/queries/orders'
 
 export const STATUS_LABEL: Record<OrderStatus, string> = {
@@ -19,9 +19,9 @@ export const STATUS_LABEL: Record<OrderStatus, string> = {
 export const STATUS_TO_STAGE: Record<OrderStatus, number> = {
   PENDING: 0,
   PENDING_TRANSFER: 0,
-  CONFIRMED: 0,
-  PROCESSING: 0,
-  SHIPPED: 1,
+  CONFIRMED: 1,
+  PROCESSING: 1,
+  SHIPPED: 2,
   ARRIVED_COUNTRY: 2,
   CUSTOMS: 2,
   NATIONAL_DISTRIBUTION: 3,
@@ -31,9 +31,9 @@ export const STATUS_TO_STAGE: Record<OrderStatus, number> = {
 }
 
 export const STAGE_CONFIG: { label: string; icon: LucideIcon }[] = [
+  { label: 'Pedido realizado', icon: ShoppingBag },
   { label: 'Preparación', icon: Package },
   { label: 'Envío internacional', icon: Plane },
-  { label: 'Llegó al país', icon: Building2 },
   { label: 'Distribución local', icon: MapPin },
   { label: 'Entregado', icon: CheckCircle },
 ]
