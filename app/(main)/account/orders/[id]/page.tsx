@@ -117,7 +117,7 @@ export default async function OrderDetailPage({
               <Truck className="w-4 h-4 text-[#c9a96e]" />
             </div>
             <div>
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-[#8a8a8a] mb-1">
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-[#0a0a0a] mb-1">
                 Número de seguimiento
               </h2>
               {order.trackingNumber ? (
@@ -125,7 +125,7 @@ export default async function OrderDetailPage({
                   {order.trackingNumber}
                 </p>
               ) : (
-                <p className="text-sm text-[#8a8a8a]">
+                <p className="text-sm text-[#0a0a0a]">
                   El número de seguimiento estará disponible cuando el pedido sea despachado.
                 </p>
               )}
@@ -160,9 +160,9 @@ export default async function OrderDetailPage({
                   <p className="text-sm font-semibold text-[#0a0a0a] leading-snug">{item.name}</p>
                   <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
                     {item.size && (
-                      <span className="text-xs text-[#8a8a8a]">Talle: {item.size}</span>
+                      <span className="text-sm text-[#8a8a8a]">Talle: {item.size}</span>
                     )}
-                    <span className="text-xs text-[#8a8a8a]">Qty: {item.quantity}</span>
+                    <span className="text-sm text-[#8a8a8a]">Cantidad: {item.quantity}</span>
                   </div>
                 </div>
                 <p className="text-sm font-bold text-[#0a0a0a] flex-shrink-0">
