@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
-import { sendOrderCancelledEmail, sendOrderShippedEmail, sendOutForDeliveryEmail, sendOrderProcessingEmail } from '@/lib/email'
+import { sendOrderCancelledEmail, sendOrderShippedEmail, sendArrivedCountryEmail, sendNationalDistributionEmail, sendDeliveredEmail } from '@/lib/email'
 
-const VALID_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED', 'PENDING_TRANSFER'] as const
+const VALID_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED', 'PENDING_TRANSFER', 'ARRIVED_COUNTRY', 'CUSTOMS', 'NATIONAL_DISTRIBUTION'] as const
 type OrderStatus = typeof VALID_STATUSES[number]
 
 // Statuses where payment was confirmed and stock was decremented.
 // PENDING_TRANSFER is intentionally excluded: stock is only decremented when admin
 // confirms the transfer via /confirm-transfer — never at order creation.
 // Cancelling a PENDING_TRANSFER order must NOT restore stock (nothing was decremented yet).
-const POST_PAYMENT: OrderStatus[] = ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED']
+const POST_PAYMENT: OrderStatus[] = ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'ARRIVED_COUNTRY', 'CUSTOMS', 'NATIONAL_DISTRIBUTION']
 
 export async function PATCH(
   request: NextRequest,
@@ -29,7 +29,7 @@ export async function PATCH(
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { status, trackingNumber, address } = body as Record<string, unknown>
+  const { status, trackingNumber, address, subStatus } = body as Record<string, unknown>
 
   const data: Record<string, unknown> = {}
 
@@ -69,6 +69,14 @@ export async function PATCH(
     }
   }
 
+  if (subStatus !== undefined && subStatus !== null && typeof subStatus !== 'string') {
+    return NextResponse.json({ error: 'Invalid subStatus' }, { status: 400 })
+  }
+
+  if (subStatus !== undefined) {
+    data.subStatus = subStatus === '' ? null : subStatus
+  }
+
   if (Object.keys(data).length === 0) {
     return NextResponse.json({ error: 'Nada que actualizar' }, { status: 400 })
   }
@@ -99,8 +107,9 @@ export async function PATCH(
   const nextStatus = status as OrderStatus | undefined
   const isCancelling = nextStatus === 'CANCELLED' && current.status !== 'CANCELLED'
   const isShipping = nextStatus === 'SHIPPED' && current.status !== 'SHIPPED'
-  const isOutForDelivery = nextStatus === 'OUT_FOR_DELIVERY' && current.status !== 'OUT_FOR_DELIVERY'
-  const isProcessing = nextStatus === 'PROCESSING' && current.status !== 'PROCESSING'
+  const isArrivedCountry = nextStatus === 'ARRIVED_COUNTRY' && current.status !== 'ARRIVED_COUNTRY'
+  const isNationalDistribution = nextStatus === 'NATIONAL_DISTRIBUTION' && current.status !== 'NATIONAL_DISTRIBUTION'
+  const isDelivered = nextStatus === 'DELIVERED' && current.status !== 'DELIVERED'
   const shouldRestoreStock = isCancelling && POST_PAYMENT.includes(current.status as OrderStatus)
 
   try {
@@ -162,17 +171,21 @@ export async function PATCH(
       sendOrderCancelledEmail(emailData).catch((e) =>
         console.error('[admin/orders] cancel email failed:', e)
       )
-    } else if (isProcessing) {
-      sendOrderProcessingEmail(emailData).catch((e) =>
-        console.error('[admin/orders] processing email failed:', e)
-      )
     } else if (isShipping) {
       sendOrderShippedEmail(emailData).catch((e) =>
         console.error('[admin/orders] shipped email failed:', e)
       )
-    } else if (isOutForDelivery) {
-      sendOutForDeliveryEmail(emailData).catch((e) =>
-        console.error('[admin/orders] out-for-delivery email failed:', e)
+    } else if (isArrivedCountry) {
+      sendArrivedCountryEmail(emailData).catch((e) =>
+        console.error('[admin/orders] arrived-country email failed:', e)
+      )
+    } else if (isNationalDistribution) {
+      sendNationalDistributionEmail(emailData).catch((e) =>
+        console.error('[admin/orders] national-distribution email failed:', e)
+      )
+    } else if (isDelivered) {
+      sendDeliveredEmail(emailData).catch((e) =>
+        console.error('[admin/orders] delivered email failed:', e)
       )
     }
 

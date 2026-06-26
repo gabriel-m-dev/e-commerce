@@ -1,0 +1,156 @@
+import { STATUS_TO_STAGE, STAGE_CONFIG, STATUS_ALERT, Info, XCircle } from '@/lib/order-status'
+import type { OrderStatus } from '@/lib/queries/orders'
+
+interface Props {
+  status: OrderStatus
+  subStatus: string | null
+  updatedAt?: Date | null
+}
+
+export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
+  const stage = STATUS_TO_STAGE[status]
+  const isCancelled = stage === -1
+  const alertMessage = STATUS_ALERT[status]
+
+  const formattedDate = updatedAt
+    ? new Date(updatedAt).toLocaleDateString('es-AR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : null
+
+  return (
+    <div className="mb-8">
+      {/* STATUS_ALERT banner */}
+      <div
+        className={`flex gap-3 border px-4 py-3 mb-6 ${
+          isCancelled
+            ? 'bg-red-50 border-red-200'
+            : 'bg-surface border-border'
+        }`}
+      >
+        {isCancelled ? (
+          <XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
+        ) : (
+          <Info className="w-4 h-4 text-[#c9a96e] mt-0.5 shrink-0" />
+        )}
+        <p className="text-[11px] text-muted leading-relaxed">{alertMessage}</p>
+      </div>
+
+      {!isCancelled && (
+        <>
+          {/* Desktop: horizontal bar */}
+          <div className="hidden md:block">
+            <div className="relative">
+              {/* Track — left-4/right-4 so it spans between node centers (nodes are w-8 = 2rem) */}
+              <div className="absolute top-4 left-4 right-4 h-[2px] bg-border" />
+              {/* Gold fill — width covers stage/4 of the track */}
+              <div
+                className="absolute top-4 left-4 h-[2px] bg-[#c9a96e] transition-all duration-700"
+                style={{ width: `calc(${(stage / 4) * 100}% - ${(stage / 4) * 2}rem)` }}
+              />
+              {/* Nodes */}
+              <div className="relative flex justify-between">
+                {STAGE_CONFIG.map((s, i) => {
+                  const isActive = i === stage
+                  const isPassed = i < stage
+                  const Icon = s.icon
+                  return (
+                    <div key={i} className="flex flex-col items-center">
+                      <div
+                        className={`w-8 h-8 flex items-center justify-center border-2 ${
+                          isPassed || isActive
+                            ? 'bg-[#c9a96e] border-[#c9a96e]'
+                            : 'bg-white border-border'
+                        }`}
+                      >
+                        <Icon
+                          className={`w-4 h-4 ${isPassed || isActive ? 'text-white' : 'text-[#8a8a8a]'}`}
+                        />
+                      </div>
+                      <p
+                        className={`mt-2 text-[9px] uppercase tracking-[0.12em] text-center max-w-[64px] leading-tight ${
+                          isActive ? 'text-foreground font-semibold' : 'text-[#8a8a8a]'
+                        }`}
+                      >
+                        {s.label}
+                      </p>
+                      {isActive && (
+                        <div className="mt-1 text-center space-y-0.5">
+                          {subStatus && (
+                            <p className="text-[9px] text-[#c9a96e] font-medium">{subStatus}</p>
+                          )}
+                          {formattedDate && (
+                            <p className="text-[9px] text-[#8a8a8a]">{formattedDate}</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile: vertical */}
+          <div className="md:hidden">
+            <div className="space-y-0">
+              {STAGE_CONFIG.map((s, i) => {
+                const isActive = i === stage
+                const isPassed = i < stage
+                const isLast = i === STAGE_CONFIG.length - 1
+                const Icon = s.icon
+                return (
+                  <div key={i} className="flex gap-4">
+                    {/* Node + connector */}
+                    <div className="flex flex-col items-center">
+                      <div
+                        className={`w-8 h-8 flex items-center justify-center border-2 shrink-0 ${
+                          isPassed || isActive
+                            ? 'bg-[#c9a96e] border-[#c9a96e]'
+                            : 'bg-white border-border'
+                        }`}
+                      >
+                        <Icon
+                          className={`w-4 h-4 ${isPassed || isActive ? 'text-white' : 'text-[#8a8a8a]'}`}
+                        />
+                      </div>
+                      {!isLast && (
+                        <div
+                          className={`w-[2px] flex-1 min-h-[24px] ${
+                            isPassed ? 'bg-[#c9a96e]' : 'bg-border'
+                          }`}
+                        />
+                      )}
+                    </div>
+                    {/* Label */}
+                    <div className={`pt-1 ${isLast ? '' : 'pb-4'}`}>
+                      <p
+                        className={`text-[10px] uppercase tracking-[0.12em] ${
+                          isActive ? 'text-foreground font-semibold' : 'text-[#8a8a8a]'
+                        }`}
+                      >
+                        {s.label}
+                      </p>
+                      {isActive && (
+                        <div className="mt-0.5 space-y-0.5">
+                          {subStatus && (
+                            <p className="text-[10px] text-[#c9a96e] font-medium">{subStatus}</p>
+                          )}
+                          {formattedDate && (
+                            <p className="text-[10px] text-[#8a8a8a]">{formattedDate}</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}

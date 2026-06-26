@@ -10,8 +10,11 @@ const TABS: { value: OrderStatus | 'ALL'; label: string }[] = [
   { value: 'PENDING_TRANSFER', label: 'Transferencia'   },
   { value: 'CONFIRMED',        label: 'Confirmado'      },
   { value: 'PROCESSING',       label: 'En proceso'      },
-  { value: 'SHIPPED',          label: 'Enviado'         },
-  { value: 'OUT_FOR_DELIVERY', label: 'En reparto'      },
+  { value: 'SHIPPED',               label: 'Enviado'         },
+  { value: 'ARRIVED_COUNTRY',       label: 'Llegó al país'   },
+  { value: 'CUSTOMS',               label: 'Aduanas'         },
+  { value: 'NATIONAL_DISTRIBUTION', label: 'Distribución'    },
+  { value: 'OUT_FOR_DELIVERY',      label: 'En reparto'      },
   { value: 'DELIVERED',        label: 'Entregado'       },
   { value: 'CANCELLED',        label: 'Cancelado'       },
 ]

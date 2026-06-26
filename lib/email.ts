@@ -428,8 +428,8 @@ export async function sendOrderShippedEmail(order: OrderEmailData): Promise<void
       <p style="margin:0;font-size:14px;font-weight:700;color:#0a0a0a;">${order.trackingNumber}</p>
     </div>` : ''}
 
-    <a href="${SITE_URL}/account" style="display:inline-block;background:#0a0a0a;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
-      Ver mi pedido →
+    <a href="${SITE_URL}/account/orders/${order.orderId}" style="display:inline-block;background:#0a0a0a;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
+      Seguí el progreso →
     </a>
   `)
 
@@ -442,5 +442,127 @@ export async function sendOrderShippedEmail(order: OrderEmailData): Promise<void
     })
   } catch (err) {
     console.error('[email] sendOrderShippedEmail failed:', err)
+  }
+}
+
+export async function sendArrivedCountryEmail(order: OrderEmailData): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const shortId = order.orderId.slice(0, 8).toUpperCase()
+
+  const html = baseLayout(`
+    <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:#0ea5e9;">
+      Llegó al país
+    </p>
+    <h1 style="margin:0 0 24px;font-size:18px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:#0a0a0a;">
+      Tu pedido llegó a Argentina
+    </h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
+      Tu pedido N° <strong>${shortId}</strong> llegó al país. Próximamente ingresará a proceso aduanero.
+    </p>
+
+    ${phoneRequestBlock(order.phone)}
+
+    ${order.trackingNumber ? `
+    <div style="background:#f5f5f5;padding:16px 20px;margin-bottom:24px;">
+      <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;">
+        Número de seguimiento
+      </p>
+      <p style="margin:0;font-size:14px;font-weight:700;color:#0a0a0a;">${order.trackingNumber}</p>
+    </div>` : ''}
+
+    <a href="${SITE_URL}/account/orders/${order.orderId}" style="display:inline-block;background:#0a0a0a;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
+      Seguí el progreso →
+    </a>
+  `)
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: order.email,
+      subject: `Tu pedido llegó al país — N° ${shortId}`,
+      html,
+    })
+  } catch (err) {
+    console.error('[email] sendArrivedCountryEmail failed:', err)
+  }
+}
+
+export async function sendNationalDistributionEmail(order: OrderEmailData): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const shortId = order.orderId.slice(0, 8).toUpperCase()
+
+  const html = baseLayout(`
+    <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:#8b5cf6;">
+      En distribución
+    </p>
+    <h1 style="margin:0 0 24px;font-size:18px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:#0a0a0a;">
+      Tu pedido está en distribución nacional
+    </h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
+      Tu pedido N° <strong>${shortId}</strong> fue liberado por aduana y está en distribución nacional.
+    </p>
+
+    ${phoneRequestBlock(order.phone)}
+
+    ${order.trackingNumber ? `
+    <div style="background:#f5f5f5;padding:16px 20px;margin-bottom:24px;">
+      <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a8a;">
+        Número de seguimiento
+      </p>
+      <p style="margin:0;font-size:14px;font-weight:700;color:#0a0a0a;">${order.trackingNumber}</p>
+    </div>` : ''}
+
+    <a href="${SITE_URL}/account/orders/${order.orderId}" style="display:inline-block;background:#0a0a0a;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
+      Seguí el progreso →
+    </a>
+  `)
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: order.email,
+      subject: `Tu pedido está en distribución nacional — N° ${shortId}`,
+      html,
+    })
+  } catch (err) {
+    console.error('[email] sendNationalDistributionEmail failed:', err)
+  }
+}
+
+export async function sendDeliveredEmail(order: OrderEmailData): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const shortId = order.orderId.slice(0, 8).toUpperCase()
+
+  const html = baseLayout(`
+    <p style="margin:0 0 4px;font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:#22c55e;">
+      Entregado
+    </p>
+    <h1 style="margin:0 0 24px;font-size:18px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:#0a0a0a;">
+      Tu pedido fue entregado
+    </h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#8a8a8a;line-height:1.6;">
+      Tu pedido N° <strong>${shortId}</strong> fue entregado. Gracias por tu compra.
+    </p>
+
+    <a href="${SITE_URL}/account/orders/${order.orderId}" style="display:inline-block;background:#0a0a0a;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;">
+      Ver mi pedido →
+    </a>
+  `)
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: order.email,
+      subject: `Tu pedido fue entregado — N° ${shortId}`,
+      html,
+    })
+  } catch (err) {
+    console.error('[email] sendDeliveredEmail failed:', err)
   }
 }

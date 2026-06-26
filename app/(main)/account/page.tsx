@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import LogoutButton from '@/components/auth/LogoutButton'
 import { getOrdersByUserId } from '@/lib/queries/orders'
 import { formatPrice } from '@/lib/utils'
+import { STATUS_LABEL } from '@/lib/order-status'
 
 export const metadata = {
   title: 'Mi cuenta',
@@ -12,21 +13,14 @@ export const metadata = {
   robots: { index: false },
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  PENDING:          'PENDIENTE',
-  CONFIRMED:        'CONFIRMADO',
-  PROCESSING:       'EN PROCESO',
-  SHIPPED:          'ENVIADO',
-  OUT_FOR_DELIVERY: 'EN REPARTO',
-  DELIVERED:        'ENTREGADO',
-  CANCELLED:        'CANCELADO',
-}
-
 const STATUS_BG: Record<string, string> = {
   PENDING:          'bg-black text-white',
   CONFIRMED:        'bg-blue-500 text-white',
   PROCESSING:       'bg-yellow-400 text-black',
   SHIPPED:          'bg-yellow-400 text-black',
+  ARRIVED_COUNTRY:       'bg-indigo-500',
+  CUSTOMS:               'bg-violet-500',
+  NATIONAL_DISTRIBUTION: 'bg-orange-500',
   OUT_FOR_DELIVERY: 'bg-orange-500 text-white',
   DELIVERED:        'bg-green-600 text-white',
   CANCELLED:        'bg-red-600 text-white',

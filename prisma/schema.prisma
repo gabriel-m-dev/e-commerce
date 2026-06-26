@@ -124,6 +124,7 @@ model Order {
   email     String
   status          OrderStatus @default(PENDING)
   trackingNumber  String?
+  subStatus       String?
   subtotal        Int
   shipping        Int
   total           Int
@@ -193,6 +194,9 @@ enum OrderStatus {
   CONFIRMED
   PROCESSING
   SHIPPED
+  ARRIVED_COUNTRY
+  CUSTOMS
+  NATIONAL_DISTRIBUTION
   OUT_FOR_DELIVERY
   DELIVERED
   CANCELLED

@@ -3,27 +3,36 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getOrderById } from '@/lib/queries/orders'
 import { formatPrice } from '@/lib/utils'
+import { OrderTimeline } from '@/components/account/OrderTimeline'
 
 export const dynamic = 'force-dynamic'
 
 const STATUS_LABEL: Record<string, string> = {
-  PENDING:          'PENDIENTE',
-  CONFIRMED:        'CONFIRMADO',
-  PROCESSING:       'EN PROCESO',
-  SHIPPED:          'ENVIADO',
-  OUT_FOR_DELIVERY: 'EN REPARTO',
-  DELIVERED:        'ENTREGADO',
-  CANCELLED:        'CANCELADO',
+  PENDING:                'PENDIENTE',
+  PENDING_TRANSFER:       'PAGO POR TRANSFERENCIA',
+  CONFIRMED:              'CONFIRMADO',
+  PROCESSING:             'EN PROCESO',
+  SHIPPED:                'ENVIADO',
+  ARRIVED_COUNTRY:        'LLEGÓ AL PAÍS',
+  CUSTOMS:                'EN ADUANA',
+  NATIONAL_DISTRIBUTION:  'DISTRIBUCIÓN NACIONAL',
+  OUT_FOR_DELIVERY:       'EN REPARTO',
+  DELIVERED:              'ENTREGADO',
+  CANCELLED:              'CANCELADO',
 }
 
 const STATUS_BG: Record<string, string> = {
-  PENDING:          'bg-black text-white',
-  CONFIRMED:        'bg-blue-500 text-white',
-  PROCESSING:       'bg-yellow-400 text-black',
-  SHIPPED:          'bg-yellow-400 text-black',
-  OUT_FOR_DELIVERY: 'bg-orange-500 text-white',
-  DELIVERED:        'bg-green-600 text-white',
-  CANCELLED:        'bg-red-600 text-white',
+  PENDING:                'bg-black text-white',
+  PENDING_TRANSFER:       'bg-yellow-400 text-black',
+  CONFIRMED:              'bg-blue-500 text-white',
+  PROCESSING:             'bg-yellow-400 text-black',
+  SHIPPED:                'bg-yellow-400 text-black',
+  ARRIVED_COUNTRY:        'bg-indigo-500 text-white',
+  CUSTOMS:                'bg-violet-500 text-white',
+  NATIONAL_DISTRIBUTION:  'bg-orange-500 text-white',
+  OUT_FOR_DELIVERY:       'bg-orange-500 text-white',
+  DELIVERED:              'bg-green-600 text-white',
+  CANCELLED:              'bg-red-600 text-white',
 }
 
 export default async function CustomerOrderDetailPage({
@@ -93,6 +102,13 @@ export default async function CustomerOrderDetailPage({
           <p className="text-[12px] text-muted">Número de seguimiento no disponible aún</p>
         </div>
       )}
+
+      {/* Order timeline */}
+      <OrderTimeline
+        status={order.status}
+        subStatus={order.subStatus}
+        updatedAt={order.updatedAt}
+      />
 
       {/* Products */}
       <div className="mb-8">
