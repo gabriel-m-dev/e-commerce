@@ -123,8 +123,9 @@ model Order {
   user      User?       @relation(fields: [userId], references: [id])
   email     String
   status          OrderStatus @default(PENDING)
-  trackingNumber  String?
-  subStatus       String?
+  trackingNumber    String?
+  subStatus         String?
+  subStatusHistory  String[]  @default([])
   subtotal        Int
   shipping        Int
   total           Int

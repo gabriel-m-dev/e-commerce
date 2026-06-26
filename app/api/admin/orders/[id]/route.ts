@@ -75,6 +75,9 @@ export async function PATCH(
 
   if (subStatus !== undefined) {
     data.subStatus = subStatus === '' ? null : subStatus
+    if (typeof subStatus === 'string' && subStatus !== '') {
+      data.subStatusHistory = { push: subStatus }
+    }
   }
 
   if (Object.keys(data).length === 0) {

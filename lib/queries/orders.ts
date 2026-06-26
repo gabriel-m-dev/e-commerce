@@ -17,6 +17,7 @@ export type OrderWithItems = {
   status: OrderStatus
   trackingNumber: string | null
   subStatus: string | null
+  subStatusHistory: string[]
   subtotal: number
   shipping: number
   total: number
@@ -65,6 +66,7 @@ function mapOrder(order: {
   status: string
   trackingNumber?: string | null
   subStatus?: string | null
+  subStatusHistory?: string[]
   subtotal: number
   shipping: number
   total: number
@@ -92,6 +94,7 @@ function mapOrder(order: {
     status: order.status as OrderStatus,
     trackingNumber: order.trackingNumber ?? null,
     subStatus: order.subStatus ?? null,
+    subStatusHistory: order.subStatusHistory ?? [],
     subtotal: Number(order.subtotal),
     shipping: Number(order.shipping),
     total: Number(order.total),

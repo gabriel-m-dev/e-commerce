@@ -6,10 +6,11 @@ import type { OrderStatus } from '@/lib/queries/orders'
 interface Props {
   status: OrderStatus
   subStatus: string | null
+  subStatusHistory: string[]
   updatedAt?: Date | null
 }
 
-export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
+export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }: Props) {
   const stage = STATUS_TO_STAGE[status]
   const isCancelled = stage === -1
   const alertMessage = STATUS_ALERT[status]
@@ -61,9 +62,20 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
                       </p>
                       {isActive && (
                         <div className="mt-1 text-center space-y-0.5">
-                          {subStatus && (
-                            <p className="text-[9px] md:text-[11px] text-[#c9a96e] font-medium">{subStatus}</p>
-                          )}
+                          {subStatusHistory.length > 0
+                            ? [...subStatusHistory].reverse().map((entry, idx) => (
+                                <p
+                                  key={idx}
+                                  className={`text-[9px] md:text-[11px] font-medium ${
+                                    idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a] line-through'
+                                  }`}
+                                >
+                                  {entry}
+                                </p>
+                              ))
+                            : subStatus && (
+                                <p className="text-[9px] md:text-[11px] text-[#c9a96e] font-medium">{subStatus}</p>
+                              )}
                           {formattedDate && (
                             <p className="text-[9px] md:text-[11px] text-[#8a8a8a]">{formattedDate}</p>
                           )}
@@ -116,9 +128,20 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
                       </p>
                       {isActive && (
                         <div className="mt-0.5 space-y-0.5">
-                          {subStatus && (
-                            <p className="text-[10px] text-[#c9a96e] font-medium">{subStatus}</p>
-                          )}
+                          {subStatusHistory.length > 0
+                            ? [...subStatusHistory].reverse().map((entry, idx) => (
+                                <p
+                                  key={idx}
+                                  className={`text-[10px] font-medium ${
+                                    idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a] line-through'
+                                  }`}
+                                >
+                                  {entry}
+                                </p>
+                              ))
+                            : subStatus && (
+                                <p className="text-[10px] text-[#c9a96e] font-medium">{subStatus}</p>
+                              )}
                           {formattedDate && (
                             <p className="text-[10px] text-[#8a8a8a]">{formattedDate}</p>
                           )}

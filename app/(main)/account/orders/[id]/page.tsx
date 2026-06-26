@@ -110,6 +110,7 @@ export default async function OrderDetailPage({
           <OrderTimeline
             status={order.status}
             subStatus={order.subStatus}
+            subStatusHistory={order.subStatusHistory}
             updatedAt={order.updatedAt}
           />
         </div>
