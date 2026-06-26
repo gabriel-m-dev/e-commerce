@@ -24,22 +24,6 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
 
   return (
     <div className="mb-8">
-      {/* STATUS_ALERT banner */}
-      <div
-        className={`flex gap-3 border px-4 py-3 mb-6 ${
-          isCancelled
-            ? 'bg-red-50 border-red-200'
-            : 'bg-surface border-border'
-        }`}
-      >
-        {isCancelled ? (
-          <XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
-        ) : (
-          <Info className="w-4 h-4 text-[#c9a96e] mt-0.5 shrink-0" />
-        )}
-        <p className="text-[11px] text-muted leading-relaxed">{alertMessage}</p>
-      </div>
-
       {!isCancelled && (
         <>
           {/* Desktop: horizontal bar */}
@@ -58,7 +42,7 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
                   return (
                     <div key={i} className="flex flex-col items-center">
                       <div
-                        className={`w-8 h-8 flex items-center justify-center border-2 ${
+                        className={`w-10 h-10 flex items-center justify-center border-2 rounded-full ${
                           isPassed || isActive
                             ? 'bg-[#c9a96e] border-[#c9a96e]'
                             : 'bg-white border-border'
@@ -104,7 +88,7 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
                   <div key={i} className="flex gap-4">
                     <div className="flex flex-col items-center">
                       <div
-                        className={`w-8 h-8 flex items-center justify-center border-2 shrink-0 ${
+                        className={`w-9 h-9 flex items-center justify-center border-2 rounded-full shrink-0 ${
                           isPassed || isActive
                             ? 'bg-[#c9a96e] border-[#c9a96e]'
                             : 'bg-white border-border'
@@ -148,6 +132,22 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
           </div>
         </>
       )}
+
+      {/* STATUS_ALERT banner */}
+      <div
+        className={`flex gap-3 border px-4 py-3 mt-6 ${
+          isCancelled
+            ? 'bg-red-50 border-red-200'
+            : 'bg-surface border-border'
+        }`}
+      >
+        {isCancelled ? (
+          <XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
+        ) : (
+          <Info className="w-4 h-4 text-[#c9a96e] mt-0.5 shrink-0" />
+        )}
+        <p className="text-[11px] text-muted leading-relaxed">{alertMessage}</p>
+      </div>
     </div>
   )
 }
