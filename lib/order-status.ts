@@ -45,8 +45,8 @@ export const SUBSTATUS_OPTIONS: Record<OrderStatus, string[]> = {
   SHIPPED: [
     'Recibido por el proveedor logístico',
     'En camino al aeropuerto de origen',
+    'Llegó al aeropuerto de origen',
     'En vuelo hacia Argentina',
-    'Salió del país de origen',
   ],
   ARRIVED_COUNTRY: [
     'Llegó a Argentina',
