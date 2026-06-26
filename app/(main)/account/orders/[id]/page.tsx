@@ -33,11 +33,12 @@ export default async function OrderDetailPage({
 
   const order = await getOrderById(id)
 
-  if (!order || order.email !== user.email) {
+  const isOwner = order.email === user.email || (order.userId != null && order.userId === user.id)
+  if (!order || !isOwner) {
     notFound()
   }
 
-  const shortId = order.id.slice(-8).toUpperCase()
+  const shortId = order.id.slice(0, 8).toUpperCase()
   const createdAt = new Intl.DateTimeFormat('es-AR', {
     day: 'numeric',
     month: 'long',

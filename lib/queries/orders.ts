@@ -14,6 +14,7 @@ export type ShippingBreakdownEntry = {
 export type OrderWithItems = {
   id: string
   email: string
+  userId: string | null
   status: OrderStatus
   trackingNumber: string | null
   subStatus: string | null
@@ -63,6 +64,7 @@ export type GetOrdersResult = {
 function mapOrder(order: {
   id: string
   email: string
+  userId?: string | null
   status: string
   trackingNumber?: string | null
   subStatus?: string | null
@@ -91,6 +93,7 @@ function mapOrder(order: {
   return {
     id: order.id,
     email: order.email,
+    userId: order.userId ?? null,
     status: order.status as OrderStatus,
     trackingNumber: order.trackingNumber ?? null,
     subStatus: order.subStatus ?? null,

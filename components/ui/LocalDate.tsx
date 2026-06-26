@@ -1,7 +1,3 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-
 interface LocalDateProps {
   date: string
   options?: Intl.DateTimeFormatOptions
@@ -9,13 +5,7 @@ interface LocalDateProps {
 }
 
 export function LocalDate({ date, options, locale = 'es-AR' }: LocalDateProps) {
-  const [formatted, setFormatted] = useState<string | null>(null)
+  const formatted = new Intl.DateTimeFormat(locale, options).format(new Date(date))
 
-  useEffect(() => {
-    setFormatted(new Intl.DateTimeFormat(locale, options).format(new Date(date)))
-  }, [date, locale, options])
-
-  if (!formatted) return null
-
-  return <>{formatted}</>
+  return <span suppressHydrationWarning>{formatted}</span>
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
-import { sendOrderCancelledEmail, sendOrderShippedEmail, sendArrivedCountryEmail, sendNationalDistributionEmail, sendDeliveredEmail } from '@/lib/email'
+import { sendOrderCancelledEmail, sendOrderShippedEmail, sendArrivedCountryEmail, sendNationalDistributionEmail, sendDeliveredEmail, sendOutForDeliveryEmail } from '@/lib/email'
 
 const VALID_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED', 'PENDING_TRANSFER', 'ARRIVED_COUNTRY', 'CUSTOMS', 'NATIONAL_DISTRIBUTION'] as const
 type OrderStatus = typeof VALID_STATUSES[number]
@@ -58,10 +58,10 @@ export async function PATCH(
         if (typeof val !== 'string' && val !== null) {
           return NextResponse.json({ error: `address.${key} inválido` }, { status: 400 })
         }
-        if (val === '' || val === null) {
+        if ((val === '' || val === null) && key !== 'phone') {
           return NextResponse.json({ error: `address.${key} es requerido` }, { status: 400 })
         }
-        addressData[key] = val as string
+        addressData[key] = (val === '' || val === null) ? null : val as string
       }
     }
     if (Object.keys(addressData).length > 0) {
@@ -94,6 +94,10 @@ export async function PATCH(
   })
   if (!current) return NextResponse.json({ error: 'Orden no encontrada' }, { status: 404 })
 
+  if (data.status !== undefined && data.status !== current.status && subStatus === undefined) {
+    data.subStatus = null
+  }
+
   // Guard: PENDING_TRANSFER → CONFIRMED must go through /confirm-transfer (stock decrement side-effect).
   // Only CANCELLED is allowed as a PATCH transition from PENDING_TRANSFER.
   if (
@@ -112,6 +116,7 @@ export async function PATCH(
   const isShipping = nextStatus === 'SHIPPED' && current.status !== 'SHIPPED'
   const isArrivedCountry = nextStatus === 'ARRIVED_COUNTRY' && current.status !== 'ARRIVED_COUNTRY'
   const isNationalDistribution = nextStatus === 'NATIONAL_DISTRIBUTION' && current.status !== 'NATIONAL_DISTRIBUTION'
+  const isOutForDelivery = nextStatus === 'OUT_FOR_DELIVERY' && current.status !== 'OUT_FOR_DELIVERY'
   const isDelivered = nextStatus === 'DELIVERED' && current.status !== 'DELIVERED'
   const shouldRestoreStock = isCancelling && POST_PAYMENT.includes(current.status as OrderStatus)
 
@@ -143,16 +148,19 @@ export async function PATCH(
         ...(addressUpsert ? [addressUpsert] : []),
       ] as any)
       updatedOrder = order
-      console.log(`[admin/orders] Orden ${id} cancelada, stock restaurado`)
     } else {
       const hasOrderUpdate = Object.keys(data).length > 0
       await Promise.all([
         hasOrderUpdate ? prisma.order.update({ where: { id }, data }) : null,
         addressUpsert,
       ].filter(Boolean))
-      updatedOrder = hasOrderUpdate
-        ? await prisma.order.findUnique({ where: { id } })
-        : current
+      if (hasOrderUpdate) {
+        const found = await prisma.order.findUnique({ where: { id } })
+        if (!found) return NextResponse.json({ error: 'Order not found after update' }, { status: 404 })
+        updatedOrder = found
+      } else {
+        updatedOrder = current
+      }
     }
 
     // Send email side effects (fire-and-forget, don't block the response)
@@ -185,6 +193,10 @@ export async function PATCH(
     } else if (isNationalDistribution) {
       sendNationalDistributionEmail(emailData).catch((e) =>
         console.error('[admin/orders] national-distribution email failed:', e)
+      )
+    } else if (isOutForDelivery) {
+      sendOutForDeliveryEmail(emailData).catch((e) =>
+        console.error('[admin/orders] out-for-delivery email failed:', e)
       )
     } else if (isDelivered) {
       sendDeliveredEmail(emailData).catch((e) =>
