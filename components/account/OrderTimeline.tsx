@@ -53,7 +53,7 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
                         />
                       </div>
                       <p
-                        className={`mt-2 text-[9px] uppercase tracking-[0.12em] text-center max-w-[64px] leading-tight ${
+                        className={`mt-2 text-[9px] md:text-xs uppercase tracking-[0.12em] text-center max-w-[64px] leading-tight ${
                           isActive ? 'text-foreground font-semibold' : 'text-[#8a8a8a]'
                         }`}
                       >
@@ -62,10 +62,10 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
                       {isActive && (
                         <div className="mt-1 text-center space-y-0.5">
                           {subStatus && (
-                            <p className="text-[9px] text-[#c9a96e] font-medium">{subStatus}</p>
+                            <p className="text-[9px] md:text-[11px] text-[#c9a96e] font-medium">{subStatus}</p>
                           )}
                           {formattedDate && (
-                            <p className="text-[9px] text-[#8a8a8a]">{formattedDate}</p>
+                            <p className="text-[9px] md:text-[11px] text-[#8a8a8a]">{formattedDate}</p>
                           )}
                         </div>
                       )}
@@ -146,7 +146,7 @@ export function OrderTimeline({ status, subStatus, updatedAt }: Props) {
         ) : (
           <Info className="w-4 h-4 text-[#c9a96e] mt-0.5 shrink-0" />
         )}
-        <p className="text-[11px] text-muted leading-relaxed">{alertMessage}</p>
+        <p className="text-[11px] md:text-sm text-muted leading-relaxed">{alertMessage}</p>
       </div>
     </div>
   )
