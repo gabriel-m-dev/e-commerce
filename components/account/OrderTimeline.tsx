@@ -1,5 +1,6 @@
 'use client'
 
+import { Fragment } from 'react'
 import { STATUS_TO_STAGE, STAGE_CONFIG, STATUS_ALERT, Info, XCircle } from '@/lib/order-status'
 import type { OrderStatus } from '@/lib/queries/orders'
 
@@ -65,20 +66,24 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                         {s.label}
                       </p>
                       {isActive && (
-                        <div className="mt-1 text-center space-y-0.5">
+                        <div className="mt-1 text-center space-y-2">
                           {subStatusHistory.length > 0
                             ? [...subStatusHistory].reverse().map((entry, idx) => {
                                 const { v, t } = parseSubStatus(entry)
                                 const timeStr = t ? new Date(t).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }) : null
                                 return (
-                                  <p
-                                    key={idx}
-                                    className={`text-[11px] md:text-xs font-medium ${
-                                      idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a]'
-                                    }`}
-                                  >
-                                    {v}{timeStr ? ` · ${timeStr}` : ''}
-                                  </p>
+                                  <Fragment key={idx}>
+                                    <p
+                                      className={`text-[11px] md:text-xs font-medium ${
+                                        idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a]'
+                                      }`}
+                                    >
+                                      {v}
+                                    </p>
+                                    {timeStr && (
+                                      <p className="text-[10px] text-[#8a8a8a]">{timeStr}</p>
+                                    )}
+                                  </Fragment>
                                 )
                               })
                             : subStatus && (
@@ -135,20 +140,24 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                         {s.label}
                       </p>
                       {isActive && (
-                        <div className="mt-0.5 space-y-0.5">
+                        <div className="mt-0.5 space-y-2">
                           {subStatusHistory.length > 0
                             ? [...subStatusHistory].reverse().map((entry, idx) => {
                                 const { v, t } = parseSubStatus(entry)
                                 const timeStr = t ? new Date(t).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }) : null
                                 return (
-                                  <p
-                                    key={idx}
-                                    className={`text-[11px] font-medium ${
-                                      idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a]'
-                                    }`}
-                                  >
-                                    {v}{timeStr ? ` · ${timeStr}` : ''}
-                                  </p>
+                                  <Fragment key={idx}>
+                                    <p
+                                      className={`text-[11px] font-medium ${
+                                        idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a]'
+                                      }`}
+                                    >
+                                      {v}
+                                    </p>
+                                    {timeStr && (
+                                      <p className="text-[10px] text-[#8a8a8a]">{timeStr}</p>
+                                    )}
+                                  </Fragment>
                                 )
                               })
                             : subStatus && (
