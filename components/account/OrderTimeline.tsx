@@ -10,6 +10,10 @@ interface Props {
   updatedAt?: Date | null
 }
 
+function parseSubStatus(raw: string): { v: string; t?: string } {
+  try { return JSON.parse(raw) } catch { return { v: raw } }
+}
+
 export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }: Props) {
   const stage = STATUS_TO_STAGE[status]
   const isCancelled = stage === -1
@@ -63,16 +67,20 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                       {isActive && (
                         <div className="mt-1 text-center space-y-0.5">
                           {subStatusHistory.length > 0
-                            ? [...subStatusHistory].reverse().map((entry, idx) => (
-                                <p
-                                  key={idx}
-                                  className={`text-[9px] md:text-[11px] font-medium ${
-                                    idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a] line-through'
-                                  }`}
-                                >
-                                  {entry}
-                                </p>
-                              ))
+                            ? [...subStatusHistory].reverse().map((entry, idx) => {
+                                const { v, t } = parseSubStatus(entry)
+                                const timeStr = t ? new Date(t).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }) : null
+                                return (
+                                  <p
+                                    key={idx}
+                                    className={`text-[9px] md:text-[11px] font-medium ${
+                                      idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a]'
+                                    }`}
+                                  >
+                                    {v}{timeStr ? ` · ${timeStr}` : ''}
+                                  </p>
+                                )
+                              })
                             : subStatus && (
                                 <p className="text-[9px] md:text-[11px] text-[#c9a96e] font-medium">{subStatus}</p>
                               )}
@@ -129,16 +137,20 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                       {isActive && (
                         <div className="mt-0.5 space-y-0.5">
                           {subStatusHistory.length > 0
-                            ? [...subStatusHistory].reverse().map((entry, idx) => (
-                                <p
-                                  key={idx}
-                                  className={`text-[10px] font-medium ${
-                                    idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a] line-through'
-                                  }`}
-                                >
-                                  {entry}
-                                </p>
-                              ))
+                            ? [...subStatusHistory].reverse().map((entry, idx) => {
+                                const { v, t } = parseSubStatus(entry)
+                                const timeStr = t ? new Date(t).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }) : null
+                                return (
+                                  <p
+                                    key={idx}
+                                    className={`text-[10px] font-medium ${
+                                      idx === 0 ? 'text-[#c9a96e]' : 'text-[#8a8a8a]'
+                                    }`}
+                                  >
+                                    {v}{timeStr ? ` · ${timeStr}` : ''}
+                                  </p>
+                                )
+                              })
                             : subStatus && (
                                 <p className="text-[10px] text-[#c9a96e] font-medium">{subStatus}</p>
                               )}
