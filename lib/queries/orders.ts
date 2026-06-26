@@ -24,6 +24,7 @@ export type OrderWithItems = {
   shippingMethodName: string | null
   shippingBreakdown: ShippingBreakdownEntry[] | null
   createdAt: Date
+  updatedAt: Date
   items: {
     id: string
     name: string
@@ -70,6 +71,7 @@ function mapOrder(order: {
   shippingBreakdown?: unknown
   shippingMethod?: { name: string } | null
   createdAt: Date
+  updatedAt: Date
   items: {
     id: string
     name: string
@@ -102,6 +104,7 @@ function mapOrder(order: {
         }))
       : null,
     createdAt: order.createdAt,
+    updatedAt: order.updatedAt,
     items: order.items.map((item) => ({
       id: item.id,
       name: item.name,
