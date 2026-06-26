@@ -4,6 +4,7 @@ import { getOrderById } from '@/lib/queries/orders'
 import { OrderTimeline } from '@/components/account/OrderTimeline'
 import { STATUS_LABEL } from '@/lib/order-status'
 import AppImage from '@/components/ui/AppImage'
+import { LocalDate } from '@/components/ui/LocalDate'
 import Link from 'next/link'
 import {
   ArrowLeft,
@@ -42,14 +43,6 @@ export default async function OrderDetailPage({
     month: 'long',
     year: 'numeric',
   }).format(new Date(order.createdAt))
-
-  const updatedAt = new Intl.DateTimeFormat('es-AR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(order.updatedAt))
 
   const statusLabel = STATUS_LABEL[order.status] ?? order.status
 
@@ -97,7 +90,10 @@ export default async function OrderDetailPage({
                 {statusLabel}
               </span>
               <span className="text-[11px] text-[#8a8a8a]">
-                Últ. act.: {updatedAt}
+                Últ. act.: <LocalDate
+                  date={order.updatedAt.toISOString()}
+                  options={{ day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }}
+                />
               </span>
             </div>
           </div>
