@@ -170,18 +170,18 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
 
       {/* STATUS_ALERT banner */}
       <div
-        className={`flex gap-3 border px-4 py-3 mt-6 ${
+        className={`flex gap-3 border px-5 py-4 mt-6 ${
           isCancelled
             ? 'bg-red-50 border-red-200'
             : 'bg-surface border-border'
         }`}
       >
         {isCancelled ? (
-          <XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
+          <XCircle className="w-5 h-5 text-destructive mt-0.5 shrink-0" />
         ) : (
-          <Info className="w-4 h-4 text-[#c9a96e] mt-0.5 shrink-0" />
+          <Info className="w-5 h-5 text-[#c9a96e] mt-0.5 shrink-0" />
         )}
-        <p className="text-[11px] md:text-sm text-muted leading-relaxed">{alertMessage}</p>
+        <p className="text-sm md:text-base text-muted leading-relaxed">{alertMessage}</p>
       </div>
     </div>
   )
