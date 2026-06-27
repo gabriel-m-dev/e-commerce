@@ -66,7 +66,7 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                         {s.label}
                       </p>
                       {isActive && (
-                        <div className="mt-1 text-center space-y-2">
+                        <div className="mt-1 text-center space-y-2 max-w-[80px] w-full">
                           {subStatusHistory.length > 0
                             ? [...subStatusHistory].reverse().map((entry, idx) => {
                                 const { v, t } = parseSubStatus(entry)
