@@ -244,7 +244,9 @@ export default async function OrderDetailPage({
         {/* Support button — desktop only */}
         <div className="hidden md:block">
           <a
-            href="#"
+            href={`https://wa.me/541141648955?text=${encodeURIComponent(`Hola! Te escribo por mi pedido #${shortId}. `)}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-[#0a0a0a] text-white text-sm font-semibold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors"
           >
             <MessageCircle className="w-4 h-4" />
@@ -256,7 +258,9 @@ export default async function OrderDetailPage({
       {/* Support button — mobile fixed bottom */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-[#e5e5e5] md:hidden">
         <a
-          href="#"
+          href={`https://wa.me/541141648955?text=${encodeURIComponent(`Hola! Te escribo por mi pedido #${shortId}. `)}`}
+          target="_blank"
+          rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-[#0a0a0a] text-white text-sm font-semibold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors"
         >
           <MessageCircle className="w-4 h-4" />
