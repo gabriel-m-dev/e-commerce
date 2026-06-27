@@ -163,7 +163,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
               key={i}
               onClick={() => setActiveThumb(i)}
               aria-label={`Vista ${i + 1}`}
-              className={`relative h-[76px] w-[76px] shrink-0 overflow-hidden bg-surface transition-opacity ${
+              className={`relative h-[76px] w-[76px] shrink-0 overflow-hidden bg-background transition-opacity ${
                 i === activeThumb
                   ? 'ring-1 ring-foreground'
                   : 'opacity-50 hover:opacity-100'
@@ -181,7 +181,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
         </div>
 
         {/* Main image */}
-        <div className="relative min-w-0 flex-1 overflow-hidden bg-surface" style={{ aspectRatio: '4/5' }}>
+        <div className="relative min-w-0 flex-1 overflow-hidden bg-background" style={{ aspectRatio: '4/5' }}>
           <Image
             src={mainImage}
             alt={product.name}
@@ -281,7 +281,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
             <button
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
               aria-label="Reducir cantidad"
-              className="px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface"
+              className="px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-background"
             >
               −
             </button>
@@ -292,7 +292,7 @@ export default function ProductDetail({ product }: { product: DbProduct }) {
               onClick={() => setQuantity((q) => q + 1)}
               aria-label="Aumentar cantidad"
               disabled={quantity >= product.stock}
-              className="px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed"
             >
               +
             </button>
