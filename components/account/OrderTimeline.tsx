@@ -45,8 +45,12 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                   const isActive = i === stage
                   const isPassed = i < stage
                   const Icon = s.icon
+                  const isFirst = i === 0
+                  const isLast = i === STAGE_CONFIG.length - 1
+                  const alignCol = isFirst ? 'items-start' : isLast ? 'items-end' : 'items-center'
+                  const alignText = isFirst ? 'text-left' : isLast ? 'text-right' : 'text-center'
                   return (
-                    <div key={i} className="flex flex-col items-center">
+                    <div key={i} className={`flex flex-col ${alignCol}`}>
                       <div
                         className={`w-12 h-12 flex items-center justify-center border-2 rounded-full ${
                           isPassed || isActive
@@ -59,14 +63,14 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                         />
                       </div>
                       <p
-                        className={`mt-2 text-xs md:text-sm uppercase tracking-[0.12em] text-center max-w-[64px] leading-tight ${
+                        className={`mt-2 text-xs md:text-sm uppercase tracking-[0.12em] max-w-[64px] leading-tight ${alignText} ${
                           isActive ? 'text-foreground font-semibold' : 'text-[#8a8a8a]'
                         }`}
                       >
                         {s.label}
                       </p>
                       {isActive && (
-                        <div className="mt-1 text-center space-y-2 max-w-[80px] w-full">
+                        <div className={`mt-1 space-y-2 max-w-[80px] w-full ${alignText}`}>
                           {subStatusHistory.length > 0
                             ? [...subStatusHistory].reverse().map((entry, idx) => {
                                 const { v, t } = parseSubStatus(entry)
