@@ -35,24 +35,20 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
           {/* Desktop: horizontal bar */}
           <div className="hidden md:block">
             <div className="relative">
-              <div className="absolute top-4 left-4 right-4 h-[2px] bg-border" />
+              <div className="absolute top-6 left-[10%] right-[10%] h-[2px] bg-border" />
               <div
-                className="absolute top-4 left-4 h-[2px] bg-[#c9a96e] transition-all duration-700"
-                style={{ width: `calc(${(stage / 4) * 100}% - ${(stage / 4) * 2}rem)` }}
+                className="absolute top-6 left-[10%] h-[2px] bg-[#c9a96e] transition-all duration-700"
+                style={{ width: `${(stage / 4) * 80}%` }}
               />
-              <div className="relative flex justify-between">
+              <div className="relative grid grid-cols-5">
                 {STAGE_CONFIG.map((s, i) => {
                   const isActive = i === stage
                   const isPassed = i < stage
                   const Icon = s.icon
-                  const isFirst = i === 0
-                  const isLast = i === STAGE_CONFIG.length - 1
-                  const alignCol = isFirst ? 'items-start' : isLast ? 'items-end' : 'items-center'
-                  const alignText = isFirst ? 'text-left' : isLast ? 'text-right' : 'text-center'
                   return (
-                    <div key={i} className={`flex flex-col ${alignCol}`}>
+                    <div key={i} className="flex flex-col items-center">
                       <div
-                        className={`w-12 h-12 flex items-center justify-center border-2 rounded-full ${
+                        className={`w-12 h-12 flex items-center justify-center border-2 rounded-full relative z-10 ${
                           isPassed || isActive
                             ? 'bg-[#c9a96e] border-[#c9a96e]'
                             : 'bg-white border-border'
@@ -63,14 +59,14 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                         />
                       </div>
                       <p
-                        className={`mt-2 text-xs md:text-sm uppercase tracking-[0.12em] max-w-[64px] leading-tight ${alignText} ${
+                        className={`mt-2 text-xs md:text-sm uppercase tracking-[0.12em] text-center w-full px-1 leading-tight ${
                           isActive ? 'text-foreground font-semibold' : 'text-[#8a8a8a]'
                         }`}
                       >
                         {s.label}
                       </p>
                       {isActive && (
-                        <div className={`mt-1 space-y-2 max-w-[80px] w-full ${alignText}`}>
+                        <div className="mt-1 space-y-2 w-full px-1 text-center">
                           {subStatusHistory.length > 0
                             ? [...subStatusHistory].reverse().map((entry, idx) => {
                                 const { v, t } = parseSubStatus(entry)
