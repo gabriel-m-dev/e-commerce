@@ -33,8 +33,12 @@ export default async function OrderDetailPage({
 
   const order = await getOrderById(id)
 
+  if (!order) {
+    notFound()
+  }
+
   const isOwner = order.email === user.email || (order.userId != null && order.userId === user.id)
-  if (!order || !isOwner) {
+  if (!isOwner) {
     notFound()
   }
 
