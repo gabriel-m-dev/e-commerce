@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { Prisma } from '../generated/prisma/client'
 
 // SYNC WITH schema.prisma enum OrderStatus
-export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED' | 'PENDING_TRANSFER'
+export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'ARRIVED_COUNTRY' | 'CUSTOMS' | 'NATIONAL_DISTRIBUTION' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED' | 'PENDING_TRANSFER'
 
 export type ShippingBreakdownEntry = {
   supplier: string | null
@@ -14,8 +14,11 @@ export type ShippingBreakdownEntry = {
 export type OrderWithItems = {
   id: string
   email: string
+  userId: string | null
   status: OrderStatus
   trackingNumber: string | null
+  subStatus: string | null
+  subStatusHistory: string[]
   subtotal: number
   shipping: number
   total: number
@@ -24,6 +27,7 @@ export type OrderWithItems = {
   shippingMethodName: string | null
   shippingBreakdown: ShippingBreakdownEntry[] | null
   createdAt: Date
+  updatedAt: Date
   items: {
     id: string
     name: string
@@ -60,8 +64,11 @@ export type GetOrdersResult = {
 function mapOrder(order: {
   id: string
   email: string
+  userId?: string | null
   status: string
   trackingNumber?: string | null
+  subStatus?: string | null
+  subStatusHistory?: string[]
   subtotal: number
   shipping: number
   total: number
@@ -70,6 +77,7 @@ function mapOrder(order: {
   shippingBreakdown?: unknown
   shippingMethod?: { name: string } | null
   createdAt: Date
+  updatedAt: Date
   items: {
     id: string
     name: string
@@ -85,8 +93,11 @@ function mapOrder(order: {
   return {
     id: order.id,
     email: order.email,
+    userId: order.userId ?? null,
     status: order.status as OrderStatus,
     trackingNumber: order.trackingNumber ?? null,
+    subStatus: order.subStatus ?? null,
+    subStatusHistory: order.subStatusHistory ?? [],
     subtotal: Number(order.subtotal),
     shipping: Number(order.shipping),
     total: Number(order.total),
@@ -102,6 +113,7 @@ function mapOrder(order: {
         }))
       : null,
     createdAt: order.createdAt,
+    updatedAt: order.updatedAt,
     items: order.items.map((item) => ({
       id: item.id,
       name: item.name,

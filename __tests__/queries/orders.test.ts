@@ -49,6 +49,7 @@ function makeOrder(overrides: {
     shipping: 0,
     total: 10000,
     createdAt: overrides.createdAt ?? new Date('2025-01-15T10:00:00Z'),
+    updatedAt: new Date('2024-01-01'),
     items: [
       {
         id: 'item_1',

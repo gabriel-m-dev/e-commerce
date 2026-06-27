@@ -12,7 +12,7 @@ import type { OrderStatus } from '@/lib/queries/orders'
 
 export const dynamic = 'force-dynamic'
 
-const VALID_STATUSES: OrderStatus[] = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED', 'PENDING_TRANSFER']
+const VALID_STATUSES: OrderStatus[] = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'ARRIVED_COUNTRY', 'CUSTOMS', 'NATIONAL_DISTRIBUTION', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED', 'PENDING_TRANSFER']
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('es-AR', {
@@ -77,28 +77,28 @@ export default async function AdminOrdersPage({
           <table className="w-full">
             <thead>
               <tr className="border-b border-border bg-surface">
-                <th className="px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
+                <th className="px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted">
                   N Orden
                 </th>
-                <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
+                <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted">
                   Cliente
                 </th>
-                <th className="hidden md:table-cell px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
+                <th className="hidden md:table-cell px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted">
                   Items
                 </th>
-                <th className="px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
+                <th className="px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted">
                   Total
                 </th>
-                <th className="px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
+                <th className="px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted">
                   Estado
                 </th>
-                <th className="hidden lg:table-cell px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
+                <th className="hidden lg:table-cell px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted">
                   Tracking
                 </th>
-                <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted">
+                <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted">
                   Fecha
                 </th>
-                <th className="px-6 py-3 text-left text-[10px] uppercase tracking-[0.18em] text-muted sr-only">
+                <th className="px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted sr-only">
                   Ver
                 </th>
               </tr>
@@ -138,16 +138,16 @@ export default async function AdminOrdersPage({
               ) : (
                 orders.map((order) => (
                   <tr key={order.id} className="border-b border-border hover:bg-surface">
-                    <td className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground">
+                    <td className="px-6 py-3 text-[11px] md:text-sm font-semibold uppercase tracking-[0.1em] text-foreground">
                       {order.id.slice(0, 8).toUpperCase()}
                     </td>
-                    <td className="hidden sm:table-cell px-6 py-3 text-[11px] text-muted">
+                    <td className="hidden sm:table-cell px-6 py-3 text-[11px] md:text-sm text-muted">
                       {order.email}
                     </td>
-                    <td className="hidden md:table-cell px-6 py-3 text-[11px] text-muted max-w-[200px] truncate">
+                    <td className="hidden md:table-cell px-6 py-3 text-[11px] md:text-sm text-muted max-w-[200px] truncate">
                       {order.items.map((i) => `${i.name} x${i.quantity}`).join(', ')}
                     </td>
-                    <td className="px-6 py-3 text-[12px] font-semibold text-foreground">
+                    <td className="px-6 py-3 text-[12px] md:text-sm font-semibold text-foreground">
                       {formatPrice(order.total)}
                     </td>
                     <td className="px-6 py-3">
@@ -156,14 +156,14 @@ export default async function AdminOrdersPage({
                     <td className="hidden lg:table-cell px-6 py-3">
                       <TrackingNumberInput orderId={order.id} current={order.trackingNumber} />
                     </td>
-                    <td className="hidden sm:table-cell px-6 py-3 text-[11px] text-muted">
+                    <td className="hidden sm:table-cell px-6 py-3 text-[11px] md:text-sm text-muted">
                       {formatDate(order.createdAt)}
                     </td>
                     <td className="px-6 py-3">
                       <div className="flex items-center gap-3">
                         <Link
                           href={`/admin/orders/${order.id}${statusParam || q ? `?${new URLSearchParams({ ...(statusParam ? { status: statusParam } : {}), ...(q ? { q } : {}) }).toString()}` : ''}`}
-                          className="text-[10px] uppercase tracking-[0.12em] text-muted hover:text-foreground transition-colors"
+                          className="text-[10px] md:text-xs uppercase tracking-[0.12em] text-muted hover:text-foreground transition-colors"
                         >
                           Ver
                         </Link>

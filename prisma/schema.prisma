@@ -123,7 +123,9 @@ model Order {
   user      User?       @relation(fields: [userId], references: [id])
   email     String
   status          OrderStatus @default(PENDING)
-  trackingNumber  String?
+  trackingNumber    String?
+  subStatus         String?
+  subStatusHistory  String[]  @default([])
   subtotal        Int
   shipping        Int
   total           Int
@@ -193,6 +195,9 @@ enum OrderStatus {
   CONFIRMED
   PROCESSING
   SHIPPED
+  ARRIVED_COUNTRY
+  CUSTOMS
+  NATIONAL_DISTRIBUTION
   OUT_FOR_DELIVERY
   DELIVERED
   CANCELLED

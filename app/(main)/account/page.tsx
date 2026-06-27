@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import LogoutButton from '@/components/auth/LogoutButton'
 import { getOrdersByUserId } from '@/lib/queries/orders'
 import { formatPrice } from '@/lib/utils'
+import { STATUS_LABEL } from '@/lib/order-status'
 
 export const metadata = {
   title: 'Mi cuenta',
@@ -12,21 +13,15 @@ export const metadata = {
   robots: { index: false },
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  PENDING:          'PENDIENTE',
-  CONFIRMED:        'CONFIRMADO',
-  PROCESSING:       'EN PROCESO',
-  SHIPPED:          'ENVIADO',
-  OUT_FOR_DELIVERY: 'EN REPARTO',
-  DELIVERED:        'ENTREGADO',
-  CANCELLED:        'CANCELADO',
-}
-
 const STATUS_BG: Record<string, string> = {
   PENDING:          'bg-black text-white',
   CONFIRMED:        'bg-blue-500 text-white',
   PROCESSING:       'bg-yellow-400 text-black',
   SHIPPED:          'bg-yellow-400 text-black',
+  PENDING_TRANSFER:      'bg-amber-500 text-white',
+  ARRIVED_COUNTRY:       'bg-indigo-500 text-white',
+  CUSTOMS:               'bg-violet-500 text-white',
+  NATIONAL_DISTRIBUTION: 'bg-orange-500 text-white',
   OUT_FOR_DELIVERY: 'bg-orange-500 text-white',
   DELIVERED:        'bg-green-600 text-white',
   CANCELLED:        'bg-red-600 text-white',
@@ -119,7 +114,7 @@ export default async function AccountPage() {
       <section className="mt-10">
         <div className="flex items-center gap-3 mb-6">
           <span className="block w-6 h-px bg-gold" aria-hidden />
-          <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-foreground">
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-foreground">
             Mis Pedidos
           </p>
         </div>
@@ -135,12 +130,12 @@ export default async function AccountPage() {
             </Link>
           </div>
         ) : (
-          <div className="divide-y divide-border">
+          <div className="flex flex-col gap-3">
             {orders.map((order) => {
               const firstImage = order.items[0]?.image ?? null
 
               return (
-                <Link key={order.id} href={`/account/orders/${order.id}`} className="block py-6 flex gap-4 hover:bg-surface transition-colors">
+                <Link key={order.id} href={`/account/orders/${order.id}`} className="flex gap-4 p-4 rounded-xl border border-border hover:border-[#c9a96e] hover:bg-surface transition-colors">
                   {/* Product thumbnail */}
                   <div className="w-16 h-16 md:w-20 md:h-20 shrink-0 bg-surface border border-border overflow-hidden">
                     {firstImage ? (
@@ -175,27 +170,27 @@ export default async function AccountPage() {
                   <div className="flex flex-col gap-1.5 flex-1 min-w-0">
                     {/* Order ID + status */}
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground">
+                      <span className="text-sm font-semibold uppercase tracking-[0.15em] text-foreground">
                         #{order.id.slice(0, 8).toUpperCase()}
                       </span>
                       <span
-                        className={`inline-block px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.15em] rounded-none ${STATUS_BG[order.status] ?? 'bg-[#8a8a8a] text-white'}`}
+                        className={`inline-block px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-none ${STATUS_BG[order.status] ?? 'bg-[#8a8a8a] text-white'}`}
                       >
                         {STATUS_LABEL[order.status] ?? order.status}
                       </span>
                     </div>
 
                     {/* Items summary */}
-                    <p className="text-[11px] text-muted truncate">
+                    <p className="text-sm text-muted truncate">
                       {order.items.map((item) => `${item.name} ×${item.quantity}`).join('  ·  ')}
                     </p>
 
                     {/* Date + total */}
                     <div className="flex items-center gap-4 mt-0.5">
-                      <span className="text-[10px] uppercase tracking-[0.15em] text-muted">
+                      <span className="text-[13px] uppercase tracking-[0.15em] text-muted">
                         {formatDate(order.createdAt)}
                       </span>
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground">
+                      <span className="text-sm font-semibold uppercase tracking-[0.1em] text-foreground">
                         {formatPrice(order.total)}
                       </span>
                     </div>

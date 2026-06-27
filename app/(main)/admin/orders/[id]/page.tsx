@@ -2,7 +2,9 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getOrderById } from '@/lib/queries/orders'
 import { formatPrice } from '@/lib/utils'
+import { STATUS_LABEL } from '@/lib/order-status'
 import OrderStatusSelect from '@/components/admin/OrderStatusSelect'
+import { OrderSubStatusSelect } from '@/components/admin/OrderSubStatusSelect'
 import ConfirmTransferButton from '@/components/admin/ConfirmTransferButton'
 import AddressEditForm from '@/components/admin/AddressEditForm'
 
@@ -18,23 +20,15 @@ function formatDate(date: Date): string {
   }).format(date)
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  PENDING:          'Pendiente',
-  CONFIRMED:        'Confirmado',
-  PROCESSING:       'En proceso',
-  SHIPPED:          'Enviado',
-  OUT_FOR_DELIVERY: 'En reparto',
-  DELIVERED:        'Entregado',
-  CANCELLED:        'Cancelado',
-  PENDING_TRANSFER: 'Transf. pendiente',
-}
-
 const STATUS_COLOR: Record<string, string> = {
   PENDING:          'text-muted border-muted',
   CONFIRMED:        'text-[#3b82f6] border-[#3b82f6]',
   PROCESSING:       'text-gold border-gold',
-  SHIPPED:          'text-foreground border-foreground',
-  OUT_FOR_DELIVERY: 'text-[#f97316] border-[#f97316]',
+  SHIPPED:               'text-foreground border-foreground',
+  ARRIVED_COUNTRY:       'text-[#6366f1] border-[#6366f1]',
+  CUSTOMS:               'text-[#8b5cf6] border-[#8b5cf6]',
+  NATIONAL_DISTRIBUTION: 'text-[#f97316] border-[#f97316]',
+  OUT_FOR_DELIVERY:      'text-[#f97316] border-[#f97316]',
   DELIVERED:        'text-foreground border-foreground font-bold',
   CANCELLED:        'text-destructive border-destructive',
   PENDING_TRANSFER: 'text-[#d97706] border-[#d97706]',
@@ -91,6 +85,9 @@ export default async function AdminOrderDetailPage({
           >
             {STATUS_LABEL[order.status] ?? order.status}
           </span>
+          {order.subStatus && (
+            <span className="text-[10px] text-muted uppercase tracking-wider">{order.subStatus}</span>
+          )}
           {order.trackingNumber && (
             <span className="text-[10px] text-muted">
               Tracking: <span className="text-foreground font-semibold">{order.trackingNumber}</span>
@@ -254,6 +251,7 @@ export default async function AdminOrderDetailPage({
           Cambiar estado
         </p>
         <OrderStatusSelect orderId={order.id} current={order.status} />
+        <OrderSubStatusSelect key={order.status} orderId={order.id} status={order.status} currentSubStatus={order.subStatus} />
       </div>
 
       {/* ─── Confirmar Pago — visible only for pending transfer orders ─── */}
