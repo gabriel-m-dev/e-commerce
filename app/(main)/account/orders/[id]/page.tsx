@@ -47,6 +47,7 @@ export default async function OrderDetailPage({
     day: 'numeric',
     month: 'long',
     year: 'numeric',
+    timeZone: 'America/Argentina/Buenos_Aires',
   }).format(new Date(order.createdAt))
 
   const statusLabel = STATUS_LABEL[order.status] ?? order.status

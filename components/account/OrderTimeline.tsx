@@ -25,6 +25,7 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
         day: 'numeric',
         month: 'long',
         year: 'numeric',
+        timeZone: 'America/Argentina/Buenos_Aires',
       })
     : null
 
@@ -70,7 +71,7 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                           {subStatusHistory.length > 0
                             ? [...subStatusHistory].reverse().map((entry, idx) => {
                                 const { v, t } = parseSubStatus(entry)
-                                const timeStr = t ? new Date(t).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }) : null
+                                const timeStr = t ? new Date(t).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Argentina/Buenos_Aires' }) : null
                                 return (
                                   <Fragment key={idx}>
                                     <p
@@ -144,7 +145,7 @@ export function OrderTimeline({ status, subStatus, subStatusHistory, updatedAt }
                           {subStatusHistory.length > 0
                             ? [...subStatusHistory].reverse().map((entry, idx) => {
                                 const { v, t } = parseSubStatus(entry)
-                                const timeStr = t ? new Date(t).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }) : null
+                                const timeStr = t ? new Date(t).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Argentina/Buenos_Aires' }) : null
                                 return (
                                   <Fragment key={idx}>
                                     <p

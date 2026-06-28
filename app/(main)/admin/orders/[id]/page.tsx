@@ -17,6 +17,7 @@ function formatDate(date: Date): string {
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: 'America/Argentina/Buenos_Aires',
   }).format(date)
 }
 
