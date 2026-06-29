@@ -275,8 +275,12 @@ export default function RegisterPage() {
                 <Spinner />
                 Creando cuenta...
               </span>
-            ) : 'Crear cuenta'}
-            <ArrowIcon className="text-gold" size={18} />
+            ) : (
+              <span className="flex items-center gap-2">
+                <ArrowIcon className="text-gold" size={18} />
+                Crear cuenta
+              </span>
+            )}
           </button>
         </form>
       </div>

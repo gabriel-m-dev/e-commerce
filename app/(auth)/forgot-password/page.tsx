@@ -110,8 +110,12 @@ export default function ForgotPasswordPage() {
               <Spinner />
               Enviando...
             </span>
-          ) : 'Enviar link'}
-          <ArrowIcon className="text-gold" size={18} />
+          ) : (
+            <span className="flex items-center gap-2">
+              <ArrowIcon className="text-gold" size={18} />
+              Enviar link
+            </span>
+          )}
         </button>
       </form>
 
