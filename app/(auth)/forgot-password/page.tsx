@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { SITE_URL } from '@/lib/constants'
 import ArrowIcon from '@/components/ui/ArrowIcon'
+import { Spinner } from '@/components/ui/Spinner'
 
 const INPUT_CLASS =
   'border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-foreground focus:outline-none transition-colors w-full'
@@ -104,7 +105,12 @@ export default function ForgotPasswordPage() {
           disabled={loading}
           className="mt-2 flex h-12 w-full items-center justify-between bg-foreground px-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 disabled:opacity-50"
         >
-          <span>{loading ? 'Enviando...' : 'Enviar link'}</span>
+          {loading ? (
+            <span className="flex items-center gap-2">
+              <Spinner />
+              Enviando...
+            </span>
+          ) : 'Enviar link'}
           <ArrowIcon className="text-gold" size={18} />
         </button>
       </form>

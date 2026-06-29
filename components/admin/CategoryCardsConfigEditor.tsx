@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import Image from '@/components/ui/AppImage'
 import { toast } from 'sonner'
 import { type CategoryCard } from '@/lib/data/site-config-defaults'
+import { Spinner } from '@/components/ui/Spinner'
 
 const CARD_NAMES = ['ZAPATILLAS', 'ROPA', 'ACCESORIOS']
 
@@ -142,7 +143,7 @@ export default function CategoryCardsConfigEditor({ initialCards }: { initialCar
                   disabled={uploadingIdx.has(activeIdx)}
                   className="self-start border border-border px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.15em] text-muted transition-colors hover:border-foreground hover:text-foreground disabled:opacity-40 disabled:pointer-events-none"
                 >
-                  {uploadingIdx.has(activeIdx) ? 'Subiendo...' : 'Subir imagen'}
+                  {uploadingIdx.has(activeIdx) ? <><Spinner /> Subiendo...</> : 'Subir imagen'}
                 </button>
                 <input
                   type="text"
@@ -212,7 +213,12 @@ export default function CategoryCardsConfigEditor({ initialCards }: { initialCar
           disabled={saving}
           className="bg-foreground px-8 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 disabled:opacity-40"
         >
-          {saving ? 'Guardando...' : 'Guardar cards'}
+          {saving ? (
+            <span className="flex items-center gap-2">
+              <Spinner />
+              Guardando...
+            </span>
+          ) : 'Guardar cards'}
         </button>
       </div>
     </div>

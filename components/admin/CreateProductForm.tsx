@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { formatSlug } from '@/lib/utils'
 import type { ShippingMethodRow } from '@/lib/queries/shipping-methods'
+import { Spinner } from '@/components/ui/Spinner'
 
 interface Category {
   id: string
@@ -544,7 +545,7 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
                           ].join(' ')}
                           title="Subir desde archivo"
                         >
-                          {uploadingIndices.has(i) ? '...' : 'Subir'}
+                          {uploadingIndices.has(i) ? <><Spinner /> Subiendo...</> : 'Subir'}
                           <input
                             type="file"
                             accept="image/*"
@@ -728,7 +729,12 @@ export default function CreateProductForm({ categories, shippingMethods }: Creat
                   disabled={loading}
                   className="flex h-10 flex-1 items-center justify-center bg-foreground text-[10px] font-semibold uppercase tracking-[0.18em] text-background hover:opacity-80 transition-opacity disabled:opacity-40"
                 >
-                  {loading ? 'Guardando...' : 'Crear producto'}
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <Spinner />
+                      Guardando...
+                    </span>
+                  ) : 'Crear producto'}
                 </button>
                 <button
                   type="button"

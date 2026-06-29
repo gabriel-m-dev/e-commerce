@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Spinner } from '@/components/ui/Spinner'
 
 export default function ConfirmTransferButton({ orderId }: { orderId: string }) {
   const router = useRouter()
@@ -36,7 +37,12 @@ export default function ConfirmTransferButton({ orderId }: { orderId: string }) 
         disabled={loading}
         className="w-full sm:w-auto px-6 py-3 bg-gold text-background text-[11px] font-semibold uppercase tracking-[0.22em] transition-opacity hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {loading ? 'Confirmando...' : 'Confirmar pago por transferencia'}
+        {loading ? (
+          <span className="flex items-center gap-2">
+            <Spinner />
+            Confirmando...
+          </span>
+        ) : 'Confirmar pago por transferencia'}
       </button>
       {error && (
         <p className="text-[11px] text-destructive uppercase tracking-[0.1em]">

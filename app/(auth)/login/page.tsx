@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import ArrowIcon from '@/components/ui/ArrowIcon'
+import { Spinner } from '@/components/ui/Spinner'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -158,8 +159,17 @@ function LoginForm() {
           disabled={loading}
           className="mt-2 flex h-12 w-full items-center justify-between bg-foreground px-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 disabled:opacity-50"
         >
-          <span>{loading ? 'Ingresando...' : 'Ingresar'}</span>
-          <ArrowIcon className="text-gold" size={18} />
+          {loading ? (
+            <span className="flex items-center gap-2">
+              <Spinner />
+              Ingresando...
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">
+              <ArrowIcon className="text-gold" size={18} />
+              Ingresar
+            </span>
+          )}
         </button>
       </form>
     </div>

@@ -5,6 +5,7 @@ import Image from '@/components/ui/AppImage'
 import { toast } from 'sonner'
 import { type BrandCategorySplitConfig, type BrandHeroPanel } from '@/lib/data/site-config-defaults'
 import { type SiteConfigKey } from '@/lib/queries/site-config'
+import { Spinner } from '@/components/ui/Spinner'
 
 interface BrandCategorySplitConfigEditorProps {
   brand: 'JORDAN' | 'NIKE' | 'ADIDAS'
@@ -123,7 +124,7 @@ export default function BrandCategorySplitConfigEditor({ brand, initialConfig }:
                     disabled={isUploading}
                     className="self-start border border-border px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.15em] text-muted transition-colors hover:border-foreground hover:text-foreground disabled:opacity-40 disabled:pointer-events-none"
                   >
-                    {isUploading ? 'Subiendo...' : 'Subir imagen'}
+                    {isUploading ? <><Spinner /> Subiendo...</> : 'Subir imagen'}
                   </button>
                   <input
                     type="text"
@@ -239,7 +240,12 @@ export default function BrandCategorySplitConfigEditor({ brand, initialConfig }:
           disabled={saving}
           className="bg-foreground px-8 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 disabled:opacity-40"
         >
-          {saving ? 'Guardando...' : 'Guardar'}
+          {saving ? (
+            <span className="flex items-center gap-2">
+              <Spinner />
+              Guardando...
+            </span>
+          ) : 'Guardar'}
         </button>
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { Spinner } from '@/components/ui/Spinner'
 
 const DELETABLE = ['PENDING', 'CANCELLED']
 
@@ -33,7 +34,7 @@ export default function DeleteOrderButton({ orderId, status }: { orderId: string
       disabled={loading}
       className="text-[10px] uppercase tracking-[0.12em] text-destructive hover:text-destructive/70 transition-colors disabled:opacity-40"
     >
-      {loading ? '...' : 'Eliminar'}
+      {loading ? <span className="flex items-center gap-2"><Spinner />Eliminando...</span> : 'Eliminar'}
     </button>
   )
 }

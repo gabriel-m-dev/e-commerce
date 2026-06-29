@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from '@/components/ui/AppImage'
 import ArrowIcon from '@/components/ui/ArrowIcon'
+import { Spinner } from '@/components/ui/Spinner'
 import ShippingNotice from '@/components/ui/ShippingNotice'
 import useCartStore from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
@@ -708,8 +709,17 @@ export default function CheckoutPage() {
                 disabled={loading || methodsLoading || !allGroupsSelected}
                 className="w-full flex items-center justify-center gap-3 bg-foreground text-background px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.22em] transition-opacity hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Procesando...' : 'Confirmar pedido'}
-                {!loading && <ArrowIcon className="shrink-0 text-gold" />}
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <Spinner />
+                    Procesando...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <ArrowIcon className="shrink-0 text-gold" />
+                    Confirmar pedido
+                  </span>
+                )}
               </button>
               <div className="mt-4 flex items-center justify-center gap-2">
                 <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden>

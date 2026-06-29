@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { type DbProduct } from '@/lib/queries/products'
 import { formatSlug } from '@/lib/utils'
 import type { ShippingMethodRow } from '@/lib/queries/shipping-methods'
+import { Spinner } from '@/components/ui/Spinner'
 
 interface EditProductFormProps {
   product: DbProduct
@@ -438,7 +439,7 @@ export default function EditProductForm({
                         disabled={uploadingIndices.has(i)}
                         className="border border-border bg-transparent px-3 py-2 text-[12px] text-foreground outline-none focus:border-foreground transition-colors flex-1 disabled:opacity-40" />
                       <label className={['flex h-[38px] cursor-pointer items-center border border-border px-3 text-[9px] font-semibold uppercase tracking-[0.15em] text-muted transition-colors hover:border-foreground hover:text-foreground shrink-0', uploadingIndices.has(i) ? 'opacity-40 pointer-events-none' : ''].join(' ')}>
-                        {uploadingIndices.has(i) ? '...' : 'Subir'}
+                        {uploadingIndices.has(i) ? <><Spinner /> Subiendo...</> : 'Subir'}
                         <input type="file" accept="image/*" className="sr-only"
                           onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFileUpload(i, file); e.target.value = '' }} />
                       </label>
@@ -566,7 +567,12 @@ export default function EditProductForm({
             <div className="flex gap-3 border-t border-border pt-5">
               <button type="submit" disabled={loading}
                 className="flex h-10 flex-1 items-center justify-center bg-foreground text-[10px] font-semibold uppercase tracking-[0.18em] text-background hover:opacity-80 transition-opacity disabled:opacity-40">
-                {loading ? 'Guardando...' : 'Guardar cambios'}
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <Spinner />
+                    Guardando...
+                  </span>
+                ) : 'Guardar cambios'}
               </button>
               <button type="button" onClick={onClose} disabled={loading}
                 className="flex h-10 items-center justify-center border border-border px-6 text-[10px] font-semibold uppercase tracking-[0.18em] hover:border-foreground transition-colors disabled:opacity-40">

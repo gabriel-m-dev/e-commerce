@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import ArrowIcon from '@/components/ui/ArrowIcon'
+import { Spinner } from '@/components/ui/Spinner'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -269,7 +270,12 @@ export default function RegisterPage() {
             disabled={loading}
             className="mt-2 flex h-12 w-full items-center justify-between bg-foreground px-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 disabled:opacity-50"
           >
-            <span>{loading ? 'Creando cuenta...' : 'Crear cuenta'}</span>
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <Spinner />
+                Creando cuenta...
+              </span>
+            ) : 'Crear cuenta'}
             <ArrowIcon className="text-gold" size={18} />
           </button>
         </form>

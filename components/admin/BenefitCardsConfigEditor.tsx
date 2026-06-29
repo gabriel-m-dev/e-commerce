@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import Image from '@/components/ui/AppImage'
 import { toast } from 'sonner'
 import { type BenefitCardsConfig } from '@/lib/data/site-config-defaults'
+import { Spinner } from '@/components/ui/Spinner'
 
 const CARD_META = {
   payment:  { label: 'Pagá como quieras',     description: 'Tarjetas, transferencia o efectivo. Con Mercado Pago.' },
@@ -184,7 +185,7 @@ export default function BenefitCardsConfigEditor({ initialConfig }: { initialCon
                     disabled={isUploading}
                     className="self-start border border-border px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.15em] text-muted transition-colors hover:border-foreground hover:text-foreground disabled:opacity-40 disabled:pointer-events-none"
                   >
-                    {isUploading ? 'Subiendo...' : imageUrl ? 'Reemplazar imagen' : 'Subir imagen custom'}
+                    {isUploading ? <><Spinner /> Subiendo...</> : imageUrl ? 'Reemplazar imagen' : 'Subir imagen custom'}
                   </button>
                   <input
                     type="text"
@@ -217,7 +218,12 @@ export default function BenefitCardsConfigEditor({ initialConfig }: { initialCon
           disabled={saving}
           className="bg-foreground px-8 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 disabled:opacity-40"
         >
-          {saving ? 'Guardando...' : 'Guardar cards'}
+          {saving ? (
+            <span className="flex items-center gap-2">
+              <Spinner />
+              Guardando...
+            </span>
+          ) : 'Guardar cards'}
         </button>
       </div>
     </div>

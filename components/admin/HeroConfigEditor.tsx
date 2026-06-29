@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import Image from '@/components/ui/AppImage'
 import { toast } from 'sonner'
 import { type HeroSlide } from '@/lib/data/site-config-defaults'
+import { Spinner } from '@/components/ui/Spinner'
 
 export default function HeroConfigEditor({ initialSlides }: { initialSlides: HeroSlide[] }) {
   const [slides, setSlides] = useState<HeroSlide[]>(initialSlides)
@@ -108,7 +109,7 @@ export default function HeroConfigEditor({ initialSlides }: { initialSlides: Her
                       disabled={uploadingIdx.has(idx)}
                       className="self-start border border-border px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.15em] text-muted transition-colors hover:border-foreground hover:text-foreground disabled:opacity-40 disabled:pointer-events-none"
                     >
-                      {uploadingIdx.has(idx) ? 'Subiendo...' : 'Subir imagen'}
+                      {uploadingIdx.has(idx) ? <><Spinner /> Subiendo...</> : 'Subir imagen'}
                     </button>
                     <input
                       type="text"
@@ -197,7 +198,12 @@ export default function HeroConfigEditor({ initialSlides }: { initialSlides: Her
           disabled={saving}
           className="bg-foreground px-8 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 disabled:opacity-40"
         >
-          {saving ? 'Guardando...' : 'Guardar hero'}
+          {saving ? (
+            <span className="flex items-center gap-2">
+              <Spinner />
+              Guardando...
+            </span>
+          ) : 'Guardar hero'}
         </button>
       </div>
     </div>

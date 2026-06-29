@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { toast } from 'sonner'
 import type { BrandHeroConfig } from '@/lib/data/site-config-defaults'
+import { Spinner } from '@/components/ui/Spinner'
 
 type Brand = 'JORDAN' | 'NIKE' | 'ADIDAS'
 
@@ -196,7 +197,7 @@ export default function BrandHeroEditor({
                     disabled={isUploading}
                     className="shrink-0 border border-border px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.15em] text-muted transition-colors hover:border-foreground hover:text-foreground disabled:opacity-40 disabled:pointer-events-none"
                   >
-                    {isUploading ? 'Subiendo...' : 'Subir archivo'}
+                    {isUploading ? <><Spinner /> Subiendo...</> : 'Subir archivo'}
                   </button>
                 </div>
 
@@ -267,7 +268,12 @@ export default function BrandHeroEditor({
           disabled={saving}
           className="bg-foreground px-8 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-80 disabled:opacity-40"
         >
-          {saving ? 'Guardando...' : `Guardar hero ${BRAND_LABELS[activeBrand]}`}
+          {saving ? (
+            <span className="flex items-center gap-2">
+              <Spinner />
+              Guardando...
+            </span>
+          ) : `Guardar hero ${BRAND_LABELS[activeBrand]}`}
         </button>
       </div>
     </div>
