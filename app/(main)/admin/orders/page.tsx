@@ -93,7 +93,7 @@ export default async function AdminOrdersPage({
                 <th className="px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted">
                   Estado
                 </th>
-                <th className="hidden lg:table-cell px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted">
+                <th className="px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted">
                   Tracking
                 </th>
                 <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] md:text-xs uppercase tracking-[0.18em] text-muted">
@@ -154,7 +154,7 @@ export default async function AdminOrdersPage({
                     <td className="px-6 py-3">
                       <OrderStatusSelect orderId={order.id} current={order.status} />
                     </td>
-                    <td className="hidden lg:table-cell px-6 py-3">
+                    <td className="px-6 py-3">
                       <TrackingNumberInput orderId={order.id} current={order.trackingNumber} />
                     </td>
                     <td className="hidden sm:table-cell px-6 py-3 text-[11px] md:text-sm text-muted">

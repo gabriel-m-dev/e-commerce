@@ -7,6 +7,7 @@ import OrderStatusSelect from '@/components/admin/OrderStatusSelect'
 import { OrderSubStatusSelect } from '@/components/admin/OrderSubStatusSelect'
 import ConfirmTransferButton from '@/components/admin/ConfirmTransferButton'
 import AddressEditForm from '@/components/admin/AddressEditForm'
+import TrackingNumberInput from '@/components/admin/TrackingNumberInput'
 
 export const dynamic = 'force-dynamic'
 
@@ -89,11 +90,9 @@ export default async function AdminOrderDetailPage({
           {order.subStatus && (
             <span className="text-[10px] text-muted uppercase tracking-wider">{order.subStatus}</span>
           )}
-          {order.trackingNumber && (
-            <span className="text-[10px] text-muted">
-              Tracking: <span className="text-foreground font-semibold">{order.trackingNumber}</span>
-            </span>
-          )}
+          <span className="text-[10px] text-muted flex items-center gap-1">
+            Tracking: <TrackingNumberInput orderId={order.id} current={order.trackingNumber} />
+          </span>
         </div>
       </div>
 
