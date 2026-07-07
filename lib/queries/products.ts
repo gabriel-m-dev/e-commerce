@@ -114,8 +114,9 @@ export async function getProducts(options?: {
   search?: string
   sort?: string
   brand?: string
+  includeInactive?: boolean
 }): Promise<DbProduct[]> {
-  const { categorySlug, search, sort, brand } = options ?? {}
+  const { categorySlug, search, sort, brand, includeInactive } = options ?? {}
 
   const orderBy = (() => {
     if (sort === 'price_asc') return { price: 'asc' as const }
@@ -126,7 +127,7 @@ export async function getProducts(options?: {
   try {
     const results = await prisma.product.findMany({
       where: {
-        active: true,
+        ...(includeInactive ? {} : { active: true }),
         ...(categorySlug
           ? { categories: { some: { category: { slug: categorySlug } } } }
           : {}),
