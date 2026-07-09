@@ -4,6 +4,15 @@ import { formatPrice } from '@/lib/utils'
 
 const FROM = process.env.RESEND_FROM ?? `${SITE_NAME} <onboarding@resend.dev>`
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 type OrderEmailData = {
   orderId: string
   email: string
@@ -19,7 +28,7 @@ function itemsHtml(items: OrderEmailData['items']): string {
       (item) => `
       <tr>
         <td style="padding:8px 0;border-bottom:1px solid #e5e5e5;font-size:12px;color:#0a0a0a;">
-          ${item.name}${item.size ? ` <span style="color:#8a8a8a;">(${item.size})</span>` : ''}
+          ${escapeHtml(item.name)}${item.size ? ` <span style="color:#8a8a8a;">(${escapeHtml(item.size)})</span>` : ''}
         </td>
         <td style="padding:8px 0;border-bottom:1px solid #e5e5e5;font-size:12px;color:#8a8a8a;text-align:center;">
           ×${item.quantity}

@@ -31,6 +31,10 @@ vi.mock('@/lib/prisma', () => ({
     },
     shippingMethod: {
       findUnique: vi.fn(),
+      findMany: vi.fn(),
+    },
+    productShippingMethod: {
+      findMany: vi.fn(),
     },
     $transaction: vi.fn(),
   },
@@ -247,6 +251,9 @@ beforeEach(() => {
   vi.clearAllMocks()
   // Set the webhook secret env var for every test
   process.env.MERCADOPAGO_WEBHOOK_SECRET = WEBHOOK_SECRET
+  // Default: no products have shipping-method assignments — fallback rule makes
+  // every active method eligible, matching pre-existing test expectations.
+  ;(prisma.productShippingMethod.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([])
 })
 
 // ===========================================================================
@@ -259,7 +266,7 @@ describe('POST /api/checkout/create-preference', () => {
 
     // Product exists but stock is 0
     ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: PRODUCT_ID, price: 15000, stock: 0, active: true },
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 0, active: true, sizes: [] },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
@@ -283,7 +290,7 @@ describe('POST /api/checkout/create-preference', () => {
     mockAnonAuth()
 
     ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: true, sizes: [] },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
@@ -326,7 +333,7 @@ describe('POST /api/checkout/create-preference', () => {
     mockAnonAuth()
 
     ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: true, sizes: [] },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
@@ -357,7 +364,7 @@ describe('POST /api/checkout/create-preference', () => {
   it('returns 400 when product is inactive', async () => {
     mockAnonAuth()
     ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: PRODUCT_ID, price: 15000, stock: 10, active: false },
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: false, sizes: [] },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
@@ -391,7 +398,7 @@ describe('POST /api/checkout/create-preference', () => {
   it('ignores client-sent price and uses DB price for order total', async () => {
     mockAnonAuth()
     ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: true, sizes: [] },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
@@ -425,7 +432,7 @@ describe('POST /api/checkout/create-preference', () => {
   it('returns 400 when quantity is zero', async () => {
     mockAnonAuth()
     ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: true, sizes: [] },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
@@ -443,7 +450,7 @@ describe('POST /api/checkout/create-preference', () => {
   it('returns 400 when quantity is negative', async () => {
     mockAnonAuth()
     ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: true, sizes: [] },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA,
@@ -461,7 +468,7 @@ describe('POST /api/checkout/create-preference', () => {
   it('returns 400 when shippingMethodId is missing', async () => {
     mockAnonAuth()
     ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: true, sizes: [] },
     ])
     const req = makeCreatePreferenceRequest({
       items: [makeCartItem()],
@@ -476,7 +483,7 @@ describe('POST /api/checkout/create-preference', () => {
   it('returns 400 when shippingMethod is inactive', async () => {
     mockAnonAuth()
     ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: true, sizes: [] },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: false, ...SHIPPING_METHOD_FORMULA,
@@ -494,7 +501,7 @@ describe('POST /api/checkout/create-preference', () => {
   it('returns 400 when shippingMethod does not exist', async () => {
     mockAnonAuth()
     ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: PRODUCT_ID, price: 15000, stock: 10, active: true },
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: true, sizes: [] },
     ])
     ;(prisma.shippingMethod.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(null)
     const req = makeCreatePreferenceRequest({
@@ -505,6 +512,98 @@ describe('POST /api/checkout/create-preference', () => {
     })
     const res = await createPreferencePost(req)
     expect(res.status).toBe(400)
+  })
+
+  it('returns 400 when item.size is not in the product\'s sizes list', async () => {
+    mockAnonAuth()
+    ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: true, sizes: ['38', '39', '40'] },
+    ])
+    ;(prisma.shippingMethod.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA },
+    ])
+
+    const req = makeCreatePreferenceRequest({
+      // '42' is not in the product's ['38','39','40'] sizes list
+      items: [makeCartItem({ size: '42' })],
+      buyer: makeBuyer(),
+      shipping: makeShipping(),
+      shippingMethodId: SHIPPING_METHOD_ID,
+    })
+    const res = await createPreferencePost(req)
+    const json = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(json.error).toMatch(/talle inválido/i)
+  })
+
+  it('returns 400 when the requested shipping method is not assigned to the product (and the product has other assignments)', async () => {
+    mockAnonAuth()
+    const OTHER_METHOD_ID = 'method-002'
+    ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: true, sizes: [] },
+    ])
+    ;(prisma.shippingMethod.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA },
+    ])
+    // Product has at least one ProductShippingMethod assignment, but only for a
+    // DIFFERENT method — the group-wide unassigned fallback must NOT kick in here,
+    // so the strict eligibility check should reject the request.
+    ;(prisma.productShippingMethod.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { productId: PRODUCT_ID, shippingMethodId: OTHER_METHOD_ID },
+    ])
+
+    const req = makeCreatePreferenceRequest({
+      items: [makeCartItem()],
+      buyer: makeBuyer(),
+      shipping: makeShipping(),
+      shippingMethodId: SHIPPING_METHOD_ID,
+    })
+    const res = await createPreferencePost(req)
+    const json = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(json.error).toMatch(/método de envío no válido/i)
+  })
+
+  it('allows a group mixing an unassigned product with a product restricted to a different method (group-wide fallback)', async () => {
+    mockAnonAuth()
+    const OTHER_METHOD_ID = 'method-002'
+    const PRODUCT_ID_2 = 'prod-002'
+    ;(prisma.product.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { id: PRODUCT_ID, name: 'Air Max 90', price: 15000, stock: 10, active: true, sizes: [] },
+      { id: PRODUCT_ID_2, name: 'Gorra Jordan', price: 8000, stock: 10, active: true, sizes: [] },
+    ])
+    ;(prisma.shippingMethod.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { id: SHIPPING_METHOD_ID, name: 'Envío estándar', active: true, ...SHIPPING_METHOD_FORMULA },
+    ])
+    // PRODUCT_ID is restricted to a different method, but PRODUCT_ID_2 has ZERO
+    // ProductShippingMethod rows at all — per getShippingMethodsByProductIds, a single
+    // unassigned product in the set makes the whole set (group) fall back to "any
+    // active method is eligible", which is exactly what the UI would have offered.
+    ;(prisma.productShippingMethod.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { productId: PRODUCT_ID, shippingMethodId: OTHER_METHOD_ID },
+    ])
+    ;(prisma.order.create as ReturnType<typeof vi.fn>).mockResolvedValue({ id: ORDER_ID })
+    mockPreferenceCreate.mockResolvedValue({ id: 'pref-mixed', init_point: 'https://mp.com/pref-mixed' })
+
+    const secondItem = makeCartItem({ quantity: 1, size: undefined })
+    ;(secondItem as Record<string, unknown>).product = {
+      ...secondItem.product,
+      id: PRODUCT_ID_2,
+      name: 'Gorra Jordan',
+      price: 8000,
+    }
+
+    const req = makeCreatePreferenceRequest({
+      items: [makeCartItem(), secondItem],
+      buyer: makeBuyer(),
+      shipping: makeShipping(),
+      shippingMethodId: SHIPPING_METHOD_ID,
+    })
+    const res = await createPreferencePost(req)
+
+    expect(res.status).toBe(200)
   })
 })
 

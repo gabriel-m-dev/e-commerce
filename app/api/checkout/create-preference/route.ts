@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     const productIds = [...new Set(items.map((item) => item.product.id))]
     const dbProducts = await prisma.product.findMany({
       where: { id: { in: productIds } },
-      select: { id: true, price: true, stock: true, active: true, weightKg: true, supplier: true },
+      select: { id: true, name: true, price: true, stock: true, active: true, weightKg: true, supplier: true, sizes: true },
     })
 
     if (dbProducts.length !== productIds.length) {
@@ -113,6 +113,9 @@ export async function POST(request: NextRequest) {
           { error: `Stock insuficiente para "${item.product.name}". Disponible: ${dbProduct.stock}.` },
           { status: 400 }
         )
+      }
+      if (item.size && dbProduct.sizes.length > 0 && !dbProduct.sizes.includes(item.size)) {
+        return Response.json({ error: `Talle inválido para "${dbProduct.name}".` }, { status: 400 })
       }
     }
 
@@ -149,6 +152,20 @@ export async function POST(request: NextRequest) {
       itemsBySupplier.get(key)!.push(item)
     }
 
+    // Verify every DB-verified supplier present in the cart is covered by a shipping
+    // group. normalizedGroups and item.product.supplier are client-supplied — an
+    // uncovered supplier would silently skip both the shipping cost calc and the
+    // eligibility check below (zero cost, no validation).
+    const distinctDbSuppliers = new Set(dbProducts.map((p) => p.supplier ?? null))
+    const coveredSupplierKeys = new Set(normalizedGroups.map((g) => g.supplier ?? null))
+    const hasUncoveredSupplier = [...distinctDbSuppliers].some((s) => !coveredSupplierKeys.has(s))
+    if (hasUncoveredSupplier) {
+      return Response.json(
+        { error: 'Cada grupo de proveedores debe tener un método de envío asignado.' },
+        { status: 400 }
+      )
+    }
+
     const perGroupCosts: number[] = []
     const shippingBreakdown: Array<{ supplier: string | null; shippingMethodId: string; shippingMethodName: string; cost: number }> = []
     const mpShippingLineItems: Array<{ id: string; title: string; quantity: number; unit_price: number; currency_id: string }> = []
@@ -162,6 +179,28 @@ export async function POST(request: NextRequest) {
       // Compute group weight from DB product weights
       const groupKey = group.supplier ?? '__null__'
       const groupItems = itemsBySupplier.get(groupKey) ?? items // fallback: use all items if not grouped
+
+      // Enforce that this shipping method is actually assigned to the group's products.
+      // Mirrors the GROUP-WIDE fallback rule in getShippingMethodsByProductIds: if ANY
+      // product in the group has zero ProductShippingMethod rows, the whole group is
+      // eligible for any active method (matches what the UI offered). Only when every
+      // product in the group has at least one assignment do we enforce the strict check.
+      const groupProductIds = [...new Set(groupItems.map((item) => item.product.id))]
+      const eligibilityRows = await prisma.productShippingMethod.findMany({
+        where: { productId: { in: groupProductIds } },
+        select: { productId: true, shippingMethodId: true },
+      })
+      const productsWithMethods = new Set(eligibilityRows.map((r) => r.productId))
+      const hasUnassignedProduct = groupProductIds.some((pid) => !productsWithMethods.has(pid))
+      if (!hasUnassignedProduct) {
+        const isEligible = groupProductIds.every((pid) =>
+          eligibilityRows.some((r) => r.productId === pid && r.shippingMethodId === group.shippingMethodId)
+        )
+        if (!isEligible) {
+          return Response.json({ error: 'Método de envío no válido para los productos seleccionados.' }, { status: 400 })
+        }
+      }
+
       const groupWeightKg = groupItems.reduce(
         (sum, item) => sum + (dbProductMap.get(item.product.id)?.weightKg ?? 0) * item.quantity,
         0
@@ -236,7 +275,7 @@ export async function POST(request: NextRequest) {
         items: {
           create: items.map((item) => ({
             productId: item.product.id,
-            name: item.product.name,
+            name: dbProducts.find((p) => p.id === item.product.id)!.name,
             price: priceMap.get(item.product.id) as number,
             quantity: item.quantity,
             size: item.size ?? null,
