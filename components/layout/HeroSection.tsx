@@ -48,7 +48,7 @@ export default function HeroSection({ slides: slidesProp }: { slides?: HeroSlide
       </div>
 
       <div className="mx-auto max-w-screen-xl px-6 lg:px-10">
-        <div className="grid min-h-[88svh] grid-cols-1 items-start lg:grid-cols-[1fr_460px] lg:items-center xl:grid-cols-[1fr_540px]">
+        <div className="grid min-h-[88svh] grid-cols-1 items-end lg:grid-cols-[1fr_460px] lg:items-center xl:grid-cols-[1fr_540px]">
 
           {/* Left — copy */}
           <div className="relative z-10 pt-5 pb-10 sm:pt-10 md:pt-20 lg:py-0 lg:pr-16">
