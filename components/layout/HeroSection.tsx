@@ -67,7 +67,7 @@ export default function HeroSection({ slides: slidesProp }: { slides?: HeroSlide
             <div className="mt-5 lg:mt-10">
               <Link
                 href={slide.ctaLink}
-                className="inline-flex items-center gap-2 border border-background/60 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-background transition-colors duration-200 hover:border-background hover:bg-background hover:text-foreground lg:gap-3 lg:px-7 lg:py-3.5 lg:text-[11px]"
+                className="inline-flex items-center gap-2 border border-background bg-background px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground transition-colors duration-200 lg:border-background/60 lg:bg-transparent lg:text-background lg:hover:border-background lg:hover:bg-background lg:hover:text-foreground lg:gap-3 lg:px-7 lg:py-3.5 lg:text-[11px]"
               >
                 {slide.ctaText} <ArrowIcon className="shrink-0 text-gold" size={14} />
               </Link>
