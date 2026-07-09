@@ -6,7 +6,7 @@ import ArrowIcon from '@/components/ui/ArrowIcon'
 import { type HeroSlide, DEFAULT_HERO_SLIDES } from '@/lib/data/site-config-defaults'
 
 export default function HeroSection({ slides: slidesProp }: { slides?: HeroSlide[] }) {
-  const slides = (slidesProp && slidesProp.length > 0) ? slidesProp : DEFAULT_HERO_SLIDES
+  const slides = ((slidesProp && slidesProp.length > 0) ? slidesProp : DEFAULT_HERO_SLIDES).slice(0, 1)
   const [current, setCurrent] = useState(0)
 
   useEffect(() => {
