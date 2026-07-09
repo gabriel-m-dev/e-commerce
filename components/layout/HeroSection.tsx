@@ -39,7 +39,7 @@ export default function HeroSection({ slides: slidesProp }: { slides?: HeroSlide
             alt=""
             fill
             sizes="100vw"
-            className={`object-cover object-center transition-opacity duration-[800ms] ${i === current ? 'opacity-100' : 'opacity-0'}`}
+            className={`object-contain object-center lg:object-cover transition-opacity duration-[800ms] ${i === current ? 'opacity-100' : 'opacity-0'}`}
             priority={i === 0}
           />
         ))}
