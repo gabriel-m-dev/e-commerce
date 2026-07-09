@@ -128,7 +128,7 @@ export default function FeaturedProductsGrid({ products }: FeaturedProductsGridP
       <div className="overflow-hidden md:px-0" ref={emblaRef}>
         <div className="flex -ml-4">
           {products.map((product, index) => (
-            <div key={product.id} className="shrink-0 pl-4 basis-[85%] md:basis-1/3">
+            <div key={product.id} className="shrink-0 pl-4 basis-[64%] md:basis-1/4">
               <ProductCard
                 product={product}
                 badge={CARD_BADGES[index % CARD_BADGES.length]}
